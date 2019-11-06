@@ -44,11 +44,11 @@ namespace GameFramework
             if (_instance != null && _instance != this) Destroy(gameObject);
             else _instance = this;
 
-            // Save Settings
-            saveSettings = new SaveSettings();
-
             //  Default Screen Size
             Screen.SetResolution(1920, 1080, true, 60);
+
+            // Save Settings
+            saveSettings = new SaveSettings();
 
             //  Register Event Listeners
             OnQuitApp += Quit;
@@ -73,13 +73,13 @@ namespace GameFramework
 
                 GUIStyle style = new GUIStyle();
 
-                Rect rect = new Rect(w - 150, 0, w, h * 2 / 100);
+                Rect rect = new Rect(w - 180, 0, w, h * 2 / 100);
                 style.alignment = TextAnchor.UpperLeft;
                 style.fontSize = h * 2 / 100;
                 style.normal.textColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
                 float msec = deltaTime * 1000.0f;
                 float fps = 1.0f / deltaTime;
-                string text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
+                string text = string.Format("{0:0.0} ms ({1:0.} fps) ", msec, fps);
                 GUI.Label(rect, text, style);
             }
         }

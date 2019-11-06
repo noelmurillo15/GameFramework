@@ -231,8 +231,6 @@ namespace GameFramework
         public static Boolean dofBool;
         private Boolean lastAOBool;
         private Boolean lastDOFBool;
-        public static Terrain readTerrain;
-        public static Terrain readSimpleTerrain;
 
         GameManager gameManager = null;
         #endregion
@@ -683,7 +681,7 @@ namespace GameFramework
             try
             {
                 mainCam.farClipPlane = renderDistINI;
-                Terrain.activeTerrain.detailObjectDensity = densityINI;
+                // Terrain.activeTerrain.detailObjectDensity = densityINI;
                 mainCam.fieldOfView = fovINI;
                 vidPanel.SetActive(false);
                 audioPanel.SetActive(false);
@@ -701,7 +699,7 @@ namespace GameFramework
             catch
             {
 
-                Debug.Log("A problem occured (chances are the terrain was not assigned )");
+                Debug.Log("A problem occured");
                 mainCam.farClipPlane = renderDistINI;
                 mainCam.fieldOfView = fovINI;
                 vidPanel.SetActive(false);
@@ -742,7 +740,6 @@ namespace GameFramework
             audioPanel.SetActive(false);
             renderDistINI = mainCam.farClipPlane;
             shadowDistINI = QualitySettings.shadowDistance;
-            Debug.Log("Shadow dist ini" + shadowDistINI);
             fovINI = mainCam.fieldOfView;
             aoBool = aoToggle.isOn;
             dofBool = dofToggle.isOn;

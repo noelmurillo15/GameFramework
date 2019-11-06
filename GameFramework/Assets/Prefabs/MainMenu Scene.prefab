@@ -169,7 +169,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2056428, guid: cc90e0aa039d3954f8de2dea80c6ed76, type: 3}
       propertyPath: m_RenderingPath
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2056428, guid: cc90e0aa039d3954f8de2dea80c6ed76, type: 3}
       propertyPath: m_HDR

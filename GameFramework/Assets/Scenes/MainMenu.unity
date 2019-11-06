@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionBounces: 2
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 1723935932}
+  m_Sun: {fileID: 0}
   m_IndirectSpecularColor: {r: 0.43975514, g: 0.48817998, b: 0.5683994, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &4
@@ -120,13 +120,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!108 &1723935932 stripped
-Light:
-  m_CorrespondingSourceObject: {fileID: 2996921716339792874, guid: 2ddfb8e2ab8a61943bbc12ec040a3075,
-    type: 3}
-  m_PrefabInstance: {fileID: 2996921717544459783}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &2996921717544459783
+--- !u!1001 &2116101092
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -137,41 +131,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MainMenu Scene
-      objectReference: {fileID: 0}
-    - target: {fileID: 2996921716350198208, guid: 2ddfb8e2ab8a61943bbc12ec040a3075,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2996921716350198208, guid: 2ddfb8e2ab8a61943bbc12ec040a3075,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2996921716350198208, guid: 2ddfb8e2ab8a61943bbc12ec040a3075,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2996921716350198208, guid: 2ddfb8e2ab8a61943bbc12ec040a3075,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2996921716350198208, guid: 2ddfb8e2ab8a61943bbc12ec040a3075,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2996921716350198208, guid: 2ddfb8e2ab8a61943bbc12ec040a3075,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2996921716350198208, guid: 2ddfb8e2ab8a61943bbc12ec040a3075,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2996921716350198208, guid: 2ddfb8e2ab8a61943bbc12ec040a3075,
         type: 3}

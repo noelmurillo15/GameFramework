@@ -10,7 +10,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 
-namespace GameFramework
+namespace GameFramework.Core
 {
     public class PauseManager : MonoBehaviour
     {
@@ -27,6 +27,7 @@ namespace GameFramework
         /// This is the audio panel holder, which holds all of the silders for the audio panel and should be called "audio panel"
         /// </summary>
         public GameObject audioPanel;
+        public GameObject quitPanel;
         /// <summary>
         /// These are the game objects with the title texts like "Pause menu" and "Game Title" 
         /// </summary>
@@ -272,24 +273,41 @@ namespace GameFramework
             lastTexLimit = QualitySettings.masterTextureLimit;
             lastShadowCascade = QualitySettings.shadowCascades;
 
-            gameManager.LoadSettings();
-            gameManager.IsMenuUIActive = true;
-
-            //  Enable Menu Panels
-            mask.SetActive(true);
-            mainPanel.SetActive(true);
-            TitleTexts.SetActive(true);
-            audioPanel.SetActive(false);
-            vidPanel.SetActive(false);
-
-            if (TitleTexts != null)
+            //  Scene Dependant
+            Time.timeScale = timeScale;
+            if (SceneManager.GetActiveScene().name == "MainMenu")
             {
-                TitleTexts.transform.GetChild(0).GetComponent<TMP_Text>().text = Application.productName;
+                gameManager.LoadSettings();
+                gameManager.IsMenuUIActive = true;
+                gameManager.IsGameOver = false;
+
+                //  Enable Menu Panels
+                mask.SetActive(true);
+                mainPanel.SetActive(true);
+                TitleTexts.SetActive(true);
+                audioPanel.SetActive(false);
+                vidPanel.SetActive(false);
+
+                if (TitleTexts != null)
+                {
+                    TitleTexts.transform.GetChild(0).GetComponent<TMP_Text>().text = Application.productName;
+                }
+
+                for (int i = 0; i < otherUIElements.Length; i++)
+                {
+                    otherUIElements[i].gameObject.SetActive(false);
+                }
             }
-
-            for (int i = 0; i < otherUIElements.Length; i++)
+            else
             {
-                otherUIElements[i].gameObject.SetActive(false);
+                gameManager.StartGameEvent();
+                gameManager.IsMenuUIActive = false;
+                gameManager.IsGameOver = false;
+                mask.SetActive(false);
+                mainPanel.SetActive(false);
+                TitleTexts.SetActive(false);
+                audioPanel.SetActive(false);
+                vidPanel.SetActive(false);
             }
         }
 
@@ -319,43 +337,36 @@ namespace GameFramework
         }
 
         #region Buttons
-        /// <summary>
-        /// Restart the level by loading the loaded level.
-        /// </summary>
         public void Restart()
         {
+            gameManager.RestartLevelEvent();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             uiEventSystem.firstSelectedGameObject = defualtSelectedMain;
         }
-        /// <summary>
-        /// 
-        /// </summary>  
+
         public void LoadGame()
         {
 
         }
-        /// <summary>
-        /// 
-        /// </summary>
+
         public void StartGame()
         {
+            gameManager.IsMenuUIActive = false;
             StartCoroutine(LoadNewScene());
         }
 
         IEnumerator LoadNewScene()
         {
             yield return gameManager.screenFader.FadeOut(2f);
-            AsyncOperation async = SceneManager.LoadSceneAsync("Level 1");
-            gameManager.IsMenuUIActive = false;
+            AsyncOperation async = SceneManager.LoadSceneAsync("Level 1", LoadSceneMode.Single);
             gameManager.screenFader.FadeIn(2f);
             while (!async.isDone) { yield return null; }
         }
-        /// <summary>
-        /// Method to resume the game, so disable the pause menu and re-enable all other ui elements
-        /// </summary>
+
         public void Pause()
         {
             Time.timeScale = 0;
+            gameManager.IsPauseUIActive = true;
             uiEventSystem.SetSelectedGameObject(defualtSelectedMain);
             mainPanel.SetActive(true);
             vidPanel.SetActive(false);
@@ -367,12 +378,11 @@ namespace GameFramework
                 otherUIElements[i].gameObject.SetActive(false);
             }
         }
-        /// <summary>
-        /// Method to resume the game, so disable the pause menu and re-enable all other ui elements
-        /// </summary>
+
         public void Resume()
         {
             Time.timeScale = timeScale;
+            gameManager.IsPauseUIActive = false;
             mainPanel.SetActive(false);
             vidPanel.SetActive(false);
             audioPanel.SetActive(false);
@@ -383,46 +393,57 @@ namespace GameFramework
                 otherUIElements[i].gameObject.SetActive(true);
             }
         }
-        /// <summary>
-        /// All the methods relating to qutting should be called here.
-        /// </summary>
+
         public void quitOptions()
         {
             vidPanel.SetActive(false);
             audioPanel.SetActive(false);
-            quitPanelAnimator.enabled = true;
-            quitPanelAnimator.Play("QuitPanelIn");
-
+            if (quitPanelAnimator != null)
+            {
+                quitPanelAnimator.enabled = true;
+                quitPanelAnimator.Play("QuitPanelIn");
+            }
+            else
+            {
+                quitPanel.SetActive(true);
+            }
         }
-        /// <summary>
-        /// Method to quit the game. Call methods such as auto saving before qutting here.
-        /// </summary>
+
         public void quitGame()
         {
-            gameManager.QuitApplicationEvent();
-            Invoke("Quit", 1f);
+            Time.timeScale = timeScale;
+            StartCoroutine(Quit());
         }
-        void Quit()
+
+        IEnumerator Quit()
         {
+            gameManager.QuitApplicationEvent();
+            yield return gameManager.screenFader.FadeOut(2f);
+            yield return new WaitForSeconds(1f);
+
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else
             Application.Quit();
 #endif
         }
-        /// <summary>
-        /// Cancels quittting by playing an animation.
-        /// </summary>
+
         public void quitCancel()
         {
-            quitPanelAnimator.Play("QuitPanelOut");
+            if (quitPanelAnimator != null)
+            {
+                quitPanelAnimator.Play("QuitPanelOut");
+            }
+            else
+            {
+                quitPanel.SetActive(false);
+            }
         }
-        /// <summary>
-        ///Loads the main menu scene.
-        /// </summary>
+
         public void returnToMenu()
         {
-            SceneManager.LoadScene(mainMenu);
+            gameManager.EndGameEvent();
+            SceneManager.LoadScene("MainMenu");
             uiEventSystem.SetSelectedGameObject(defualtSelectedMain);
         }
         #endregion
@@ -435,7 +456,14 @@ namespace GameFramework
         {
             vidPanel.SetActive(false);
             audioPanel.SetActive(true);
-            audioPanelAnimator.enabled = true;
+            if (!gameManager.IsMenuUIActive)
+            {
+                mainPanel.SetActive(false);
+            }
+            if (audioPanelAnimator != null)
+            {
+                audioPanelAnimator.enabled = true;
+            }
             audioIn();
         }
         /// <summary>
@@ -444,7 +472,10 @@ namespace GameFramework
         public void audioIn()
         {
             uiEventSystem.SetSelectedGameObject(defualtSelectedAudio);
-            audioPanelAnimator.Play("Audio Panel In");
+            if (audioPanelAnimator != null)
+            {
+                audioPanelAnimator.Play("Audio Panel In");
+            }
             audioMasterSlider.value = AudioListener.volume;
             //Perform modulo to find factor f to allow for non uniform music volumes
             float a; float b; float f;
@@ -542,10 +573,14 @@ namespace GameFramework
         /// <returns></returns>
         internal IEnumerator applyAudioMain()
         {
-            audioPanelAnimator.Play("Audio Panel Out");
+            if (audioPanelAnimator != null)
+            {
+                audioPanelAnimator.Play("Audio Panel Out");
+            }
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
             vidPanel.SetActive(false);
             audioPanel.SetActive(false);
+            mainPanel.SetActive(true);
             beforeMaster = AudioListener.volume;
             lastMusicMult = audioMusicSlider.value;
             lastAudioMult = audioEffectsSlider.value;
@@ -565,11 +600,15 @@ namespace GameFramework
         /// <returns></returns>
         internal IEnumerator cancelAudioMain()
         {
-            audioPanelAnimator.Play("Audio Panel Out");
-            Debug.Log(audioPanelAnimator.GetCurrentAnimatorClipInfo(0).Length);
+            if (audioPanelAnimator != null)
+            {
+                audioPanelAnimator.Play("Audio Panel Out");
+                // Debug.Log(audioPanelAnimator.GetCurrentAnimatorClipInfo(0).Length);
+            }
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
             vidPanel.SetActive(false);
             audioPanel.SetActive(false);
+            mainPanel.SetActive(true);
             AudioListener.volume = beforeMaster;
             //Debug.Log(_beforeMaster + AudioListener.volume);
             try
@@ -602,7 +641,14 @@ namespace GameFramework
         {
             vidPanel.SetActive(true);
             audioPanel.SetActive(false);
-            vidPanelAnimator.enabled = true;
+            if (!gameManager.IsMenuUIActive)
+            {
+                mainPanel.SetActive(false);
+            }
+            if (vidPanelAnimator != null)
+            {
+                vidPanelAnimator.enabled = true;
+            }
             videoIn();
         }
         /// <summary>
@@ -611,7 +657,10 @@ namespace GameFramework
         public void videoIn()
         {
             uiEventSystem.SetSelectedGameObject(defualtSelectedVideo);
-            vidPanelAnimator.Play("Video Panel In");
+            if (vidPanelAnimator != null)
+            {
+                vidPanelAnimator.Play("Video Panel In");
+            }
 
             if (QualitySettings.antiAliasing == 0)
             {
@@ -675,9 +724,13 @@ namespace GameFramework
         /// <returns></returns>
         internal IEnumerator cancelVideoMain()
         {
-            vidPanelAnimator.Play("Video Panel Out");
+            if (vidPanelAnimator != null)
+            {
+                vidPanelAnimator.Play("Video Panel Out");
+            }
 
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
+
             try
             {
                 mainCam.farClipPlane = renderDistINI;
@@ -685,6 +738,7 @@ namespace GameFramework
                 mainCam.fieldOfView = fovINI;
                 vidPanel.SetActive(false);
                 audioPanel.SetActive(false);
+                mainPanel.SetActive(true);
                 aoBool = lastAOBool;
                 dofBool = lastDOFBool;
                 Screen.SetResolution(beforeRes.width, beforeRes.height, Screen.fullScreen);
@@ -704,6 +758,7 @@ namespace GameFramework
                 mainCam.fieldOfView = fovINI;
                 vidPanel.SetActive(false);
                 audioPanel.SetActive(false);
+                mainPanel.SetActive(true);
                 aoBool = lastAOBool;
                 dofBool = lastDOFBool;
                 QualitySettings.shadowDistance = shadowDistINI;
@@ -734,10 +789,14 @@ namespace GameFramework
         /// <returns></returns>
         internal IEnumerator applyVideo()
         {
-            vidPanelAnimator.Play("Video Panel Out");
+            if (vidPanelAnimator != null)
+            {
+                vidPanelAnimator.Play("Video Panel Out");
+            }
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
             vidPanel.SetActive(false);
             audioPanel.SetActive(false);
+            mainPanel.SetActive(true);
             renderDistINI = mainCam.farClipPlane;
             shadowDistINI = QualitySettings.shadowDistance;
             fovINI = mainCam.fieldOfView;

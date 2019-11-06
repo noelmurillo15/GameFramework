@@ -6,7 +6,7 @@ using System.IO;
 using UnityEngine;
 
 
-namespace GameFramework
+namespace GameFramework.Core
 {
     [System.Serializable]
     public class SaveSettings

@@ -5,7 +5,7 @@
 using UnityEngine;
 
 
-namespace GameFramework
+namespace GameFramework.Core
 {
     public class GameManager : MonoBehaviour
     {
@@ -32,10 +32,12 @@ namespace GameFramework
         bool isGameOver = false;
         bool isInventoryActive = false;
         bool isMenuActive = false;
+        bool isPauseActive = false;
 
         public bool IsInventoryUIActive { get { return isInventoryActive; } set { isInventoryActive = value; } }
+        public bool IsPauseUIActive { get { return isPauseActive; } set { isPauseActive = value; } }
         public bool IsMenuUIActive { get { return isMenuActive; } set { isMenuActive = value; } }
-        public bool IsGameOver { get { return isGameOver; } }
+        public bool IsGameOver { get { return isGameOver; } set { isGameOver = value; } }
         #endregion
 
 
@@ -79,7 +81,7 @@ namespace GameFramework
                 style.normal.textColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
                 float msec = deltaTime * 1000.0f;
                 float fps = 1.0f / deltaTime;
-                string text = string.Format("{0:0.0} ms ({1:0.} fps) ", msec, fps);
+                string text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
                 GUI.Label(rect, text, style);
             }
         }
@@ -101,6 +103,7 @@ namespace GameFramework
         {
             if (OnStartGame != null)
             {
+                isMenuActive = false;
                 isGameOver = false;
                 OnStartGame();
             }
@@ -132,6 +135,7 @@ namespace GameFramework
             {
                 if (!isGameOver)
                 {
+                    isMenuActive = true;
                     isGameOver = true;
                     OnEndGame();
                 }
@@ -149,7 +153,6 @@ namespace GameFramework
         void Quit()
         {
             OnQuitApp -= Quit;
-            Destroy(this.gameObject);
         }
     }
 }

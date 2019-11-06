@@ -137,11 +137,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 10860832, guid: cc90e0aa039d3954f8de2dea80c6ed76, type: 3}
       propertyPath: m_BoundingSphereOverride.y
-      value: 3.0337949e+32
-      objectReference: {fileID: 0}
-    - target: {fileID: 10860832, guid: cc90e0aa039d3954f8de2dea80c6ed76, type: 3}
-      propertyPath: m_BoundingSphereOverride.z
-      value: NaN
+      value: 2.3510647e-38
       objectReference: {fileID: 0}
     - target: {fileID: 2056428, guid: cc90e0aa039d3954f8de2dea80c6ed76, type: 3}
       propertyPath: m_ClearFlags
@@ -179,6 +175,10 @@ PrefabInstance:
       propertyPath: m_AllowDynamicResolution
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 11499738, guid: cc90e0aa039d3954f8de2dea80c6ed76, type: 3}
+      propertyPath: quitPanel
+      value: 
+      objectReference: {fileID: 2996921716350003120}
     - target: {fileID: 11499738, guid: cc90e0aa039d3954f8de2dea80c6ed76, type: 3}
       propertyPath: pauseMenu
       value: 
@@ -395,6 +395,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2996921716350003120 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 116090, guid: cc90e0aa039d3954f8de2dea80c6ed76,
+    type: 3}
+  m_PrefabInstance: {fileID: 2996921716350116554}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2996921716349996550 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 126156, guid: cc90e0aa039d3954f8de2dea80c6ed76,

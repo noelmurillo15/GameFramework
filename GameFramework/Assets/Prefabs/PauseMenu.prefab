@@ -4196,7 +4196,7 @@ GameObject:
   - component: {fileID: 2032839491107110160}
   - component: {fileID: 2032839491112843004}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: Render Distance Slider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4267,7 +4267,7 @@ MonoBehaviour:
   m_FillRect: {fileID: 2032839491107067418}
   m_HandleRect: {fileID: 2032839491106930646}
   m_Direction: 0
-  m_MinValue: 50
+  m_MinValue: 100
   m_MaxValue: 1000
   m_WholeNumbers: 0
   m_Value: 1000
@@ -10669,7 +10669,7 @@ MonoBehaviour:
   m_MinValue: 10
   m_MaxValue: 500
   m_WholeNumbers: 0
-  m_Value: 55
+  m_Value: 150
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -11899,7 +11899,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 1
+        m_CallState: 0
 --- !u!1 &2032839491118917978
 GameObject:
   m_ObjectHideFlags: 0
@@ -14247,7 +14247,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 0
 --- !u!1 &2032839491118928354
 GameObject:
   m_ObjectHideFlags: 0
@@ -17545,9 +17545,9 @@ MonoBehaviour:
   m_FillRect: {fileID: 2032839491107102022}
   m_HandleRect: {fileID: 2032839491107123070}
   m_Direction: 0
-  m_MinValue: 20
+  m_MinValue: 60
   m_MaxValue: 120
-  m_WholeNumbers: 0
+  m_WholeNumbers: 1
   m_Value: 60
   m_OnValueChanged:
     m_PersistentCalls:

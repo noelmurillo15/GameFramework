@@ -13,8 +13,9 @@ namespace GameFramework.Core
         static GameManager _instance;
         public static GameManager Instance { get { return _instance; } }
 
+        public PauseManager pauseManager = null;
         public ScreenFader screenFader = null;
-        SaveSettings saveSettings = null;
+        public SaveSettings saveSettings = null;
 
         #region Events
         public delegate void GeneralEvent();
@@ -87,9 +88,9 @@ namespace GameFramework.Core
         }
 
         #region Game Settings
-        public void LoadSettings()
+        public bool LoadSettings(bool full = false)
         {
-            saveSettings.LoadFromJson();
+            return saveSettings.LoadFromJson(full);
         }
 
         public void SaveSettings()

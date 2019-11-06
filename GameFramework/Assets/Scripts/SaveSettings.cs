@@ -11,90 +11,37 @@ namespace GameFramework.Core
     [System.Serializable]
     public class SaveSettings
     {
-        /// <summary>
-        /// Change the file name if something else floats your boat
-        /// </summary>
-        public string fileName = "GameSettings.json";
-        /// <summary>
-        /// Music volume
-        /// </summary>
-        public float musicVolume;
-        /// <summary>
-        /// Effects volume
-        /// </summary>
-        public float effectsVolume;
-        /// <summary>
-        /// Master volume
-        /// </summary>
-        public float masterVolume;
-        /// <summary>
-        /// Shadow Distance
-        /// </summary>
-        public float shadowDistINI;
-        /// <summary>
-        /// Render distance
-        /// </summary>
-        public float renderDistINI;
-        /// <summary>
-        /// MSAA quality
-        /// </summary>
-        public float aaQualINI;
-        /// <summary>
-        /// Density
-        /// </summary>
-        public float densityINI;
-        /// <summary>
-        /// Camera FOV
-        /// </summary>
-        public float fovINI;
-        /// <summary>
-        /// MSAA settings
-        /// </summary>
-        public int msaaINI;
-        /// <summary>
-        /// VSync settings
-        /// </summary>
-        public int vsyncINI;
-        /// <summary>
-        /// Texture quality
-        /// </summary>
-        public int textureLimit;
-        /// <summary>
-        /// Quality preset
-        /// </summary>
-        public int curQualityLevel;
-        /// <summary>
-        /// Shadwo Cascade
-        /// </summary>
-        public int lastShadowCascade;
-        /// <summary>
-        /// Aniso texture level
-        /// </summary>
-        public int anisoLevel;
-        /// <summary>
-        /// AO on or off
-        /// </summary>
-        public bool aoBool;
-        /// <summary>
-        /// DOF on or off
-        /// </summary>
-        public bool dofBool;
-        /// <summary>
-        /// Is the game in fullscreen
-        /// </summary>
-        public bool fullscreenBool;
-        /// <summary>
-        /// Resolution heigh
-        /// </summary>
-        public int resHeight;
-        /// <summary>
-        /// Resolution Width
-        /// </summary>
-        public int resWidth;
-        /// <summary>
-        /// The string that will be saved.
-        /// </summary>
+        #region Settings
+        //  File
         static string jsonString;
+        static string fileName = "GameSettings.json";
+
+        //  Audio
+        public float musicVolume;
+        public float effectsVolume;
+        public float masterVolume;
+
+        //  Graphics
+        public int vsyncINI;
+        public int curQualityLevel;
+        public bool fullscreenBool;
+        public int resHeight;
+        public int resWidth;
+
+        //  Advanced Graphics        
+        public int msaaINI;
+        public float msaaQualityINI;
+        public float renderDistanceINI;
+        public float shadowDistINI;
+        public int textureLimit;
+        public int anisoTextureLevel;
+        public bool aoBool;
+        public bool dofBool;
+        public int lastShadowCascade;
+
+        //  Camera
+        public float fovINI;
+        #endregion
 
 
         bool DirectoryExists(string path)
@@ -103,97 +50,137 @@ namespace GameFramework.Core
             else { return false; }
         }
 
-        public void LoadFromJson()
+        public bool LoadFromJson(bool full)
         {
             if (DirectoryExists(Application.persistentDataPath + "/" + fileName))
-            {   //  Override Settings if file Exists
-                ApplySettings(File.ReadAllText(Application.persistentDataPath + "/" + fileName));
+            {
+                Load(File.ReadAllText(Application.persistentDataPath + "/" + fileName), full);
+                return true;
             }
+            return false;
         }
 
-        void ApplySettings(String readString)
+        void Load(String readString, bool full)
         {
+            Debug.Log("LoadSettings::ApplySettings() : " + readString);
             try
             {
                 SaveSettings read = (SaveSettings)createJSONOBJ(readString);
-                QualitySettings.antiAliasing = (int)read.aaQualINI;
-                PauseManager.densityINI = read.densityINI;
-                QualitySettings.shadowDistance = read.shadowDistINI;
-                PauseManager.mainCamShared.farClipPlane = read.renderDistINI;
-                PauseManager.mainCamShared.fieldOfView = read.fovINI;
-                QualitySettings.antiAliasing = read.msaaINI;
-                QualitySettings.vSyncCount = read.vsyncINI;
-                PauseManager.lastTexLimit = read.textureLimit;
-                QualitySettings.masterTextureLimit = read.textureLimit;
-                AudioListener.volume = read.masterVolume;
-                PauseManager.lastAudioMult = read.effectsVolume;
-                PauseManager.lastMusicMult = read.musicVolume;
-                PauseManager.dofBool = read.dofBool;
-                PauseManager.aoBool = read.aoBool;
-                QualitySettings.SetQualityLevel(read.curQualityLevel);
-                QualitySettings.shadowCascades = read.lastShadowCascade;
-                Screen.SetResolution(read.resWidth, read.resHeight, read.fullscreenBool);
-                if (read.anisoLevel == 0)
-                {
-                    QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
-                }
-                else if (read.anisoLevel == 1)
-                {
-                    QualitySettings.anisotropicFiltering = AnisotropicFiltering.ForceEnable;
-                }
-                else if (read.anisoLevel == 2)
-                {
-                    QualitySettings.anisotropicFiltering = AnisotropicFiltering.Enable;
-                }
+                resWidth = read.resWidth;
+                resHeight = read.resHeight;
+                fullscreenBool = read.fullscreenBool;
+                masterVolume = read.masterVolume;
+                musicVolume = read.musicVolume;
+                effectsVolume = read.effectsVolume;
+                renderDistanceINI = read.renderDistanceINI;
+                fovINI = read.fovINI;
+                msaaQualityINI = read.msaaQualityINI;
+                shadowDistINI = read.shadowDistINI;
+                msaaINI = read.msaaINI;
+                vsyncINI = read.vsyncINI;
+                textureLimit = read.textureLimit;
+                curQualityLevel = read.curQualityLevel;
+                lastShadowCascade = read.lastShadowCascade;
+                dofBool = read.dofBool;
+                aoBool = read.aoBool;
+                anisoTextureLevel = read.anisoTextureLevel;
             }
             catch (FileNotFoundException)
             {
-                Debug.Log("Game settings not found in: " + readString);
+                Debug.LogError("Game settings not found in: " + readString);
+                return;
+            }
+
+#if UNITY_STANDALONE
+            Screen.SetResolution(resWidth, resHeight, fullscreenBool);
+#endif
+            //  Audio Settings
+            AudioListener.volume = masterVolume;
+            // myManager.pauseManager.lastMusicMult = musicVolume;
+            // myManager.pauseManager.lastAudioMult = effectsVolume;
+
+            //  Camera Settings
+            Camera.main.farClipPlane = renderDistanceINI;
+            Camera.main.fieldOfView = fovINI;
+
+            //  Graphics Settings
+            if (full)
+            {
+                QualitySettings.antiAliasing = (int)msaaQualityINI;
+                QualitySettings.shadowDistance = shadowDistINI;
+                QualitySettings.antiAliasing = msaaINI;
+                QualitySettings.vSyncCount = vsyncINI;
+                QualitySettings.masterTextureLimit = textureLimit;
+                QualitySettings.SetQualityLevel(curQualityLevel);
+                QualitySettings.shadowCascades = lastShadowCascade;
+                // myManager.pauseManager.dofBool = dofBool;
+                // myManager.pauseManager.aoBool = aoBool;
+
+                if (anisoTextureLevel == 0)
+                {
+                    QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
+                }
+                else if (anisoTextureLevel == 1)
+                {
+                    QualitySettings.anisotropicFiltering = AnisotropicFiltering.ForceEnable;
+                }
+                else if (anisoTextureLevel == 2)
+                {
+                    QualitySettings.anisotropicFiltering = AnisotropicFiltering.Enable;
+                }
             }
         }
 
         public void SaveToJson()
         {
+            //  Delete Existing Json File
             if (DirectoryExists(Application.persistentDataPath + "/" + fileName))
             {
                 File.Delete(Application.persistentDataPath + "/" + fileName);
             }
 
-            aaQualINI = QualitySettings.antiAliasing;
-            densityINI = PauseManager.densityINI;
-            shadowDistINI = PauseManager.shadowDistINI;
-            renderDistINI = PauseManager.mainCamShared.farClipPlane;
-            fovINI = PauseManager.mainCamShared.fieldOfView;
-            msaaINI = QualitySettings.antiAliasing;
-            vsyncINI = PauseManager.vsyncINI;
-            textureLimit = PauseManager.lastTexLimit;
-            masterVolume = PauseManager.beforeMaster;
-            effectsVolume = PauseManager.lastAudioMult;
-            musicVolume = PauseManager.lastMusicMult;
-            aoBool = PauseManager.aoBool;
-            dofBool = PauseManager.dofBool;
-            curQualityLevel = QualitySettings.GetQualityLevel();
-            lastShadowCascade = PauseManager.lastShadowCascade;
+            //  Screen Settings
             resHeight = Screen.currentResolution.height;
             resWidth = Screen.currentResolution.width;
             fullscreenBool = Screen.fullScreen;
 
+            //  Audio Settings
+            masterVolume = AudioListener.volume;
+            effectsVolume = 1f;
+            musicVolume = 1f;
+
+            //  Camera Settings
+            renderDistanceINI = Camera.main.farClipPlane;
+            fovINI = Camera.main.fieldOfView;
+
+            //  Graphics Settings
+            curQualityLevel = QualitySettings.GetQualityLevel();
+            vsyncINI = QualitySettings.vSyncCount;
+            msaaINI = QualitySettings.antiAliasing;
+            msaaQualityINI = QualitySettings.antiAliasing;
+            textureLimit = QualitySettings.masterTextureLimit;
+            shadowDistINI = QualitySettings.shadowDistance;
+            lastShadowCascade = QualitySettings.shadowCascades;
+            aoBool = false;
+            dofBool = false;
+
             if (QualitySettings.anisotropicFiltering == AnisotropicFiltering.Disable)
             {
-                anisoLevel = 0;
+                anisoTextureLevel = 0;
             }
             else if (QualitySettings.anisotropicFiltering == AnisotropicFiltering.ForceEnable)
             {
-                anisoLevel = 1;
+                anisoTextureLevel = 1;
             }
             else if (QualitySettings.anisotropicFiltering == AnisotropicFiltering.Enable)
             {
-                anisoLevel = 2;
+                anisoTextureLevel = 2;
             }
 
+            //  Write to Json file
             jsonString = JsonUtility.ToJson(this);
             File.WriteAllText(Application.persistentDataPath + "/" + fileName, jsonString);
-            Debug.Log("Saving Settings : " + jsonString);
+            Debug.Log("SaveSettings::SaveToJson() : " + jsonString);
         }
 
         public static object createJSONOBJ(string jsonString)

@@ -101,7 +101,7 @@ namespace GameFramework.Core
         /// <summary>
         /// Inital terrain detail density
         /// </summary>
-        internal static float densityINI;
+        // internal static float densityINI;
         /// <summary>
         /// Inital fov 
         /// </summary>
@@ -240,24 +240,26 @@ namespace GameFramework.Core
         public void Awake()
         {   //  Default Values
             mainCamShared = mainCam;
-            gameManager = GameManager.Instance;
             uiEventSystem.firstSelectedGameObject = defualtSelectedMain;
+
+            //  Assign to GameMaster
+            gameManager = GameManager.Instance;
+            gameManager.pauseManager = this;
 
             //  Graphics Quality Presets
             presets = QualitySettings.names;
             presetLabel.text = presets[QualitySettings.GetQualityLevel()].ToString();
-            _currentLevel = QualitySettings.GetQualityLevel();
+            allRes = Screen.resolutions;
+            resolutionLabel.text = Screen.currentResolution.width.ToString() + " x " + Screen.currentResolution.height.ToString();
 
             //  Resolutions
-            allRes = Screen.resolutions;
+            _currentLevel = QualitySettings.GetQualityLevel();
             currentRes = Screen.currentResolution;
-            resolutionLabel.text = Screen.currentResolution.width.ToString() + " x " + Screen.currentResolution.height.ToString();
             isFullscreen = Screen.fullScreen;
 
             //  Audio Volume
             _beforeEffectVol = new float[_audioEffectAmt];
             beforeMaster = AudioListener.volume;
-
             lastMusicMult = audioMusicSlider.value;
             lastAudioMult = audioEffectsSlider.value;
 
@@ -277,7 +279,11 @@ namespace GameFramework.Core
             Time.timeScale = timeScale;
             if (SceneManager.GetActiveScene().name == "MainMenu")
             {
-                gameManager.LoadSettings();
+                if (!gameManager.LoadSettings(true))
+                {   //  TODO : 
+                    Debug.Log("Game Settings File was missing, applying default settings");
+                }
+
                 gameManager.IsMenuUIActive = true;
                 gameManager.IsGameOver = false;
 
@@ -300,6 +306,7 @@ namespace GameFramework.Core
             }
             else
             {
+                gameManager.LoadSettings(false);
                 gameManager.StartGameEvent();
                 gameManager.IsMenuUIActive = false;
                 gameManager.IsGameOver = false;
@@ -334,6 +341,30 @@ namespace GameFramework.Core
             {
                 Resume();
             }
+        }
+
+        public void UpdateSliderUI(float fov, float modelQ, float renderDist, float shadowDist, float masterVol, float musicVol, float effectsVol, float textureQ, float cascadeAmt)
+        {
+            fovSlider.value = fov;
+            modelQualSlider.value = modelQ;
+            terrainQualSlider.value = 0f;
+            highQualTreeSlider.value = 0f;
+            renderDistSlider.value = renderDist;
+            terrainDensitySlider.value = 0f;
+            shadowDistSlider.value = shadowDist;
+            audioMasterSlider.value = masterVol;
+            audioMusicSlider.value = musicVol;
+            audioEffectsSlider.value = effectsVol;
+            masterTexSlider.value = textureQ;
+            shadowCascadesSlider.value = cascadeAmt;
+        }
+
+        public void UpdateToggleUI(bool vsync, bool ao, bool dof, bool fscreen)
+        {
+            vSyncToggle.isOn = vsync;
+            aoToggle.isOn = ao;
+            dofToggle.isOn = dof;
+            fullscreenToggle.isOn = fscreen;
         }
 
         #region Buttons
@@ -488,7 +519,7 @@ namespace GameFramework.Core
             }
             catch
             {
-                Debug.Log("You do not have multiple audio sources");
+                // Debug.Log("You do not have multiple audio sources");
                 audioMusicSlider.value = lastMusicMult;
             }
             //Do this with the effects
@@ -501,7 +532,7 @@ namespace GameFramework.Core
             }
             catch
             {
-                Debug.Log("You do not have multiple audio sources");
+                // Debug.Log("You do not have multiple audio sources");
                 audioEffectsSlider.value = lastAudioMult;
             }
 
@@ -948,7 +979,7 @@ namespace GameFramework.Core
             }
             catch
             {
-                Debug.Log("No AO post processing found");
+                // Debug.Log("No AO post processing found");
                 return;
             }
         }

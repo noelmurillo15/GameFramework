@@ -19,16 +19,13 @@ namespace GameFramework
             {
                 titleText.text = Application.productName;
             }
-
             StartCoroutine(LoadNewScene());
         }
 
         IEnumerator LoadNewScene()
         {
             yield return new WaitForSeconds(waitSeconds);
-
             AsyncOperation async = SceneManager.LoadSceneAsync(sceneIndex);
-
             while (!async.isDone) { yield return null; }
         }
     }

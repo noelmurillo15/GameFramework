@@ -340,7 +340,15 @@ namespace GameFramework
         /// </summary>
         public void StartGame()
         {
-            SceneManager.LoadScene("Level 1");
+            StartCoroutine(LoadNewScene());
+        }
+
+        IEnumerator LoadNewScene()
+        {
+            yield return GameManager.Instance.screenFader.FadeOut(2f);
+            AsyncOperation async = SceneManager.LoadSceneAsync("Level 1");
+            GameManager.Instance.screenFader.FadeIn(2f);
+            while (!async.isDone) { yield return null; }
         }
         /// <summary>
         /// Method to resume the game, so disable the pause menu and re-enable all other ui elements
@@ -390,6 +398,11 @@ namespace GameFramework
         /// Method to quit the game. Call methods such as auto saving before qutting here.
         /// </summary>
         public void quitGame()
+        {
+            GameManager.Instance.QuitApplicationEvent();
+            Invoke("Quit", 1f);
+        }
+        void Quit()
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;

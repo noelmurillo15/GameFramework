@@ -178,11 +178,11 @@ Preset:
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: defaultScreenWidth
-    value: 1024
+    value: 1920
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: defaultScreenHeight
-    value: 768
+    value: 1080
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: defaultScreenWidthWeb
@@ -210,23 +210,23 @@ Preset:
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: m_StackTraceTypes.Array.data[0]
-    value: 2
+    value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: m_StackTraceTypes.Array.data[1]
-    value: 2
+    value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: m_StackTraceTypes.Array.data[2]
-    value: 2
+    value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: m_StackTraceTypes.Array.data[3]
-    value: 2
+    value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: m_StackTraceTypes.Array.data[4]
-    value: 2
+    value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: m_StackTraceTypes.Array.data[5]
@@ -302,7 +302,7 @@ Preset:
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: defaultIsNativeResolution
-    value: 1
+    value: 0
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: macRetinaSupport
@@ -630,7 +630,7 @@ Preset:
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: enableFrameTimingStats
-    value: 0
+    value: 1
     objectReference: {fileID: 0}
   - target: {fileID: 0}
     propertyPath: useHDRDisplay

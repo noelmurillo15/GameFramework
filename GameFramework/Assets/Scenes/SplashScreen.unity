@@ -38,13 +38,13 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 1
+  m_GIWorkflowMode: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -56,7 +56,7 @@ LightmapSettings:
   m_LightmapEditorSettings:
     serializedVersion: 12
     m_Resolution: 2
-    m_BakeResolution: 40
+    m_BakeResolution: 4
     m_AtlasSize: 1024
     m_AO: 0
     m_AOMaxDistance: 1
@@ -187,11 +187,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2913164679809820863, guid: b527be4d0d0693d4f96ebb58494ace2d,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b527be4d0d0693d4f96ebb58494ace2d, type: 3}
 --- !u!1001 &4750609924291213236
@@ -204,7 +199,7 @@ PrefabInstance:
     - target: {fileID: 4580276326715118875, guid: 2c3b43af9f32328468e331357dd1ae37,
         type: 3}
       propertyPath: m_Name
-      value: GameManager
+      value: PersistantGameManager
       objectReference: {fileID: 0}
     - target: {fileID: 3767263622802522114, guid: 2c3b43af9f32328468e331357dd1ae37,
         type: 3}

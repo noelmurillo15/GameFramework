@@ -1,6 +1,8 @@
-﻿using TMPro;
+﻿/*
+    *   PauseManager - Manages Pause UI & Functionality
+ */
+using TMPro;
 using System;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
@@ -232,13 +234,14 @@ namespace GameFramework
         public static Terrain readTerrain;
         public static Terrain readSimpleTerrain;
 
-        private SaveSettings saveSettings = new SaveSettings();
+        GameManager gameManager = null;
         #endregion
 
 
-        public void Start()
+        public void Awake()
         {   //  Default Values
             mainCamShared = mainCam;
+            gameManager = GameManager.Instance;
             uiEventSystem.firstSelectedGameObject = defualtSelectedMain;
 
             //  Graphics Quality Presets
@@ -271,10 +274,8 @@ namespace GameFramework
             lastTexLimit = QualitySettings.masterTextureLimit;
             lastShadowCascade = QualitySettings.shadowCascades;
 
-            if (saveSettings.DirectoryExists(Application.persistentDataPath + "/" + saveSettings.fileName))
-            {   //  Override Settings if file Exists
-                saveSettings.LoadGameSettings(File.ReadAllText(Application.persistentDataPath + "/" + saveSettings.fileName));
-            }
+            gameManager.LoadSettings();
+            gameManager.IsMenuUIActive = true;
 
             //  Enable Menu Panels
             mask.SetActive(true);
@@ -345,9 +346,10 @@ namespace GameFramework
 
         IEnumerator LoadNewScene()
         {
-            yield return GameManager.Instance.screenFader.FadeOut(2f);
+            yield return gameManager.screenFader.FadeOut(2f);
             AsyncOperation async = SceneManager.LoadSceneAsync("Level 1");
-            GameManager.Instance.screenFader.FadeIn(2f);
+            gameManager.IsMenuUIActive = false;
+            gameManager.screenFader.FadeIn(2f);
             while (!async.isDone) { yield return null; }
         }
         /// <summary>
@@ -399,7 +401,7 @@ namespace GameFramework
         /// </summary>
         public void quitGame()
         {
-            GameManager.Instance.QuitApplicationEvent();
+            gameManager.QuitApplicationEvent();
             Invoke("Quit", 1f);
         }
         void Quit()
@@ -549,7 +551,7 @@ namespace GameFramework
             beforeMaster = AudioListener.volume;
             lastMusicMult = audioMusicSlider.value;
             lastAudioMult = audioEffectsSlider.value;
-            saveSettings.SaveGameSettings();
+            gameManager.SaveSettings();
         }
         /// <summary>
         /// Cancel the audio setting changes
@@ -751,8 +753,7 @@ namespace GameFramework
             lastShadowCascade = QualitySettings.shadowCascades;
             vsyncINI = QualitySettings.vSyncCount;
             isFullscreen = Screen.fullScreen;
-            saveSettings.SaveGameSettings();
-
+            gameManager.SaveSettings();
         }
         /// <summary>
         /// Video Options

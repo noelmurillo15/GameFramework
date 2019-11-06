@@ -1,4 +1,7 @@
-﻿using System;
+﻿/*
+    *   SaveSettings - Save/Loads game settings from a JSON file 
+ */
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -94,27 +97,21 @@ namespace GameFramework
         static string jsonString;
 
 
-        public bool DirectoryExists(string path)
+        bool DirectoryExists(string path)
         {
             if (File.Exists(path)) { return true; }
             else { return false; }
         }
 
-        /// <summary>
-        /// Create the JSON object needed to save settings.
-        /// </summary>
-        /// <param name="jsonString"></param>
-        /// <returns></returns>
-        public static object createJSONOBJ(string jsonString)
+        public void LoadFromJson()
         {
-            return JsonUtility.FromJson<SaveSettings>(jsonString);
+            if (DirectoryExists(Application.persistentDataPath + "/" + fileName))
+            {   //  Override Settings if file Exists
+                ApplySettings(File.ReadAllText(Application.persistentDataPath + "/" + fileName));
+            }
         }
 
-        /// <summary>
-        /// Read the game settings from the file
-        /// </summary>
-        /// <param name="readString"></param>        
-        public void LoadGameSettings(String readString)
+        void ApplySettings(String readString)
         {
             try
             {
@@ -155,12 +152,9 @@ namespace GameFramework
             }
         }
 
-        /// <summary>
-        /// Get the quality/music settings before saving 
-        /// </summary>
-        public void SaveGameSettings()
+        public void SaveToJson()
         {
-            if (File.Exists(Application.persistentDataPath + "/" + fileName))
+            if (DirectoryExists(Application.persistentDataPath + "/" + fileName))
             {
                 File.Delete(Application.persistentDataPath + "/" + fileName);
             }
@@ -198,8 +192,13 @@ namespace GameFramework
             }
 
             jsonString = JsonUtility.ToJson(this);
-            Debug.Log(jsonString);
             File.WriteAllText(Application.persistentDataPath + "/" + fileName, jsonString);
+            Debug.Log("Saving Settings : " + jsonString);
+        }
+
+        public static object createJSONOBJ(string jsonString)
+        {
+            return JsonUtility.FromJson<SaveSettings>(jsonString);
         }
     }
 }

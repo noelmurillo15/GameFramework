@@ -56,7 +56,7 @@ LightmapSettings:
   m_LightmapEditorSettings:
     serializedVersion: 12
     m_Resolution: 2
-    m_BakeResolution: 3
+    m_BakeResolution: 4
     m_AtlasSize: 256
     m_AO: 1
     m_AOMaxDistance: 2.59
@@ -192,11 +192,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2996921716349633062, guid: 2ddfb8e2ab8a61943bbc12ec040a3075,
-        type: 3}
-      propertyPath: far clip plane
-      value: 1000
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ddfb8e2ab8a61943bbc12ec040a3075, type: 3}

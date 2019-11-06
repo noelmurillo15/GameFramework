@@ -1,5 +1,5 @@
 ﻿/*
-    *   GameManager - Stores all resources needed for gameplay
+    *   GameManager - Backbone of the game application
     *   Created by : Allan N. Murillo
  */
 using UnityEngine;
@@ -14,6 +14,7 @@ namespace GameFramework
         public static GameManager Instance { get { return _instance; } }
 
         public ScreenFader screenFader = null;
+        SaveSettings saveSettings = null;
 
         #region Events
         public delegate void GeneralEvent();
@@ -32,8 +33,8 @@ namespace GameFramework
         bool isInventoryActive = false;
         bool isMenuActive = false;
 
-        public bool IsInventoryUIActive { get { return isInventoryActive; } }
-        public bool IsMenuUIActive { get { return isMenuActive; } }
+        public bool IsInventoryUIActive { get { return isInventoryActive; } set { isInventoryActive = value; } }
+        public bool IsMenuUIActive { get { return isMenuActive; } set { isMenuActive = value; } }
         public bool IsGameOver { get { return isGameOver; } }
         #endregion
 
@@ -43,12 +44,16 @@ namespace GameFramework
             if (_instance != null && _instance != this) Destroy(gameObject);
             else _instance = this;
 
+            // Save Settings
+            saveSettings = new SaveSettings();
+
             //  Default Screen Size
-            // Screen.SetResolution(1920, 1080, true, 60);
+            Screen.SetResolution(1920, 1080, true, 60);
 
             //  Register Event Listeners
             OnQuitApp += Quit;
 
+            //  Enable Flags
             displayFPS = true;
 
             //  Persist throughout scenes
@@ -78,6 +83,18 @@ namespace GameFramework
                 GUI.Label(rect, text, style);
             }
         }
+
+        #region Game Settings
+        public void LoadSettings()
+        {
+            saveSettings.LoadFromJson();
+        }
+
+        public void SaveSettings()
+        {
+            saveSettings.SaveToJson();
+        }
+        #endregion
 
         #region Events
         public void StartGameEvent()

@@ -63,11 +63,11 @@ Camera:
   field of view: 90
   orthographic: 0
   orthographic size: 5
-  m_Depth: -1
+  m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: -1
+  m_RenderingPath: 3
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   titleText: {fileID: 2913164679568846516}
   sceneIndex: 1
-  waitSeconds: 3
+  waitDelay: 3
 --- !u!1 &2913164679006142164
 GameObject:
   m_ObjectHideFlags: 0

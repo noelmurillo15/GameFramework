@@ -1,12 +1,14 @@
 ﻿/*
-    *   SaveSettings - Save/Loads game settings from a JSON file 
+    *   SaveSettings - Save/Loads game settings to/from a JSON file
+    *   Created by : Allan N. Murillo
  */
 using System;
 using System.IO;
 using UnityEngine;
+using GameFramework.Managers;
 
 
-namespace GameFramework.Core
+namespace GameFramework.External
 {
     [System.Serializable]
     public class SaveSettings
@@ -17,175 +19,152 @@ namespace GameFramework.Core
         static string fileName = "GameSettings.json";
 
         //  Audio
-        public float musicVolume;
-        public float effectsVolume;
         public float masterVolume;
 
-        //  Graphics
-        public int vsyncINI;
-        public int curQualityLevel;
-        public bool fullscreenBool;
-        public int resHeight;
-        public int resWidth;
+        //  Graphics Preset
+        public int currentQualityLevel;
 
         //  Advanced Graphics        
-        public int msaaINI;
-        public float msaaQualityINI;
-        public float renderDistanceINI;
-        public float shadowDistINI;
+        public bool vsync;
+        public float renderDistance;
+        public float shadowDist;
+        public int shadowCascade;
+        public int msaa;
+        public int anisoLevel;
         public int textureLimit;
-        public int anisoTextureLevel;
-        public bool aoBool;
-        public bool dofBool;
-        public int lastShadowCascade;
-
-        //  Camera
-        public float fovINI;
         #endregion
 
 
-        bool DirectoryExists(string path)
+        static object CreateJsonObj(string jsonString)
         {
-            if (File.Exists(path)) { return true; }
-            else { return false; }
+            Debug.Log("GameSettings::Creating Json Object");
+            return JsonUtility.FromJson<SaveSettings>(jsonString);
         }
 
-        public bool LoadFromJson(bool full)
+        public bool LoadGameSettings()
         {
-            if (DirectoryExists(Application.persistentDataPath + "/" + fileName))
+            Debug.Log("GameSettings::Loading from JSON");
+            string path = Application.persistentDataPath + "/" + fileName;
+            if (VerifyDirectory(path))
             {
-                Load(File.ReadAllText(Application.persistentDataPath + "/" + fileName), full);
+                Debug.Log("GameSettings.Json Exists!");
+                OverwriteGameSettings(File.ReadAllText(path));
                 return true;
             }
+            Debug.Log("GameSettings.Json does not exist");
             return false;
         }
 
-        void Load(String readString, bool full)
+        public void SaveGameSettings()
         {
-            Debug.Log("LoadSettings::ApplySettings() : " + readString);
-            try
+            Debug.Log("GameSetting::Saving to JSON");
+            string path = Application.persistentDataPath + "/" + fileName;
+
+            //  Delete existing file
+            if (VerifyDirectory(path)) { File.Delete(path); }
+
+            //  Get Current Game Settings
+            masterVolume = GameSettingsManager.masterVolumeINI;
+            vsync = GameSettingsManager.vsyncINI;
+            msaa = GameSettingsManager.msaaINI;
+            renderDistance = GameSettingsManager.renderDistINI;
+            textureLimit = GameSettingsManager.textureLimitINI;
+            shadowDist = GameSettingsManager.shadowDistINI;
+            shadowCascade = GameSettingsManager.shadowCascadeINI;
+            anisoLevel = GameSettingsManager.anisoFilterLevelINI;
+            currentQualityLevel = GameSettingsManager.currentQualityLevelINI;
+
+            //  Write to Json Save file
+            jsonString = JsonUtility.ToJson(this);
+            File.WriteAllText(path, jsonString);
+
+            // Debug.Log("Saving these Settings to JSON : " + "Vol : " + masterVolume + ", vsync : " + vsync +
+            //     ", Preset " + currentQualityLevel + ", RenderDist : " + renderDistance + ", ShadowDist : " + shadowDist +
+            //     ", cascade " + shadowCascade + ", MSAA : " + msaa + ", aniso : " + anisoLevel + ", texture limit : " + textureLimit);
+
+            //  Sync with Browser's IndexedDB
+            if (Application.platform == RuntimePlatform.WebGLPlayer)
             {
-                SaveSettings read = (SaveSettings)createJSONOBJ(readString);
-                resWidth = read.resWidth;
-                resHeight = read.resHeight;
-                fullscreenBool = read.fullscreenBool;
-                masterVolume = read.masterVolume;
-                musicVolume = read.musicVolume;
-                effectsVolume = read.effectsVolume;
-                renderDistanceINI = read.renderDistanceINI;
-                fovINI = read.fovINI;
-                msaaQualityINI = read.msaaQualityINI;
-                shadowDistINI = read.shadowDistINI;
-                msaaINI = read.msaaINI;
-                vsyncINI = read.vsyncINI;
-                textureLimit = read.textureLimit;
-                curQualityLevel = read.curQualityLevel;
-                lastShadowCascade = read.lastShadowCascade;
-                dofBool = read.dofBool;
-                aoBool = read.aoBool;
-                anisoTextureLevel = read.anisoTextureLevel;
+                Sync();
             }
-            catch (FileNotFoundException)
+        }
+
+        void OverwriteGameSettings(String jsonString)
+        {
+            Debug.Log("GameSetting::Overwriting INI game settings");
+            try
+            {   //  Read settings from JSON file                
+                SaveSettings read = (SaveSettings)CreateJsonObj(jsonString);
+                masterVolume = read.masterVolume;
+                renderDistance = read.renderDistance;
+                shadowDist = read.shadowDist;
+                msaa = read.msaa;
+                vsync = read.vsync;
+                textureLimit = read.textureLimit;
+                currentQualityLevel = read.currentQualityLevel;
+                shadowCascade = read.shadowCascade;
+                anisoLevel = read.anisoLevel;
+            }
+            catch (FileLoadException)
             {
-                Debug.LogError("Game settings not found in: " + readString);
+                Debug.LogError("Could not read game settings from json file");
                 return;
             }
 
-#if UNITY_STANDALONE
-            Screen.SetResolution(resWidth, resHeight, fullscreenBool);
+            // Debug.Log("Loaded JSON Settings : " + "Vol : " + masterVolume + ", vsync : " + vsync +
+            //     ", Preset " + currentQualityLevel + ", RenderDist : " + renderDistance + ", ShadowDist : " + shadowDist +
+            //     ", cascade " + shadowCascade + ", MSAA : " + msaa + ", aniso : " + anisoLevel + ", texture limit : " + textureLimit);
+
+            //  Overwrite Game Settings
+            GameSettingsManager.masterVolumeINI = masterVolume;
+            GameSettingsManager.vsyncINI = vsync;
+            GameSettingsManager.msaaINI = msaa;
+            GameSettingsManager.renderDistINI = renderDistance;
+            GameSettingsManager.textureLimitINI = textureLimit;
+            GameSettingsManager.shadowDistINI = shadowDist;
+            GameSettingsManager.shadowCascadeINI = shadowCascade;
+            GameSettingsManager.anisoFilterLevelINI = anisoLevel;
+            GameSettingsManager.currentQualityLevelINI = currentQualityLevel;
+            GameSettingsManager.settingsLoadedINI = true;
+        }
+
+        bool VerifyDirectory(string filePath)
+        {
+            if (File.Exists(filePath)) { return true; }
+            else { return false; }
+        }
+
+
+        #region External JS LIBRARY
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [System.Runtime.InteropServices.DllImport("__Internal")]
+        static extern void InitilaizeJsLib();
+        [System.Runtime.InteropServices.DllImport("__Internal")]
+        static extern void SyncPersistantData();
+
+
+        public void Initialize()
+        {
+            InitilaizeJsLib();
+        }
+
+        public void Sync()
+        {
+            //  Unity WebGL stores all files that must persist between sessions to the browser IndexedDB.
+            //  This function makes sure Unity flushes all pending file system write operations to the IndexedDB file system from memory   
+            SyncPersistantData();
+        }
+#else
+        public void Initialize()
+        {
+            LoadGameSettings();
+        }
+
+        public void Sync()
+        {
+            Debug.Log("WebGL is not enabled -SyncPersistantData");
+        }
 #endif
-            //  Audio Settings
-            AudioListener.volume = masterVolume;
-            // myManager.pauseManager.lastMusicMult = musicVolume;
-            // myManager.pauseManager.lastAudioMult = effectsVolume;
-
-            //  Camera Settings
-            Camera.main.farClipPlane = renderDistanceINI;
-            Camera.main.fieldOfView = fovINI;
-
-            //  Graphics Settings
-            if (full)
-            {
-                QualitySettings.antiAliasing = (int)msaaQualityINI;
-                QualitySettings.shadowDistance = shadowDistINI;
-                QualitySettings.antiAliasing = msaaINI;
-                QualitySettings.vSyncCount = vsyncINI;
-                QualitySettings.masterTextureLimit = textureLimit;
-                QualitySettings.SetQualityLevel(curQualityLevel);
-                QualitySettings.shadowCascades = lastShadowCascade;
-                // myManager.pauseManager.dofBool = dofBool;
-                // myManager.pauseManager.aoBool = aoBool;
-
-                if (anisoTextureLevel == 0)
-                {
-                    QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
-                }
-                else if (anisoTextureLevel == 1)
-                {
-                    QualitySettings.anisotropicFiltering = AnisotropicFiltering.ForceEnable;
-                }
-                else if (anisoTextureLevel == 2)
-                {
-                    QualitySettings.anisotropicFiltering = AnisotropicFiltering.Enable;
-                }
-            }
-        }
-
-        public void SaveToJson()
-        {
-            //  Delete Existing Json File
-            if (DirectoryExists(Application.persistentDataPath + "/" + fileName))
-            {
-                File.Delete(Application.persistentDataPath + "/" + fileName);
-            }
-
-            //  Screen Settings
-            resHeight = Screen.currentResolution.height;
-            resWidth = Screen.currentResolution.width;
-            fullscreenBool = Screen.fullScreen;
-
-            //  Audio Settings
-            masterVolume = AudioListener.volume;
-            effectsVolume = 1f;
-            musicVolume = 1f;
-
-            //  Camera Settings
-            renderDistanceINI = Camera.main.farClipPlane;
-            fovINI = Camera.main.fieldOfView;
-
-            //  Graphics Settings
-            curQualityLevel = QualitySettings.GetQualityLevel();
-            vsyncINI = QualitySettings.vSyncCount;
-            msaaINI = QualitySettings.antiAliasing;
-            msaaQualityINI = QualitySettings.antiAliasing;
-            textureLimit = QualitySettings.masterTextureLimit;
-            shadowDistINI = QualitySettings.shadowDistance;
-            lastShadowCascade = QualitySettings.shadowCascades;
-            aoBool = false;
-            dofBool = false;
-
-            if (QualitySettings.anisotropicFiltering == AnisotropicFiltering.Disable)
-            {
-                anisoTextureLevel = 0;
-            }
-            else if (QualitySettings.anisotropicFiltering == AnisotropicFiltering.ForceEnable)
-            {
-                anisoTextureLevel = 1;
-            }
-            else if (QualitySettings.anisotropicFiltering == AnisotropicFiltering.Enable)
-            {
-                anisoTextureLevel = 2;
-            }
-
-            //  Write to Json file
-            jsonString = JsonUtility.ToJson(this);
-            File.WriteAllText(Application.persistentDataPath + "/" + fileName, jsonString);
-            Debug.Log("SaveSettings::SaveToJson() : " + jsonString);
-        }
-
-        public static object createJSONOBJ(string jsonString)
-        {
-            return JsonUtility.FromJson<SaveSettings>(jsonString);
-        }
+        #endregion
     }
 }

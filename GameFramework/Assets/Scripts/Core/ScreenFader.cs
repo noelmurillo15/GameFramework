@@ -49,5 +49,17 @@ namespace GameFramework
                 yield return null;
             }
         }
+
+        public void LoadSceneEvent()
+        {
+            Debug.Log("ScreenFader::LoadSceneEvent()");
+            FadeOut(2f);
+        }
+
+        public void FinishLoadSceneEvent()
+        {
+            Debug.Log("ScreenFader::FinishLoadSceneEvent()");
+            FadeIn(1f);
+        }
     }
 }

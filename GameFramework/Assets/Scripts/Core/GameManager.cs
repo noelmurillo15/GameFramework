@@ -2,34 +2,42 @@
     *   GameManager - Backbone of the game application
     *   Created by : Allan N. Murillo
  */
+using System;
 using UnityEngine;
+using System.Collections;
+using GameFramework.Events;
+using GameFramework.External;
 
 
-namespace GameFramework.Core
+namespace GameFramework.Managers
 {
     public class GameManager : MonoBehaviour
     {
         #region GameManager Class Members
+        //  Singleton Design Pattern
         static GameManager _instance;
-        public static GameManager Instance { get { return _instance; } }
+        public static GameManager Instance
+        {
+            get
+            {
+                if (_instance == null) { _instance = GameObject.FindObjectOfType<GameManager>(); }
+                return _instance;
+            }
+        }
 
-        public PauseManager pauseManager = null;
-        public ScreenFader screenFader = null;
-        public SaveSettings saveSettings = null;
+        //  Persistant References
+        [HideInInspector] public GameSettingsManager gameSettingsManager = null;
+        [HideInInspector] public ScreenFader screenFader = null;
+        [HideInInspector] public SceneLoader sceneLoader = null;
+        [HideInInspector] private SaveSettings gameSettings = null;
 
-        #region Events
-        public delegate void GeneralEvent();
-        public event GeneralEvent OnInventoryToggle;
-        public event GeneralEvent OnRestartLevel;
-        public event GeneralEvent OnMenuToggle;
-        public event GeneralEvent OnStartGame;
-        public event GeneralEvent OnEndGame;
-        public event GeneralEvent OnQuitApp;
-        #endregion
+        public GameEvent OnApplicationQuitEvent = null;
 
+        //  FPS tracker
         float deltaTime = 0.0f;
-        bool displayFPS = false;
 
+        //  Flags
+        bool displayFPS = false;
         bool isGameOver = false;
         bool isInventoryActive = false;
         bool isMenuActive = false;
@@ -42,30 +50,44 @@ namespace GameFramework.Core
         #endregion
 
 
-        void Awake()
+        //  TODO : Singletons are great for Audio Manager, Input Manager, SceneLoader
+        protected virtual void Awake()
         {
-            if (_instance != null && _instance != this) Destroy(gameObject);
-            else _instance = this;
-
-            //  Default Screen Size
-            Screen.SetResolution(1920, 1080, true, 60);
-
-            // Save Settings
-            saveSettings = new SaveSettings();
-
-            //  Register Event Listeners
-            OnQuitApp += Quit;
-
-            //  Enable Flags
-            displayFPS = true;
+            if (_instance != null && _instance != this) { Destroy(this.gameObject); return; }
+            string startSceneName = string.Format("__________ {0} __________", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            Debug.Log(startSceneName);
+            Debug.Log("GM::Awake()");
 
             //  Persist throughout scenes
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(this.gameObject);
+            _instance = this;
+
+            // Game Settings
+            GameSettingsManager.settingsLoadedINI = false;
+            gameSettings = new SaveSettings();
+            gameSettings.Initialize();
+
+            //  Get Components
+            sceneLoader = gameObject.GetComponent<SceneLoader>();
+            screenFader = gameObject.GetComponentInChildren<ScreenFader>();
+
+            //  Toggle Flags
+            displayFPS = true;
+            isInventoryActive = false;
+            isPauseActive = false;
+            isMenuActive = false;
+            isGameOver = false;
+
+            //  Force SceneLoader Init when built on any other platform besides WebGl
+            if (Application.platform != RuntimePlatform.WebGLPlayer)
+            {
+                if (sceneLoader != null) { sceneLoader.Initialize(); }
+            }
         }
 
         void Update()
         {
-            if (displayFPS) { deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f; }
+            deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
         }
 
         void OnGUI()
@@ -88,72 +110,82 @@ namespace GameFramework.Core
         }
 
         #region Game Settings
-        public bool LoadSettings(bool full = false)
+        public void LoadSettingsFromIndexedDB()
         {
-            return saveSettings.LoadFromJson(full);
-        }
-
-        public void SaveSettings()
-        {
-            saveSettings.SaveToJson();
+            gameSettings.LoadGameSettings();
+            if (sceneLoader != null) { sceneLoader.Initialize(); }
         }
         #endregion
 
-        #region Events
+        #region Game Events
         public void StartGameEvent()
         {
-            if (OnStartGame != null)
-            {
-                isMenuActive = false;
-                isGameOver = false;
-                OnStartGame();
-            }
+            isGameOver = false;
+            isMenuActive = false;
+            sceneLoader.LoadLevel(2);
         }
-        public void ToggleInventoryEvent()
+
+        public void LoadMainMenuEvent()
         {
-            if (OnInventoryToggle != null)
-            {
-                OnInventoryToggle();
-            }
+            isGameOver = true;
+            isMenuActive = true;
+            sceneLoader.LoadMainMenu();
         }
-        public void ToggleMenuEvent()
-        {
-            if (OnMenuToggle != null)
-            {
-                OnMenuToggle();
-            }
-        }
-        public void RestartLevelEvent()
-        {
-            if (OnRestartLevel != null)
-            {
-                OnRestartLevel();
-            }
-        }
-        public void EndGameEvent()
-        {
-            if (OnEndGame != null)
-            {
-                if (!isGameOver)
-                {
-                    isMenuActive = true;
-                    isGameOver = true;
-                    OnEndGame();
-                }
-            }
-        }
+
         public void QuitApplicationEvent()
         {
-            if (OnQuitApp != null)
+            Debug.Log("GM::QuitApplicationEvent()");
+            isGameOver = true;
+            StartCoroutine(QuitSequence());
+        }
+
+        IEnumerator QuitSequence()
+        {
+            Debug.Log("GM::QuitSequence()");
+            gameSettings.SaveGameSettings();
+            yield return screenFader.FadeOut(3f);
+            if (OnApplicationQuitEvent != null) { OnApplicationQuitEvent.Raise(); }
+            sceneLoader.LoadCreditsScene();
+            // Destroy(this.gameObject);
+        }
+
+        void OnDestroy()
+        {
+            if (GameManager.Instance == this)
             {
-                OnQuitApp();
+                Debug.Log("GM Singleton is being Destroyed!");
+
+                if (OnApplicationQuitEvent != null) { OnApplicationQuitEvent.UnregisterAllListeners(); }
+                Resources.UnloadUnusedAssets();
+                GC.Collect();
+
+#if UNITY_EDITOR
+                // UnityEditor.EditorApplication.isPlaying = false;
+#elif UNITY_WEBGL
+                Quit();
+#else
+                Application.Quit();
+#endif
+            }
+            else
+            {
+                Debug.Log("Destroying duplicate GM!");
             }
         }
-        #endregion
+        #endregion                
 
-        void Quit()
-        {
-            OnQuitApp -= Quit;
-        }
+        #region External JavaScript Library
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [System.Runtime.InteropServices.DllImport("__Internal")]
+        static extern void QuitGame();
+
+
+        public void Quit()
+        {   //  There is a known Unity bug preventing Application.Quit && unityInstance.Quit from properly quitting      
+            Debug.Log("GM::Quit() -Trying to call JavaScript Func : QuitGame()");      
+            QuitGame();
+        }        
+#endif
+        #endregion
     }
 }

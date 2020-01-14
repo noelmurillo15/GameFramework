@@ -1,24 +1,21 @@
-﻿using System.IO;
+﻿#if UNITY_EDITOR
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
 
-namespace GameFramework
+public class AssetBundler : Editor
 {
-    public class AssetBundler : Editor
+    [MenuItem("Assets/Build AssetBundles")]
+    private static void BuildAllAssetBundles()
     {
-        [MenuItem("Assets/Build AssetBundles")]
-        static void BuildAllAssetBundles()
-        {
-            string path = Application.streamingAssetsPath;
+        string path = Application.streamingAssetsPath;
+        if (!Directory.Exists(path)) { Directory.CreateDirectory(path); }
 
-            if (!Directory.Exists(path))
-            {
-                Directory.CreateDirectory(path);
-            }
-
-            BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.None, EditorUserBuildSettings.activeBuildTarget);
-            AssetDatabase.Refresh();
-        }
+        //  Assetbundles need to be downloaded from the same server as the game
+        //  For this reason, ChunkBasedCompression (lz4) works better than gz due to decompression of the bundle after loading it
+        BuildPipeline.BuildAssetBundles(path, BuildAssetBundleOptions.ChunkBasedCompression, EditorUserBuildSettings.activeBuildTarget);
+        AssetDatabase.Refresh();
     }
 }
+#endif

@@ -2,158 +2,95 @@
     *   GameManager - Backbone of the game application
     *   Created by : Allan N. Murillo
  */
+using System;
 using UnityEngine;
-
+using System.Collections;
 
 namespace GameFramework.Core
 {
-    public class GameManager : MonoBehaviour
+    public sealed class GameManager : MonoBehaviour
     {
-        #region GameManager Class Members
-        static GameManager _instance;
-        public static GameManager Instance { get { return _instance; } }
+        private static GameManager _instance;
+        public static GameManager Instance
+        {  get  {  if (_instance == null) { _instance = FindObjectOfType<GameManager>(); }  return _instance;  }  }
+        
+        [HideInInspector] public SceneTransitionManager sceneTransitionManager = null;
+        public GameEvent onApplicationQuitEvent = null;
 
-        public PauseManager pauseManager = null;
-        public ScreenFader screenFader = null;
-        public SaveSettings saveSettings = null;
-
-        #region Events
-        public delegate void GeneralEvent();
-        public event GeneralEvent OnInventoryToggle;
-        public event GeneralEvent OnRestartLevel;
-        public event GeneralEvent OnMenuToggle;
-        public event GeneralEvent OnStartGame;
-        public event GeneralEvent OnEndGame;
-        public event GeneralEvent OnQuitApp;
-        #endregion
-
-        float deltaTime = 0.0f;
-        bool displayFPS = false;
-
-        bool isGameOver = false;
-        bool isInventoryActive = false;
-        bool isMenuActive = false;
-        bool isPauseActive = false;
-
-        public bool IsInventoryUIActive { get { return isInventoryActive; } set { isInventoryActive = value; } }
-        public bool IsPauseUIActive { get { return isPauseActive; } set { isPauseActive = value; } }
-        public bool IsMenuUIActive { get { return isMenuActive; } set { isMenuActive = value; } }
-        public bool IsGameOver { get { return isGameOver; } set { isGameOver = value; } }
-        #endregion
+        private SaveSettings _saveSettings = null;
+        private float _deltaTime = 0.0f;
+        private bool _displayFps = false;
 
 
-        void Awake()
+        private void Awake()
         {
-            if (_instance != null && _instance != this) Destroy(gameObject);
-            else _instance = this;
-
-            //  Default Screen Size
-            Screen.SetResolution(1920, 1080, true, 60);
-
-            // Save Settings
-            saveSettings = new SaveSettings();
-
-            //  Register Event Listeners
-            OnQuitApp += Quit;
-
-            //  Enable Flags
-            displayFPS = true;
-
-            //  Persist throughout scenes
+            if (_instance != null && _instance != this) { Destroy(gameObject); return; }
             DontDestroyOnLoad(gameObject);
+            _instance = this;
+            
+            _displayFps = true;
+            
+            GameSettingsManager.SettingsLoadedIni = false;
+            _saveSettings = new SaveSettings();
+            _saveSettings.Initialize();
+
+            sceneTransitionManager = gameObject.GetComponentInChildren<SceneTransitionManager>();
+            sceneTransitionManager.ScreenMaskBrightness = 0f;
+            sceneTransitionManager.Initialize();
         }
 
-        void Update()
+        private void Update()
         {
-            if (displayFPS) { deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f; }
+            _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
-            if (displayFPS)
-            {
-                int w = Screen.width, h = Screen.height;
-
-                GUIStyle style = new GUIStyle();
-
-                Rect rect = new Rect(w - 180, 0, w, h * 2 / 100);
-                style.alignment = TextAnchor.UpperLeft;
-                style.fontSize = h * 2 / 100;
-                style.normal.textColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-                float msec = deltaTime * 1000.0f;
-                float fps = 1.0f / deltaTime;
-                string text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
-                GUI.Label(rect, text, style);
-            }
+            if (!_displayFps) return;
+            var style = new GUIStyle();
+            int w = Screen.width, h = Screen.height;
+            h *= 2 / 100;
+            var rect = new Rect(w - 180, 0, w, h);
+            style.alignment = TextAnchor.UpperLeft;
+            style.fontSize = h * 2 / 100;
+            style.normal.textColor = Color.white;
+            var msecs = _deltaTime * 1000.0f;
+            var fps = 1.0f / _deltaTime;
+            var text = $"{msecs:0.0} ms ({fps:0.} fps)";
+            GUI.Label(rect, text, style);
         }
 
-        #region Game Settings
-        public bool LoadSettings(bool full = false)
-        {
-            return saveSettings.LoadFromJson(full);
-        }
-
-        public void SaveSettings()
-        {
-            saveSettings.SaveToJson();
-        }
-        #endregion
-
-        #region Events
+        #region Game Events
         public void StartGameEvent()
         {
-            if (OnStartGame != null)
-            {
-                isMenuActive = false;
-                isGameOver = false;
-                OnStartGame();
-            }
+            sceneTransitionManager.LoadLevel(2);
         }
-        public void ToggleInventoryEvent()
+
+        public void LoadMainMenuEvent()
         {
-            if (OnInventoryToggle != null)
-            {
-                OnInventoryToggle();
-            }
+            sceneTransitionManager.LoadMainMenu();
         }
-        public void ToggleMenuEvent()
-        {
-            if (OnMenuToggle != null)
-            {
-                OnMenuToggle();
-            }
-        }
-        public void RestartLevelEvent()
-        {
-            if (OnRestartLevel != null)
-            {
-                OnRestartLevel();
-            }
-        }
-        public void EndGameEvent()
-        {
-            if (OnEndGame != null)
-            {
-                if (!isGameOver)
-                {
-                    isMenuActive = true;
-                    isGameOver = true;
-                    OnEndGame();
-                }
-            }
-        }
+
         public void QuitApplicationEvent()
         {
-            if (OnQuitApp != null)
-            {
-                OnQuitApp();
-            }
+            StartCoroutine(QuitSequence());
+        }
+
+        private IEnumerator QuitSequence()
+        {
+            _saveSettings.SaveGameSettings();
+            yield return sceneTransitionManager.FadeOut(3f);
+            if (onApplicationQuitEvent != null) { onApplicationQuitEvent.Raise(); }
+            sceneTransitionManager.LoadCreditsScene();
+        }
+
+        private void OnDestroy()
+        {
+            if (Instance != this) return;
+            if (onApplicationQuitEvent != null) { onApplicationQuitEvent.UnregisterAllListeners(); }
+            Resources.UnloadUnusedAssets();
+            GC.Collect();
         }
         #endregion
-
-        void Quit()
-        {
-            OnQuitApp -= Quit;
-        }
     }
 }

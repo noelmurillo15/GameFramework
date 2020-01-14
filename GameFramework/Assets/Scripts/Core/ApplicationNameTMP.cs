@@ -1,10 +1,13 @@
 ﻿using TMPro;
 using UnityEngine;
 
-public class ApplicationNameTMP : MonoBehaviour
+namespace GameFramework.Core
 {
-    void Awake()
+    public class ApplicationNameTMP : MonoBehaviour
     {
-        GetComponent<TMP_Text>().text = Application.productName.ToString();
+        private void Awake()
+        {
+            GetComponent<TMP_Text>().text = Application.productName;
+        }
     }
 }

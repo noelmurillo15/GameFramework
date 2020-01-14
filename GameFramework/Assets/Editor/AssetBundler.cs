@@ -7,7 +7,7 @@ using UnityEngine;
 public class AssetBundler : Editor
 {
     [MenuItem("Assets/Build AssetBundles")]
-    static void BuildAllAssetBundles()
+    private static void BuildAllAssetBundles()
     {
         string path = Application.streamingAssetsPath;
         if (!Directory.Exists(path)) { Directory.CreateDirectory(path); }

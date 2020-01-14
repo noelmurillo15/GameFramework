@@ -2,16 +2,16 @@
     *   EventDestructor - Used by GameEventListeners to destroy root gameobjects upon Application Quit
     *   Created by : Allan N. Murillo
  */
+
 using UnityEngine;
 
-
-namespace GameFramework
+namespace GameFramework.Core
 {
     public class EventDestructor : MonoBehaviour
     {
-        public void DestroyThis()
-        {
-            Destroy(this.gameObject);
+        public void OnApplicationQuitEvent()
+        {    //    Handled by onApplicationQuit ScriptableObject
+            Destroy(gameObject);
         }
     }
 }

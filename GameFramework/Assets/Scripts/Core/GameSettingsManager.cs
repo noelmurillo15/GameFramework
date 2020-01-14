@@ -8,151 +8,126 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-
-namespace GameFramework.Managers
+namespace GameFramework.Core
 {
     public class GameSettingsManager : MonoBehaviour
     {
-        #region Class Members
-        //  Panels
-        [SerializeField] GameObject mask = null;
-        [SerializeField] GameObject mainPanel = null;
-        [SerializeField] GameObject vidPanel = null;
-        [SerializeField] GameObject audioPanel = null;
-        [SerializeField] GameObject quitPanel = null;
-        [SerializeField] GameObject TitleTexts = null;
+        [SerializeField] private GameObject mask = null;
+        [SerializeField] private GameObject mainPanel = null;
+        [SerializeField] private GameObject vidPanel = null;
+        [SerializeField] private GameObject audioPanel = null;
+        [SerializeField] private GameObject quitPanel = null;
+        [SerializeField] private GameObject titleTexts = null;
 
-        //  Animators
-        [SerializeField] Animator audioPanelAnimator = null;
-        [SerializeField] Animator quitPanelAnimator = null;
-        [SerializeField] Animator vidPanelAnimator = null;
+        [SerializeField] private Animator audioPanelAnimator = null;
+        [SerializeField] private Animator quitPanelAnimator = null;
+        [SerializeField] private Animator vidPanelAnimator = null;
 
-        //  Misc
-        [SerializeField] Camera mainCam = null;
-        [SerializeField] String mainMenuSceneName = string.Empty;
-        [SerializeField] float timeScale = 1f;
+        [SerializeField] private Camera mainCam = null;
+        [SerializeField] private String mainMenuSceneName = string.Empty;
+        [SerializeField] private float timeScale = 1f;
 
-        //  Settings UI
-        [SerializeField] TMP_Text pauseMenuTitleText = null;
+        [SerializeField] private TMP_Text pauseMenuTitleText = null;
+        [SerializeField] private Dropdown aaCombo = null;
+        [SerializeField] private Dropdown afCombo = null;
+        [SerializeField] private Slider renderDistSlider = null;
+        [SerializeField] private Slider shadowDistSlider = null;
+        [SerializeField] private Slider audioMasterVolumeSlider = null;
+        [SerializeField] private Slider masterTexSlider = null;
+        [SerializeField] private Slider shadowCascadesSlider = null;
+        [SerializeField] private Toggle vSyncToggle = null;
+        [SerializeField] private Text presetLabel = null;
+        private string[] _presets;
+        [SerializeField] private float[] shadowDist = null;
+        [SerializeField] private AudioSource bgMusic = null;
+        [SerializeField] private AudioSource[] sfx = null;
 
-        [SerializeField] Dropdown aaCombo = null;
-        [SerializeField] Dropdown afCombo = null;
-
-        [SerializeField] Slider renderDistSlider = null;
-        [SerializeField] Slider shadowDistSlider = null;
-        [SerializeField] Slider audioMasterVolumeSlider = null;
-        [SerializeField] Slider masterTexSlider = null;
-        [SerializeField] Slider shadowCascadesSlider = null;
-        [SerializeField] Toggle vSyncToggle = null;
-
-        [SerializeField] Text presetLabel = null;
-        String[] presets;
-
-        //  Hardcoded Shadow Distance
-        [SerializeField] float[] shadowDist = null;
-
-        //  Audio Sources
-        [SerializeField] AudioSource bgMusic = null;
-        [SerializeField] AudioSource[] sfx = null;
-
-        GameManager gameManager = null;
-
-        //  INI Settings
-        internal static float masterVolumeINI;
-        internal static int currentQualityLevelINI;
-        internal static bool vsyncINI;
-        internal static int msaaINI;
-        internal static float renderDistINI;
-        internal static float shadowDistINI;
-        internal static int textureLimitINI;
-        internal static int anisoFilterLevelINI;
-        internal static int shadowCascadeINI;
-        internal static bool settingsLoadedINI;
-        #endregion
+        private GameManager _gameManager = null;
+        internal static float MasterVolumeIni;
+        internal static int CurrentQualityLevelIni;
+        internal static bool VsyncIni;
+        internal static int MsaaIni;
+        internal static float RenderDistIni;
+        internal static float ShadowDistIni;
+        internal static int TextureLimitIni;
+        internal static int AnisoFilterLevelIni;
+        internal static int ShadowCascadeIni;
+        internal static bool SettingsLoadedIni;
 
 
-        //  TODO : updated the graphics preset changes other graphics settings but their UI is not updated =(
         public void Awake()
-        {   //  Default Values
-            if (TitleTexts != null)
+        {
+            if (titleTexts != null)
             {
-                TitleTexts.transform.GetChild(0).GetComponent<TMP_Text>().text = Application.productName;
+                titleTexts.transform.GetChild(0).GetComponent<TMP_Text>().text = Application.productName;
             }
 
             Time.timeScale = timeScale;
-            presets = QualitySettings.names;
+            _presets = QualitySettings.names;
             pauseMenuTitleText.text = "Main Menu";
 
-            gameManager = GameManager.Instance;
-            gameManager.gameSettingsManager = this;
+            _gameManager = GameManager.Instance;
 
             //  TODO : Create an audio setting for BG music
             if (bgMusic != null) { bgMusic.volume = 0.8f; }
 
-            Debug.Log("__________ " + gameManager.sceneLoader.GetCurrentSceneName() + " __________");
-            if (gameManager.sceneLoader.GetCurrentSceneName() == mainMenuSceneName)
+            if (SceneTransitionManager.GetCurrentSceneName() == mainMenuSceneName)
             {   //  Loaded Main Menu Scene                
-                gameManager.IsMenuUIActive = true;
-                gameManager.IsGameOver = true;
+                _gameManager.IsMenuUiActive = true;
                 mask.SetActive(true);
                 mainPanel.SetActive(true);
-                TitleTexts.SetActive(true);
+                titleTexts.SetActive(true);
                 audioPanel.SetActive(false);
                 vidPanel.SetActive(false);
             }
             else
             {   //  Loaded a Level Scene
-                gameManager.IsMenuUIActive = false;
-                gameManager.IsGameOver = false;
+                _gameManager.IsMenuUiActive = false;
                 mask.SetActive(false);
                 mainPanel.SetActive(false);
-                TitleTexts.SetActive(false);
+                titleTexts.SetActive(false);
                 audioPanel.SetActive(false);
                 vidPanel.SetActive(false);
             }
 
-            if (!settingsLoadedINI) { DefaultSettings(); }
-            ApplyINISettings();
+            if (!SettingsLoadedIni) { DefaultSettings(); }
+            ApplyIniSettings();
         }
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape) && !gameManager.IsMenuUIActive)
-            {
-                if (mainPanel.activeSelf == false) { Pause(); }
-                else { Resume(); }
-            }
+            if (!Input.GetKeyDown(KeyCode.Escape) || _gameManager.IsMenuUiActive) return;
+            if (mainPanel.activeSelf == false) { Pause(); }
+            else { Resume(); }
         }
 
         #region Game Settings Panel Buttons
         public void StartGame()
         {
-            gameManager.StartGameEvent();
+            _gameManager.StartGameEvent();
         }
 
         public void Pause()
         {
             Time.timeScale = 0;
-            gameManager.IsPauseUIActive = true;
             mainPanel.SetActive(true);
             vidPanel.SetActive(false);
             audioPanel.SetActive(false);
-            TitleTexts.SetActive(true);
+            titleTexts.SetActive(true);
             mask.SetActive(true);
         }
 
         public void Resume()
         {
             Time.timeScale = timeScale;
-            gameManager.IsPauseUIActive = false;
             mainPanel.SetActive(false);
             vidPanel.SetActive(false);
             audioPanel.SetActive(false);
-            TitleTexts.SetActive(false);
+            titleTexts.SetActive(false);
             mask.SetActive(false);
         }
 
-        public void quitOptions()
+        public void QuitOptions()
         {
             vidPanel.SetActive(false);
             audioPanel.SetActive(false);
@@ -167,28 +142,24 @@ namespace GameFramework.Managers
             }
         }
 
-        public void quitCancel()
+        public void QuitCancel()
         {
             if (quitPanelAnimator != null)
-            {
                 quitPanelAnimator.Play("QuitPanelOut");
-            }
             else
-            {
                 quitPanel.SetActive(false);
-            }
         }
 
-        public void returnToMenu()
+        public void ReturnToMenu()
         {
             Time.timeScale = timeScale;
-            gameManager.LoadMainMenuEvent();
+            _gameManager.LoadMainMenuEvent();
         }
 
-        public void quitGame()
+        public void QuitGame()
         {
             Time.timeScale = timeScale;
-            gameManager.QuitApplicationEvent();
+            _gameManager.QuitApplicationEvent();
         }
         #endregion
 
@@ -197,35 +168,33 @@ namespace GameFramework.Managers
         {
             vidPanel.SetActive(false);
             audioPanel.SetActive(true);
-            if (!gameManager.IsMenuUIActive) { mainPanel.SetActive(false); }
+            if (!_gameManager.IsMenuUiActive) { mainPanel.SetActive(false); }
             AudioPanelIn();
         }
 
         public void AudioPanelIn()
         {
             pauseMenuTitleText.text = "Audio Menu";
-            if (audioPanelAnimator != null)
-            {
-                audioPanelAnimator.enabled = true;
-                audioPanelAnimator.Play("Audio Panel In");
-            }
+            if (audioPanelAnimator == null) return;
+            audioPanelAnimator.enabled = true;
+            audioPanelAnimator.Play("Audio Panel In");
         }
 
-        public void applyAudio()
+        public void ApplyAudio()
         {
             StartCoroutine(ApplyAudioSettings());
         }
 
-        public void cancelAudio()
+        public void CancelAudio()
         {
             StartCoroutine(RevertAudioSettings());
         }
 
-        internal IEnumerator ApplyAudioSettings()
+        private IEnumerator ApplyAudioSettings()
         {
             if (audioPanelAnimator != null) { audioPanelAnimator.Play("Audio Panel Out"); }
 
-            masterVolumeINI = audioMasterVolumeSlider.value;
+            MasterVolumeIni = audioMasterVolumeSlider.value;
 
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
             pauseMenuTitleText.text = "Main Menu";
@@ -234,11 +203,11 @@ namespace GameFramework.Managers
             mainPanel.SetActive(true);
         }
 
-        internal IEnumerator RevertAudioSettings()
+        private IEnumerator RevertAudioSettings()
         {
             if (audioPanelAnimator != null) { audioPanelAnimator.Play("Audio Panel Out"); }
 
-            audioMasterVolumeSlider.value = masterVolumeINI;
+            audioMasterVolumeSlider.value = MasterVolumeIni;
 
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
             pauseMenuTitleText.text = "Main Menu";
@@ -253,42 +222,40 @@ namespace GameFramework.Managers
         {   //  Turn On/Off Panels
             vidPanel.SetActive(true);
             audioPanel.SetActive(false);
-            if (!gameManager.IsMenuUIActive) { mainPanel.SetActive(false); }
+            if (!_gameManager.IsMenuUiActive) { mainPanel.SetActive(false); }
             VideoPanelIn();
         }
 
         public void VideoPanelIn()
         {
             pauseMenuTitleText.text = "Video Menu";
-            if (vidPanelAnimator != null)
-            {
-                vidPanelAnimator.enabled = true;
-                vidPanelAnimator.Play("Video Panel In");
-            }
+            if (vidPanelAnimator == null) return;
+            vidPanelAnimator.enabled = true;
+            vidPanelAnimator.Play("Video Panel In");
         }
 
-        public void apply()
+        public void Apply()
         {
             StartCoroutine(ApplyVideoSettings());
         }
 
-        public void cancelVideo()
+        public void CancelVideo()
         {
             StartCoroutine(RevertVideoSettings());
         }
 
-        internal IEnumerator ApplyVideoSettings()
+        private IEnumerator ApplyVideoSettings()
         {
             if (vidPanelAnimator != null) { vidPanelAnimator.Play("Video Panel Out"); }
 
-            currentQualityLevelINI = QualitySettings.GetQualityLevel();
-            vsyncINI = vSyncToggle.isOn;
-            msaaINI = aaCombo.value;
-            anisoFilterLevelINI = afCombo.value;
-            renderDistINI = renderDistSlider.value;
-            textureLimitINI = (int)masterTexSlider.value;
-            shadowDistINI = shadowDistSlider.value;
-            shadowCascadeINI = (int)shadowCascadesSlider.value;
+            CurrentQualityLevelIni = QualitySettings.GetQualityLevel();
+            VsyncIni = vSyncToggle.isOn;
+            MsaaIni = aaCombo.value;
+            AnisoFilterLevelIni = afCombo.value;
+            RenderDistIni = renderDistSlider.value;
+            TextureLimitIni = (int)masterTexSlider.value;
+            ShadowDistIni = shadowDistSlider.value;
+            ShadowCascadeIni = (int)shadowCascadesSlider.value;
 
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
             pauseMenuTitleText.text = "Main Menu";
@@ -297,18 +264,18 @@ namespace GameFramework.Managers
             mainPanel.SetActive(true);
         }
 
-        internal IEnumerator RevertVideoSettings()
+        private IEnumerator RevertVideoSettings()
         {
             if (vidPanelAnimator != null) { vidPanelAnimator.Play("Video Panel Out"); }
 
-            QualitySettings.SetQualityLevel(currentQualityLevelINI);
-            vSyncToggle.isOn = vsyncINI;
-            aaCombo.value = msaaINI;
-            afCombo.value = anisoFilterLevelINI;
-            renderDistSlider.value = renderDistINI;
-            masterTexSlider.value = textureLimitINI;
-            shadowDistSlider.value = shadowDistINI;
-            shadowCascadesSlider.value = shadowCascadeINI;
+            QualitySettings.SetQualityLevel(CurrentQualityLevelIni);
+            vSyncToggle.isOn = VsyncIni;
+            aaCombo.value = MsaaIni;
+            afCombo.value = AnisoFilterLevelIni;
+            renderDistSlider.value = RenderDistIni;
+            masterTexSlider.value = TextureLimitIni;
+            shadowDistSlider.value = ShadowDistIni;
+            shadowCascadesSlider.value = ShadowCascadeIni;
 
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
             pauseMenuTitleText.text = "Main Menu";
@@ -319,26 +286,17 @@ namespace GameFramework.Managers
         #endregion
 
         #region Game Setting Events
-        public void updateMasterVol(float f)
+        public void UpdateMasterVol(float f)
         {
             AudioListener.volume = f;
-            // Debug.Log("GameSettingsManager::updateMasterVol " + AudioListener.volume);
         }
 
-        public void toggleVSync(Boolean B)
+        public void ToggleVSync(bool b)
         {
-            if (B == true)
-            {
-                QualitySettings.vSyncCount = 1;
-            }
-            else
-            {
-                QualitySettings.vSyncCount = 0;
-            }
-            // Debug.Log("GameSettingsManager::toggleVSync : " + QualitySettings.vSyncCount);
+            QualitySettings.vSyncCount = b ? 1 : 0;
         }
 
-        public void updateRenderDist(float f)
+        public void UpdateRenderDist(float f)
         {
             try
             {
@@ -346,281 +304,255 @@ namespace GameFramework.Managers
             }
             catch
             {
-                // Debug.Log("Camera was not assigned, using Camera.Main");
                 mainCam = Camera.main;
                 mainCam.farClipPlane = f;
             }
-            // Debug.Log("GameSettingsManager::updateRenderDist() : " + Camera.main.farClipPlane);
         }
 
-        public void updateTex(float qual)
+        public void UpdateTex(float textureQuality)
         {
-            int f = Mathf.RoundToInt(qual);
+            int f = Mathf.RoundToInt(textureQuality);
             QualitySettings.masterTextureLimit = f;
-            // Debug.Log("GameSettingsManager::updateTex() : " + QualitySettings.masterTextureLimit);
         }
 
-        public void updateShadowDistance(float dist)
+        public void UpdateShadowDistance(float dist)
         {
             QualitySettings.shadowDistance = dist;
-            // Debug.Log("GameSettingsManager::updateShadowDistance() : " + QualitySettings.shadowDistance);
         }
 
-        public void forceOnANISO()
+        private static void ForceOnANISO()
         {
             QualitySettings.anisotropicFiltering = AnisotropicFiltering.ForceEnable;
         }
 
-        public void perTexANISO()
+        private static void PerTextureAniso()
         {
             QualitySettings.anisotropicFiltering = AnisotropicFiltering.Enable;
         }
 
-        public void disableANISO()
+        private static void DisableAniso()
         {
             QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
         }
 
-        public void updateANISO(int anisoSetting)
+        public void UpdateAniso(int anisoSetting)
         {
-            if (anisoSetting == 0)
+            switch (anisoSetting)
             {
-                disableANISO();
+                case 0:
+                    DisableAniso();
+                    break;
+                case 1:
+                    PerTextureAniso();
+                    break;
+                case 2:
+                    ForceOnANISO();
+                    break;
             }
-            else if (anisoSetting == 1)
-            {
-                perTexANISO();
-            }
-            else if (anisoSetting == 2)
-            {
-                forceOnANISO();
-            }
-            // Debug.Log("GameSettingsManager::updateANISO() : " + (int)QualitySettings.anisotropicFiltering);
         }
 
-        public void updateCascades(float cascades)
+        public void UpdateCascades(float cascades)
         {
             int c = Mathf.RoundToInt(cascades);
-            if (c == 1)
+            switch (c)
             {
-                c = 2;
-            }
-            else if (c == 3)
-            {
-                c = 2;
+                case 1:
+                case 3:
+                    c = 2;
+                    break;
             }
             QualitySettings.shadowCascades = c;
-            // Debug.Log("GameSettingsManager::updateCascades() : " + QualitySettings.shadowCascades);
         }
 
-        public void updateMSAA(int msaaAmount)
+        public void UpdateMsaa(int msaaAmount)
         {
-            if (msaaAmount == 0)
+            switch (msaaAmount)
             {
-                disableMSAA();
+                case 0:
+                    DisableMsaa();
+                    break;
+                case 1:
+                    TwoMsaa();
+                    break;
+                case 2:
+                    FourMsaa();
+                    break;
+                case 3:
+                    EightMsaa();
+                    break;
             }
-            else if (msaaAmount == 1)
-            {
-                twoMSAA();
-            }
-            else if (msaaAmount == 2)
-            {
-                fourMSAA();
-            }
-            else if (msaaAmount == 3)
-            {
-                eightMSAA();
-            }
-            // Debug.Log("MSAA has been set to " + QualitySettings.antiAliasing + "x");
         }
 
-        public void disableMSAA()
+        private static void DisableMsaa()
         {
             QualitySettings.antiAliasing = 0;
         }
 
-        public void twoMSAA()
+        private static void TwoMsaa()
         {
             QualitySettings.antiAliasing = 2;
         }
 
-        public void fourMSAA()
+        private static void FourMsaa()
         {
             QualitySettings.antiAliasing = 4;
         }
 
-        public void eightMSAA()
+        private static void EightMsaa()
         {
             QualitySettings.antiAliasing = 8;
         }
 
-        public void nextPreset()
+        public void NextPreset()
         {
             QualitySettings.IncreaseLevel();
             int cur = QualitySettings.GetQualityLevel();
-            presetLabel.text = presets[cur];
+            presetLabel.text = _presets[cur];
             shadowDistSlider.value = shadowDist[cur];
             aaCombo.value = cur;
-            // Debug.Log("Graphics Preset has been set to " + presets[cur]);
         }
 
-        public void lastPreset()
+        public void LastPreset()
         {
             QualitySettings.DecreaseLevel();
             int cur = QualitySettings.GetQualityLevel();
-            presetLabel.text = presets[cur];
+            presetLabel.text = _presets[cur];
             shadowDistSlider.value = shadowDist[cur];
             aaCombo.value = cur;
-            // Debug.Log("Graphics Preset has been set to " + presets[cur]);
         }
         #endregion
 
         #region INI Settings
-        void DefaultSettings()
+
+        private void DefaultSettings()
         {
-            Debug.Log("GameSettingsManager::DefaultSettings()");
-
-            //  Default Audio
-            masterVolumeINI = 0.75f;
-
-            //  Default Graphics Preset
-            currentQualityLevelINI = presets.Length - 1;
-
-            //  Default Graphics Settings
-            msaaINI = 2;
-            vsyncINI = true;
-            anisoFilterLevelINI = 1;
-            renderDistINI = 800.0f;
-            shadowDistINI = shadowDist[currentQualityLevelINI];
-            shadowCascadeINI = 4;
-            textureLimitINI = 0;
+            MasterVolumeIni = 0.75f;
+            CurrentQualityLevelIni = _presets.Length - 1;
+            MsaaIni = 2;
+            VsyncIni = true;
+            AnisoFilterLevelIni = 1;
+            RenderDistIni = 800.0f;
+            ShadowDistIni = shadowDist[CurrentQualityLevelIni];
+            ShadowCascadeIni = 4;
+            TextureLimitIni = 0;
         }
 
-        void ApplyINISettings()
+        private void ApplyIniSettings()
         {
             // Debug.Log("INI Settings being applied : " + "Vol : " + masterVolumeINI + ", vsync : " + vsyncINI +
             //     ", Preset " + currentQualityLevelINI + ", RenderDist : " + renderDistINI + ", ShadowDist : " + shadowDistINI +
             //     ", cascade " + shadowCascadeINI + ", MSAA : " + msaaINI + ", aniso : " + anisoFilterLevelINI + ", texture limit : " + textureLimitINI);
 
-            //  Master Volume
-            if (AudioListener.volume != masterVolumeINI)
+            if (AudioListener.volume != MasterVolumeIni)
             {
-                AudioListener.volume = masterVolumeINI;
+                AudioListener.volume = MasterVolumeIni;
             }
-            if (audioMasterVolumeSlider.value != masterVolumeINI)
+            if (audioMasterVolumeSlider.value != MasterVolumeIni)
             {
                 MuteEventListener(audioMasterVolumeSlider.onValueChanged);
-                audioMasterVolumeSlider.value = masterVolumeINI;
+                audioMasterVolumeSlider.value = MasterVolumeIni;
                 UnMuteEventListener(audioMasterVolumeSlider.onValueChanged);
             }
 
-            //  Graphics Quality Preset
-            if (QualitySettings.GetQualityLevel() != currentQualityLevelINI)
+            if (QualitySettings.GetQualityLevel() != CurrentQualityLevelIni)
             {
-                QualitySettings.SetQualityLevel(currentQualityLevelINI);
+                QualitySettings.SetQualityLevel(CurrentQualityLevelIni);
             }
-            if (!presetLabel.text.Contains(presets[currentQualityLevelINI]))
+            if (!presetLabel.text.Contains(_presets[CurrentQualityLevelIni]))
             {
-                presetLabel.text = presets[currentQualityLevelINI];
+                presetLabel.text = _presets[CurrentQualityLevelIni];
             }
 
-            //  Vsync
-            if (vsyncINI && QualitySettings.vSyncCount == 0)
+            if (VsyncIni && QualitySettings.vSyncCount == 0)
             {
                 QualitySettings.vSyncCount = 1;
             }
-            else if (!vsyncINI && QualitySettings.vSyncCount > 0)
+            else if (!VsyncIni && QualitySettings.vSyncCount > 0)
             {
                 QualitySettings.vSyncCount = 0;
             }
-            if (vSyncToggle.isOn != vsyncINI)
+            if (vSyncToggle.isOn != VsyncIni)
             {
                 MuteEventListener(vSyncToggle.onValueChanged);
-                vSyncToggle.isOn = vsyncINI;
+                vSyncToggle.isOn = VsyncIni;
                 UnMuteEventListener(vSyncToggle.onValueChanged);
             }
 
-            //  MSAA
-            if (msaaINI == 0 && QualitySettings.antiAliasing != 0)
+            if (MsaaIni == 0 && QualitySettings.antiAliasing != 0)
             {
-                disableMSAA();
+                DisableMsaa();
             }
-            else if (msaaINI == 1 && QualitySettings.antiAliasing != 2)
+            else if (MsaaIni == 1 && QualitySettings.antiAliasing != 2)
             {
-                twoMSAA();
+                TwoMsaa();
             }
-            else if (msaaINI == 2 && QualitySettings.antiAliasing != 4)
+            else if (MsaaIni == 2 && QualitySettings.antiAliasing != 4)
             {
-                fourMSAA();
+                FourMsaa();
             }
-            else if (msaaINI > 2 && QualitySettings.antiAliasing < 8)
+            else if (MsaaIni > 2 && QualitySettings.antiAliasing < 8)
             {
-                eightMSAA();
+                EightMsaa();
             }
-            if (aaCombo.value != msaaINI)
+            if (aaCombo.value != MsaaIni)
             {
                 MuteEventListener(aaCombo.onValueChanged);
-                aaCombo.value = msaaINI;
+                aaCombo.value = MsaaIni;
                 UnMuteEventListener(aaCombo.onValueChanged);
             }
 
-            //  Anisotropic Texture Filtering
-            if ((int)QualitySettings.anisotropicFiltering != anisoFilterLevelINI)
+            if ((int)QualitySettings.anisotropicFiltering != AnisoFilterLevelIni)
             {
-                QualitySettings.anisotropicFiltering = (AnisotropicFiltering)anisoFilterLevelINI;
+                QualitySettings.anisotropicFiltering = (AnisotropicFiltering)AnisoFilterLevelIni;
             }
-            if (afCombo.value != anisoFilterLevelINI)
+            if (afCombo.value != AnisoFilterLevelIni)
             {
                 MuteEventListener(afCombo.onValueChanged);
-                afCombo.value = anisoFilterLevelINI;
+                afCombo.value = AnisoFilterLevelIni;
                 UnMuteEventListener(afCombo.onValueChanged);
             }
 
-            //  Render Distance
-            if (Camera.main.farClipPlane != renderDistINI)
+            if (Camera.main.farClipPlane != RenderDistIni)
             {
-                Camera.main.farClipPlane = renderDistINI;
+                Camera.main.farClipPlane = RenderDistIni;
             }
-            if (renderDistSlider.value != renderDistINI)
+            if (renderDistSlider.value != RenderDistIni)
             {
                 MuteEventListener(renderDistSlider.onValueChanged);
-                renderDistSlider.value = renderDistINI;
+                renderDistSlider.value = RenderDistIni;
                 UnMuteEventListener(renderDistSlider.onValueChanged);
             }
 
-            //  Shadow Distance
-            if (QualitySettings.shadowDistance != shadowDistINI)
+            if (QualitySettings.shadowDistance != ShadowDistIni)
             {
-                QualitySettings.shadowDistance = shadowDistINI;
+                QualitySettings.shadowDistance = ShadowDistIni;
             }
-            if (shadowDistSlider.value != shadowDistINI)
+            if (shadowDistSlider.value != ShadowDistIni)
             {
                 MuteEventListener(shadowDistSlider.onValueChanged);
-                shadowDistSlider.value = shadowDistINI;
+                shadowDistSlider.value = ShadowDistIni;
                 UnMuteEventListener(shadowDistSlider.onValueChanged);
             }
 
-            //  Master Texture Limit
-            if (QualitySettings.masterTextureLimit != textureLimitINI)
+            if (QualitySettings.masterTextureLimit != TextureLimitIni)
             {
-                QualitySettings.masterTextureLimit = textureLimitINI;
+                QualitySettings.masterTextureLimit = TextureLimitIni;
             }
-            if (masterTexSlider.value != textureLimitINI)
+            if (masterTexSlider.value != TextureLimitIni)
             {
                 MuteEventListener(masterTexSlider.onValueChanged);
-                masterTexSlider.value = textureLimitINI;
+                masterTexSlider.value = TextureLimitIni;
                 UnMuteEventListener(masterTexSlider.onValueChanged);
             }
 
-            //  Shadow Cascade
-            if (QualitySettings.shadowCascades != shadowCascadeINI)
+            if (QualitySettings.shadowCascades != ShadowCascadeIni)
             {
-                QualitySettings.shadowCascades = shadowCascadeINI;
+                QualitySettings.shadowCascades = ShadowCascadeIni;
             }
-            if (shadowCascadesSlider.value != shadowCascadeINI)
+            if (shadowCascadesSlider.value != ShadowCascadeIni)
             {
                 MuteEventListener(shadowCascadesSlider.onValueChanged);
-                shadowCascadesSlider.value = shadowCascadeINI;
+                shadowCascadesSlider.value = ShadowCascadeIni;
                 UnMuteEventListener(shadowCascadesSlider.onValueChanged);
             }
 
@@ -631,12 +563,13 @@ namespace GameFramework.Managers
             //     ", texture limit : " + QualitySettings.masterTextureLimit
             // );
 
-            settingsLoadedINI = true;
+            SettingsLoadedIni = true;
         }
         #endregion
 
         #region Toggle OnValueChanged Listeners
-        void MuteEventListener(UnityEngine.Events.UnityEventBase eventBase)
+
+        private static void MuteEventListener(UnityEngine.Events.UnityEventBase eventBase)
         {
             int count = eventBase.GetPersistentEventCount();
             for (int x = 0; x < count; x++)
@@ -645,7 +578,7 @@ namespace GameFramework.Managers
             }
         }
 
-        void UnMuteEventListener(UnityEngine.Events.UnityEventBase eventBase)
+        private static void UnMuteEventListener(UnityEngine.Events.UnityEventBase eventBase)
         {
             int count = eventBase.GetPersistentEventCount();
             for (int x = 0; x < count; x++)

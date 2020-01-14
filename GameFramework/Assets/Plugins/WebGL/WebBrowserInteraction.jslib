@@ -4,7 +4,7 @@ var WebBrowserInteraction = {
         console.log("WebBrowserInteraction::InitilaizeJsLib()")
         FS.syncfs(true, function (err) {        
             assert(!err);
-            unityInstance.SendMessage('PersistantGameManager', 'LoadSettingsFromIndexedDB');
+            unityInstance.SendMessage('PersistantGameManager', 'LoadSettingsFromIndexedDb');
         });
     },
     SyncPersistantData : function()

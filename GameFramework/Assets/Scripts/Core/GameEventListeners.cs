@@ -1,27 +1,31 @@
-﻿using UnityEngine;
+﻿/*
+    *   GameEventListeners - Listens for Game Events raised and responds
+    *   Created by : Allan N. Murillo
+ */
+using UnityEngine;
 using UnityEngine.Events;
 
-namespace GameFramework.Events
+namespace GameFramework.Core
 {
     public class GameEventListeners : MonoBehaviour
     {
-        public GameEvent Event;
-        public UnityEvent Response;
+        public GameEvent @event;
+        public UnityEvent response;
 
 
-        void OnEnable()
+        private void OnEnable()
         {
-            Event.RegisterListener(this);
+            @event.RegisterListener(this);
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
-            Event.UnregisterListener(this);
+            @event.UnregisterListener(this);
         }
 
         public void OnEventRaised()
         {
-            Response.Invoke();
+            response.Invoke();
         }
     }
 }

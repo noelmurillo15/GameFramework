@@ -5,172 +5,107 @@
 using System;
 using UnityEngine;
 using System.Collections;
-using GameFramework.Events;
-using GameFramework.External;
 
-
-namespace GameFramework.Managers
+namespace GameFramework.Core
 {
-    public class GameManager : MonoBehaviour
+    public sealed class GameManager : MonoBehaviour
     {
-        #region GameManager Class Members
-        //  Singleton Design Pattern
-        static GameManager _instance;
+        private static GameManager _instance;
         public static GameManager Instance
+        {  get  {  if (_instance == null) { _instance = FindObjectOfType<GameManager>(); }  return _instance;  }  }
+        
+        [HideInInspector] public SceneTransitionManager sceneTransitionManager = null;
+        public GameEvent onApplicationQuitEvent = null;
+
+        private SaveSettings _saveSettings = null;
+        private float _deltaTime = 0.0f;
+        private bool _displayFps = false;
+        
+        [HideInInspector] public bool isInventoryUiNotNull = false;
+        public bool IsMenuUiActive { get; set; } = false;
+
+        
+        private void Awake()
         {
-            get
-            {
-                if (_instance == null) { _instance = GameObject.FindObjectOfType<GameManager>(); }
-                return _instance;
-            }
-        }
-
-        //  Persistant References
-        [HideInInspector] public GameSettingsManager gameSettingsManager = null;
-        [HideInInspector] public ScreenFader screenFader = null;
-        [HideInInspector] public SceneLoader sceneLoader = null;
-        [HideInInspector] private SaveSettings gameSettings = null;
-
-        public GameEvent OnApplicationQuitEvent = null;
-
-        //  FPS tracker
-        float deltaTime = 0.0f;
-
-        //  Flags
-        bool displayFPS = false;
-        bool isGameOver = false;
-        bool isInventoryActive = false;
-        bool isMenuActive = false;
-        bool isPauseActive = false;
-
-        public bool IsInventoryUIActive { get { return isInventoryActive; } set { isInventoryActive = value; } }
-        public bool IsPauseUIActive { get { return isPauseActive; } set { isPauseActive = value; } }
-        public bool IsMenuUIActive { get { return isMenuActive; } set { isMenuActive = value; } }
-        public bool IsGameOver { get { return isGameOver; } set { isGameOver = value; } }
-        #endregion
-
-
-        //  TODO : Singletons are great for Audio Manager, Input Manager, SceneLoader
-        protected virtual void Awake()
-        {
-            if (_instance != null && _instance != this) { Destroy(this.gameObject); return; }
-            string startSceneName = string.Format("__________ {0} __________", UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-            Debug.Log(startSceneName);
-            Debug.Log("GM::Awake()");
-
-            //  Persist throughout scenes
-            DontDestroyOnLoad(this.gameObject);
+            if (_instance != null && _instance != this) { Destroy(gameObject); return; }
+            DontDestroyOnLoad(gameObject);
             _instance = this;
+            
+            _displayFps = true;
+            IsMenuUiActive = false;
+            
+            GameSettingsManager.SettingsLoadedIni = false;
+            _saveSettings = new SaveSettings();
+            _saveSettings.Initialize();
 
-            // Game Settings
-            GameSettingsManager.settingsLoadedINI = false;
-            gameSettings = new SaveSettings();
-            gameSettings.Initialize();
-
-            //  Get Components
-            sceneLoader = gameObject.GetComponent<SceneLoader>();
-            screenFader = gameObject.GetComponentInChildren<ScreenFader>();
-
-            //  Toggle Flags
-            displayFPS = true;
-            isInventoryActive = false;
-            isPauseActive = false;
-            isMenuActive = false;
-            isGameOver = false;
-
-            //  Force SceneLoader Init when built on any other platform besides WebGl
-            if (Application.platform != RuntimePlatform.WebGLPlayer)
-            {
-                if (sceneLoader != null) { sceneLoader.Initialize(); }
-            }
+            sceneTransitionManager = gameObject.GetComponentInChildren<SceneTransitionManager>();
+            sceneTransitionManager.ScreenMaskBrightness = 0f;
+            
+            if (Application.platform == RuntimePlatform.WebGLPlayer) return;
+            if (sceneTransitionManager != null) { sceneTransitionManager.Initialize(); }
         }
 
-        void Update()
+        private void Update()
         {
-            deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
+            _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
         }
 
-        void OnGUI()
+        private void OnGUI()
         {
-            if (displayFPS)
-            {
-                int w = Screen.width, h = Screen.height;
-
-                GUIStyle style = new GUIStyle();
-
-                Rect rect = new Rect(w - 180, 0, w, h * 2 / 100);
-                style.alignment = TextAnchor.UpperLeft;
-                style.fontSize = h * 2 / 100;
-                style.normal.textColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-                float msec = deltaTime * 1000.0f;
-                float fps = 1.0f / deltaTime;
-                string text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
-                GUI.Label(rect, text, style);
-            }
+            if (!_displayFps) return;
+            var style = new GUIStyle();
+            int w = Screen.width, h = Screen.height;
+            h *= 2 / 100;
+            var rect = new Rect(w - 180, 0, w, h);
+            style.alignment = TextAnchor.UpperLeft;
+            style.fontSize = h * 2 / 100;
+            style.normal.textColor = Color.white;
+            var msecs = _deltaTime * 1000.0f;
+            var fps = 1.0f / _deltaTime;
+            var text = $"{msecs:0.0} ms ({fps:0.} fps)";
+            GUI.Label(rect, text, style);
         }
 
         #region Game Settings
-        public void LoadSettingsFromIndexedDB()
-        {
-            gameSettings.LoadGameSettings();
-            if (sceneLoader != null) { sceneLoader.Initialize(); }
+        public void LoadSettingsFromIndexedDb()
+        {    //    When playing in WebGL, a Javascript plugin will initialize SceneLoader via LoadSettingsFromIndexedDb()
+            _saveSettings.LoadGameSettings();
+            if (sceneTransitionManager != null) { sceneTransitionManager.Initialize(); }
         }
         #endregion
 
         #region Game Events
         public void StartGameEvent()
         {
-            isGameOver = false;
-            isMenuActive = false;
-            sceneLoader.LoadLevel(2);
+            IsMenuUiActive = false;
+            sceneTransitionManager.LoadLevel(2);
         }
 
         public void LoadMainMenuEvent()
         {
-            isGameOver = true;
-            isMenuActive = true;
-            sceneLoader.LoadMainMenu();
+            IsMenuUiActive = true;
+            sceneTransitionManager.LoadMainMenu();
         }
 
         public void QuitApplicationEvent()
         {
-            Debug.Log("GM::QuitApplicationEvent()");
-            isGameOver = true;
             StartCoroutine(QuitSequence());
         }
 
-        IEnumerator QuitSequence()
+        private IEnumerator QuitSequence()
         {
-            Debug.Log("GM::QuitSequence()");
-            gameSettings.SaveGameSettings();
-            yield return screenFader.FadeOut(3f);
-            if (OnApplicationQuitEvent != null) { OnApplicationQuitEvent.Raise(); }
-            sceneLoader.LoadCreditsScene();
-            // Destroy(this.gameObject);
+            _saveSettings.SaveGameSettings();
+            yield return sceneTransitionManager.FadeOut(3f);
+            if (onApplicationQuitEvent != null) { onApplicationQuitEvent.Raise(); }
+            sceneTransitionManager.LoadCreditsScene();
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
-            if (GameManager.Instance == this)
-            {
-                Debug.Log("GM Singleton is being Destroyed!");
-
-                if (OnApplicationQuitEvent != null) { OnApplicationQuitEvent.UnregisterAllListeners(); }
-                Resources.UnloadUnusedAssets();
-                GC.Collect();
-
-#if UNITY_EDITOR
-                // UnityEditor.EditorApplication.isPlaying = false;
-#elif UNITY_WEBGL
-                Quit();
-#else
-                Application.Quit();
-#endif
-            }
-            else
-            {
-                Debug.Log("Destroying duplicate GM!");
-            }
+            if (Instance != this) return;
+            if (onApplicationQuitEvent != null) { onApplicationQuitEvent.UnregisterAllListeners(); }
+            Resources.UnloadUnusedAssets();
+            GC.Collect();
         }
         #endregion                
 
@@ -181,10 +116,12 @@ namespace GameFramework.Managers
 
 
         public void Quit()
-        {   //  There is a known Unity bug preventing Application.Quit && unityInstance.Quit from properly quitting      
+        { 
             Debug.Log("GM::Quit() -Trying to call JavaScript Func : QuitGame()");      
             QuitGame();
         }        
+#else
+        public void Quit() {  }
 #endif
         #endregion
     }

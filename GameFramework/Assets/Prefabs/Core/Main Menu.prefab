@@ -1385,7 +1385,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 6136380913984932933}
-          m_MethodName: returnToMenu
+          m_MethodName: ReturnToMenu
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1396,7 +1396,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
         - m_Target: {fileID: 6136380913984932933}
-          m_MethodName: cancelVideo
+          m_MethodName: CancelVideo
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -1538,7 +1538,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: cancelAudio
+        m_MethodName: CancelAudio
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2242,7 +2242,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: quitGame
+        m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2663,7 +2663,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: updateANISO
+        m_MethodName: UpdateAniso
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3040,7 +3040,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: updateShadowDistance
+        m_MethodName: UpdateShadowDistance
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3522,7 +3522,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: apply
+        m_MethodName: Apply
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3905,7 +3905,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: updateMasterVol
+        m_MethodName: UpdateMasterVol
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6509,7 +6509,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: cancelVideo
+        m_MethodName: CancelVideo
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6795,7 +6795,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: applyAudio
+        m_MethodName: ApplyAudio
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7128,7 +7128,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: updateMSAA
+        m_MethodName: UpdateMsaa
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8610,7 +8610,7 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls:
         - m_Target: {fileID: 6136380913984932933}
-          m_MethodName: returnToMenu
+          m_MethodName: ReturnToMenu
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -8621,7 +8621,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
         - m_Target: {fileID: 6136380913984932933}
-          m_MethodName: cancelAudio
+          m_MethodName: CancelAudio
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -8763,7 +8763,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: quitCancel
+        m_MethodName: QuitCancel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9197,7 +9197,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: updateTex
+        m_MethodName: UpdateTex
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9450,7 +9450,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: lastPreset
+        m_MethodName: LastPreset
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9694,7 +9694,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: nextPreset
+        m_MethodName: NextPreset
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -9794,7 +9794,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: updateRenderDist
+        m_MethodName: UpdateRenderDist
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -10501,7 +10501,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: quitOptions
+        m_MethodName: QuitOptions
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -11706,7 +11706,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: updateCascades
+        m_MethodName: UpdateCascades
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12508,7 +12508,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6136380913984932933}
-        m_MethodName: toggleVSync
+        m_MethodName: ToggleVSync
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -2,29 +2,19 @@
     *   SaveSettings - Save/Loads game settings to/from a JSON file
     *   Created by : Allan N. Murillo
  */
-using System;
 using System.IO;
 using UnityEngine;
-using GameFramework.Managers;
 
-
-namespace GameFramework.External
+namespace GameFramework.Core
 {
     [System.Serializable]
     public class SaveSettings
     {
-        #region Settings
-        //  File
-        static string jsonString;
-        static string fileName = "GameSettings.json";
+        private static string _jsonString;
+        private static string _fileName = "GameSettings.json";
 
-        //  Audio
         public float masterVolume;
-
-        //  Graphics Preset
         public int currentQualityLevel;
-
-        //  Advanced Graphics        
         public bool vsync;
         public float renderDistance;
         public float shadowDist;
@@ -32,68 +22,51 @@ namespace GameFramework.External
         public int msaa;
         public int anisoLevel;
         public int textureLimit;
-        #endregion
 
 
-        static object CreateJsonObj(string jsonString)
+        private static object CreateJsonObj(string jsonString)
         {
-            Debug.Log("GameSettings::Creating Json Object");
             return JsonUtility.FromJson<SaveSettings>(jsonString);
         }
 
         public bool LoadGameSettings()
         {
-            Debug.Log("GameSettings::Loading from JSON");
-            string path = Application.persistentDataPath + "/" + fileName;
-            if (VerifyDirectory(path))
-            {
-                Debug.Log("GameSettings.Json Exists!");
-                OverwriteGameSettings(File.ReadAllText(path));
-                return true;
-            }
-            Debug.Log("GameSettings.Json does not exist");
-            return false;
+            string path = Application.persistentDataPath + "/" + _fileName;
+            if (!VerifyDirectory(path)) return false;
+            OverwriteGameSettings(File.ReadAllText(path));
+            return true;
         }
 
         public void SaveGameSettings()
         {
-            Debug.Log("GameSetting::Saving to JSON");
-            string path = Application.persistentDataPath + "/" + fileName;
-
-            //  Delete existing file
+            string path = Application.persistentDataPath + "/" + _fileName;
             if (VerifyDirectory(path)) { File.Delete(path); }
 
-            //  Get Current Game Settings
-            masterVolume = GameSettingsManager.masterVolumeINI;
-            vsync = GameSettingsManager.vsyncINI;
-            msaa = GameSettingsManager.msaaINI;
-            renderDistance = GameSettingsManager.renderDistINI;
-            textureLimit = GameSettingsManager.textureLimitINI;
-            shadowDist = GameSettingsManager.shadowDistINI;
-            shadowCascade = GameSettingsManager.shadowCascadeINI;
-            anisoLevel = GameSettingsManager.anisoFilterLevelINI;
-            currentQualityLevel = GameSettingsManager.currentQualityLevelINI;
+            masterVolume = GameSettingsManager.MasterVolumeIni;
+            vsync = GameSettingsManager.VsyncIni;
+            msaa = GameSettingsManager.MsaaIni;
+            renderDistance = GameSettingsManager.RenderDistIni;
+            textureLimit = GameSettingsManager.TextureLimitIni;
+            shadowDist = GameSettingsManager.ShadowDistIni;
+            shadowCascade = GameSettingsManager.ShadowCascadeIni;
+            anisoLevel = GameSettingsManager.AnisoFilterLevelIni;
+            currentQualityLevel = GameSettingsManager.CurrentQualityLevelIni;
 
-            //  Write to Json Save file
-            jsonString = JsonUtility.ToJson(this);
-            File.WriteAllText(path, jsonString);
+            _jsonString = JsonUtility.ToJson(this);
+            File.WriteAllText(path, _jsonString);
 
             // Debug.Log("Saving these Settings to JSON : " + "Vol : " + masterVolume + ", vsync : " + vsync +
             //     ", Preset " + currentQualityLevel + ", RenderDist : " + renderDistance + ", ShadowDist : " + shadowDist +
             //     ", cascade " + shadowCascade + ", MSAA : " + msaa + ", aniso : " + anisoLevel + ", texture limit : " + textureLimit);
-
-            //  Sync with Browser's IndexedDB
-            if (Application.platform == RuntimePlatform.WebGLPlayer)
-            {
-                Sync();
-            }
+            
+            //  Sync with Web Browser's IndexedDB via JavaScript
+            if (Application.platform == RuntimePlatform.WebGLPlayer) {  Sync();  }
         }
 
-        void OverwriteGameSettings(String jsonString)
+        private void OverwriteGameSettings(string jsonString)
         {
-            Debug.Log("GameSetting::Overwriting INI game settings");
             try
-            {   //  Read settings from JSON file                
+            {
                 SaveSettings read = (SaveSettings)CreateJsonObj(jsonString);
                 masterVolume = read.masterVolume;
                 renderDistance = read.renderDistance;
@@ -115,26 +88,23 @@ namespace GameFramework.External
             //     ", Preset " + currentQualityLevel + ", RenderDist : " + renderDistance + ", ShadowDist : " + shadowDist +
             //     ", cascade " + shadowCascade + ", MSAA : " + msaa + ", aniso : " + anisoLevel + ", texture limit : " + textureLimit);
 
-            //  Overwrite Game Settings
-            GameSettingsManager.masterVolumeINI = masterVolume;
-            GameSettingsManager.vsyncINI = vsync;
-            GameSettingsManager.msaaINI = msaa;
-            GameSettingsManager.renderDistINI = renderDistance;
-            GameSettingsManager.textureLimitINI = textureLimit;
-            GameSettingsManager.shadowDistINI = shadowDist;
-            GameSettingsManager.shadowCascadeINI = shadowCascade;
-            GameSettingsManager.anisoFilterLevelINI = anisoLevel;
-            GameSettingsManager.currentQualityLevelINI = currentQualityLevel;
-            GameSettingsManager.settingsLoadedINI = true;
+            GameSettingsManager.MasterVolumeIni = masterVolume;
+            GameSettingsManager.VsyncIni = vsync;
+            GameSettingsManager.MsaaIni = msaa;
+            GameSettingsManager.RenderDistIni = renderDistance;
+            GameSettingsManager.TextureLimitIni = textureLimit;
+            GameSettingsManager.ShadowDistIni = shadowDist;
+            GameSettingsManager.ShadowCascadeIni = shadowCascade;
+            GameSettingsManager.AnisoFilterLevelIni = anisoLevel;
+            GameSettingsManager.CurrentQualityLevelIni = currentQualityLevel;
+            GameSettingsManager.SettingsLoadedIni = true;
         }
 
-        bool VerifyDirectory(string filePath)
+        private bool VerifyDirectory(string filePath)
         {
-            if (File.Exists(filePath)) { return true; }
-            else { return false; }
+            return File.Exists(filePath);
         }
-
-
+        
         #region External JS LIBRARY
 #if UNITY_WEBGL && !UNITY_EDITOR
         [System.Runtime.InteropServices.DllImport("__Internal")]
@@ -143,27 +113,14 @@ namespace GameFramework.External
         static extern void SyncPersistantData();
 
 
-        public void Initialize()
-        {
-            InitilaizeJsLib();
-        }
+        public void Initialize() { InitilaizeJsLib(); }
 
-        public void Sync()
-        {
-            //  Unity WebGL stores all files that must persist between sessions to the browser IndexedDB.
-            //  This function makes sure Unity flushes all pending file system write operations to the IndexedDB file system from memory   
-            SyncPersistantData();
-        }
+        //  Unity WebGL stores all files that must persist between sessions to the browser IndexedDB.
+        //  This function makes sure Unity flushes all pending file system write operations to the IndexedDB file system from memory   
+        public void Sync() { SyncPersistantData(); }
 #else
-        public void Initialize()
-        {
-            LoadGameSettings();
-        }
-
-        public void Sync()
-        {
-            Debug.Log("WebGL is not enabled -SyncPersistantData");
-        }
+        public void Initialize() {  LoadGameSettings();  }
+        public void Sync() { }
 #endif
         #endregion
     }

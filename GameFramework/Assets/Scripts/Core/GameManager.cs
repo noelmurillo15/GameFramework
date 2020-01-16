@@ -1,6 +1,7 @@
 ﻿/*
-    *   GameManager - Backbone of the game application
-    *   Created by : Allan N. Murillo
+ *   GameManager - Backbone of the game application
+ *   TODO : Use a preload scene for persistent manager
+ *   Created by : Allan N. Murillo
  */
 using System;
 using UnityEngine;
@@ -10,29 +11,20 @@ namespace GameFramework.Core
 {
     public sealed class GameManager : MonoBehaviour
     {
-        private static GameManager _instance;
-        public static GameManager Instance
-        {  get  {  if (_instance == null) { _instance = FindObjectOfType<GameManager>(); }  return _instance;  }  }
-        
-        [HideInInspector] public SceneTransitionManager sceneTransitionManager = null;
-        public GameEvent onApplicationQuitEvent = null;
+        public static GameManager Instance { get; private set; }
 
-        private SaveSettings _saveSettings = null;
         private float _deltaTime = 0.0f;
-        private bool _displayFps = false;
+        private SaveSettings _saveSettings = null;
+        [SerializeField] private bool displayFps = false;
+        [SerializeField] private GameEvent onApplicationQuitEvent = null;
+        [HideInInspector] public SceneTransitionManager sceneTransitionManager = null;
         
-        [HideInInspector] public bool isInventoryUiNotNull = false;
-        public bool IsMenuUiActive { get; set; } = false;
 
-        
         private void Awake()
         {
-            if (_instance != null && _instance != this) { Destroy(gameObject); return; }
+            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             DontDestroyOnLoad(gameObject);
-            _instance = this;
-            
-            _displayFps = true;
-            IsMenuUiActive = false;
+            Instance = this;
             
             GameSettingsManager.SettingsLoadedIni = false;
             _saveSettings = new SaveSettings();
@@ -42,17 +34,18 @@ namespace GameFramework.Core
             sceneTransitionManager.ScreenMaskBrightness = 0f;
             
             if (Application.platform == RuntimePlatform.WebGLPlayer) return;
-            if (sceneTransitionManager != null) { sceneTransitionManager.Initialize(); }
+            sceneTransitionManager.Initialize();
         }
 
         private void Update()
         {
+            if (!displayFps) return;
             _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
         }
 
         private void OnGUI()
         {
-            if (!_displayFps) return;
+            if (!displayFps) return;
             var style = new GUIStyle();
             int w = Screen.width, h = Screen.height;
             h *= 2 / 100;
@@ -66,24 +59,13 @@ namespace GameFramework.Core
             GUI.Label(rect, text, style);
         }
 
-        #region Game Settings
-        public void LoadSettingsFromIndexedDb()
-        {    //    When playing in WebGL, a Javascript plugin will initialize SceneLoader via LoadSettingsFromIndexedDb()
-            _saveSettings.LoadGameSettings();
-            if (sceneTransitionManager != null) { sceneTransitionManager.Initialize(); }
-        }
-        #endregion
-
-        #region Game Events
         public void StartGameEvent()
         {
-            IsMenuUiActive = false;
             sceneTransitionManager.LoadLevel(2);
         }
 
         public void LoadMainMenuEvent()
         {
-            IsMenuUiActive = true;
             sceneTransitionManager.LoadMainMenu();
         }
 
@@ -96,20 +78,25 @@ namespace GameFramework.Core
         {
             _saveSettings.SaveGameSettings();
             yield return sceneTransitionManager.FadeOut(3f);
-            if (onApplicationQuitEvent != null) { onApplicationQuitEvent.Raise(); }
+            onApplicationQuitEvent.Raise();
             sceneTransitionManager.LoadCreditsScene();
         }
 
         private void OnDestroy()
         {
             if (Instance != this) return;
-            if (onApplicationQuitEvent != null) { onApplicationQuitEvent.UnregisterAllListeners(); }
+            onApplicationQuitEvent.UnregisterAllListeners();
             Resources.UnloadUnusedAssets();
             GC.Collect();
         }
-        #endregion                
 
         #region External JavaScript Library
+        public void LoadSettingsFromIndexedDb()
+        {    //    When playing in WebGL, a Javascript plugin will initialize SceneLoader via LoadSettingsFromIndexedDb()
+            _saveSettings.LoadGameSettings();
+            sceneTransitionManager.Initialize();
+        }
+        
 #if UNITY_WEBGL && !UNITY_EDITOR
         [System.Runtime.InteropServices.DllImport("__Internal")]
         static extern void QuitGame();

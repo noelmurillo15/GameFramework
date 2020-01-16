@@ -1,6 +1,6 @@
 ﻿/*
-    *   SceneTransitionManager - Used for async scene transitions
-    *   Created by : Allan N. Murillo
+ *    SceneTransitionManager - Used for async scene transitions
+ *    Created by : Allan N. Murillo
  */
 using System.IO;
 using UnityEngine;
@@ -12,6 +12,11 @@ namespace GameFramework.Core
     [RequireComponent(typeof(CanvasGroup))]
     public class SceneTransitionManager : MonoBehaviour
     {
+        [Header("Scene Names")]
+        [SerializeField] private string splashScreenSceneName = "SplashScreen";
+        [SerializeField] private string mainMenuSceneName = "MainMenu";
+        [SerializeField] private string creditsSceneName = "Credits";
+        [Space][Header("Scene Transition Fade")]
         [SerializeField] private CanvasGroup canvasGroup;
         [SerializeField] private float fadeOutDelay = 1.5f;
         [SerializeField] private float fadeInDelay = 0.5f;
@@ -33,7 +38,8 @@ namespace GameFramework.Core
         private string[] _sceneNames = null;
         private Coroutine _currentFade = null;
         
-
+        //    TODO : Make a separate unified game settings scene and use additive scene loading when you need pause or main menu
+        //    TODO : Screen Fade should be an animation controlling the canvas group alpha
         private void Awake()
         {
             canvasGroup = GetComponent<CanvasGroup>();
@@ -49,18 +55,18 @@ namespace GameFramework.Core
             {
                 _sceneNames[i] = Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i));
             }
-            if (GetCurrentSceneName() != "SplashScreen") return;
+            if (GetCurrentSceneName() != splashScreenSceneName) return;
             LoadMainMenu();
         }
 
         public void LoadMainMenu()
         {
-            StartCoroutine(LoadNewScene("MainMenu"));
+            StartCoroutine(LoadNewScene(mainMenuSceneName));
         }
 
         public void LoadCreditsScene()
         {
-            StartCoroutine(LoadNewScene("ExitScreen"));
+            StartCoroutine(LoadNewScene(creditsSceneName));
         }
 
         public void LoadLevel(int index)
@@ -78,6 +84,11 @@ namespace GameFramework.Core
         public static string GetCurrentSceneName()
         {
             return SceneManager.GetActiveScene().name;
+        }
+
+        public static bool IsMainMenuSceneActive()
+        {
+            return GetCurrentSceneName() == "MainMenu";
         }
 
         private IEnumerator LoadNewScene(int index)

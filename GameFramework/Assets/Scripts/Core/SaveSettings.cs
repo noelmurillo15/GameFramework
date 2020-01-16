@@ -43,7 +43,7 @@ namespace GameFramework.Core
             if (VerifyDirectory(path)) { File.Delete(path); }
 
             masterVolume = GameSettingsManager.MasterVolumeIni;
-            vsync = GameSettingsManager.VsyncIni;
+            vsync = GameSettingsManager.VSyncIni;
             msaa = GameSettingsManager.MsaaIni;
             renderDistance = GameSettingsManager.RenderDistIni;
             textureLimit = GameSettingsManager.TextureLimitIni;
@@ -89,7 +89,7 @@ namespace GameFramework.Core
             //     ", cascade " + shadowCascade + ", MSAA : " + msaa + ", aniso : " + anisoLevel + ", texture limit : " + textureLimit);
 
             GameSettingsManager.MasterVolumeIni = masterVolume;
-            GameSettingsManager.VsyncIni = vsync;
+            GameSettingsManager.VSyncIni = vsync;
             GameSettingsManager.MsaaIni = msaa;
             GameSettingsManager.RenderDistIni = renderDistance;
             GameSettingsManager.TextureLimitIni = textureLimit;

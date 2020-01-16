@@ -1,9 +1,8 @@
 ﻿/*
-    *   GameSettingsManager - Manages GameSettings UI & Functionality
-    *   Created by : Allan N. Murillo
+ *    GameSettingsManager - Manages GameSettings UI & Functionality
+ *    Created by : Allan N. Murillo
  */
 using TMPro;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
@@ -24,12 +23,10 @@ namespace GameFramework.Core
         [SerializeField] private Animator vidPanelAnimator = null;
 
         [SerializeField] private Camera mainCam = null;
-        [SerializeField] private String mainMenuSceneName = string.Empty;
         [SerializeField] private float timeScale = 1f;
 
-        [SerializeField] private TMP_Text pauseMenuTitleText = null;
-        [SerializeField] private Dropdown aaCombo = null;
-        [SerializeField] private Dropdown afCombo = null;
+        [SerializeField] private TMP_Dropdown aaCombo = null;
+        [SerializeField] private TMP_Dropdown afCombo = null;
         [SerializeField] private Slider renderDistSlider = null;
         [SerializeField] private Slider shadowDistSlider = null;
         [SerializeField] private Slider audioMasterVolumeSlider = null;
@@ -45,7 +42,7 @@ namespace GameFramework.Core
         private GameManager _gameManager = null;
         internal static float MasterVolumeIni;
         internal static int CurrentQualityLevelIni;
-        internal static bool VsyncIni;
+        internal static bool VSyncIni;
         internal static int MsaaIni;
         internal static float RenderDistIni;
         internal static float ShadowDistIni;
@@ -62,41 +59,17 @@ namespace GameFramework.Core
                 titleTexts.transform.GetChild(0).GetComponent<TMP_Text>().text = Application.productName;
             }
 
-            Time.timeScale = timeScale;
+            Resume();
             _presets = QualitySettings.names;
-            pauseMenuTitleText.text = "Main Menu";
-
             _gameManager = GameManager.Instance;
 
-            //  TODO : Create an audio setting for BG music
-            if (bgMusic != null) { bgMusic.volume = 0.8f; }
-
-            if (SceneTransitionManager.GetCurrentSceneName() == mainMenuSceneName)
-            {   //  Loaded Main Menu Scene                
-                _gameManager.IsMenuUiActive = true;
-                mask.SetActive(true);
-                mainPanel.SetActive(true);
-                titleTexts.SetActive(true);
-                audioPanel.SetActive(false);
-                vidPanel.SetActive(false);
-            }
-            else
-            {   //  Loaded a Level Scene
-                _gameManager.IsMenuUiActive = false;
-                mask.SetActive(false);
-                mainPanel.SetActive(false);
-                titleTexts.SetActive(false);
-                audioPanel.SetActive(false);
-                vidPanel.SetActive(false);
-            }
-
-            if (!SettingsLoadedIni) { DefaultSettings(); }
+            if (!SettingsLoadedIni) DefaultSettings();
             ApplyIniSettings();
         }
 
         public void Update()
         {
-            if (!Input.GetKeyDown(KeyCode.Escape) || _gameManager.IsMenuUiActive) return;
+            if (!Input.GetKeyDown(KeyCode.Escape)) return;
             if (mainPanel.activeSelf == false) { Pause(); }
             else { Resume(); }
         }
@@ -107,8 +80,9 @@ namespace GameFramework.Core
             _gameManager.StartGameEvent();
         }
 
-        public void Pause()
+        private void Pause()
         {
+            if (SceneTransitionManager.IsMainMenuSceneActive()) return;
             Time.timeScale = 0;
             mainPanel.SetActive(true);
             vidPanel.SetActive(false);
@@ -119,6 +93,7 @@ namespace GameFramework.Core
 
         public void Resume()
         {
+            if (SceneTransitionManager.IsMainMenuSceneActive()) return;
             Time.timeScale = timeScale;
             mainPanel.SetActive(false);
             vidPanel.SetActive(false);
@@ -168,13 +143,12 @@ namespace GameFramework.Core
         {
             vidPanel.SetActive(false);
             audioPanel.SetActive(true);
-            if (!_gameManager.IsMenuUiActive) { mainPanel.SetActive(false); }
+            mainPanel.SetActive(false);
             AudioPanelIn();
         }
 
-        public void AudioPanelIn()
+        private void AudioPanelIn()
         {
-            pauseMenuTitleText.text = "Audio Menu";
             if (audioPanelAnimator == null) return;
             audioPanelAnimator.enabled = true;
             audioPanelAnimator.Play("Audio Panel In");
@@ -197,7 +171,6 @@ namespace GameFramework.Core
             MasterVolumeIni = audioMasterVolumeSlider.value;
 
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
-            pauseMenuTitleText.text = "Main Menu";
             vidPanel.SetActive(false);
             audioPanel.SetActive(false);
             mainPanel.SetActive(true);
@@ -210,7 +183,6 @@ namespace GameFramework.Core
             audioMasterVolumeSlider.value = MasterVolumeIni;
 
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
-            pauseMenuTitleText.text = "Main Menu";
             vidPanel.SetActive(false);
             audioPanel.SetActive(false);
             mainPanel.SetActive(true);
@@ -219,16 +191,15 @@ namespace GameFramework.Core
 
         #region Video Panel
         public void Video()
-        {   //  Turn On/Off Panels
+        {
             vidPanel.SetActive(true);
             audioPanel.SetActive(false);
-            if (!_gameManager.IsMenuUiActive) { mainPanel.SetActive(false); }
+            mainPanel.SetActive(false);
             VideoPanelIn();
         }
 
-        public void VideoPanelIn()
+        private void VideoPanelIn()
         {
-            pauseMenuTitleText.text = "Video Menu";
             if (vidPanelAnimator == null) return;
             vidPanelAnimator.enabled = true;
             vidPanelAnimator.Play("Video Panel In");
@@ -249,7 +220,7 @@ namespace GameFramework.Core
             if (vidPanelAnimator != null) { vidPanelAnimator.Play("Video Panel Out"); }
 
             CurrentQualityLevelIni = QualitySettings.GetQualityLevel();
-            VsyncIni = vSyncToggle.isOn;
+            VSyncIni = vSyncToggle.isOn;
             MsaaIni = aaCombo.value;
             AnisoFilterLevelIni = afCombo.value;
             RenderDistIni = renderDistSlider.value;
@@ -258,7 +229,6 @@ namespace GameFramework.Core
             ShadowCascadeIni = (int)shadowCascadesSlider.value;
 
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
-            pauseMenuTitleText.text = "Main Menu";
             vidPanel.SetActive(false);
             audioPanel.SetActive(false);
             mainPanel.SetActive(true);
@@ -269,7 +239,7 @@ namespace GameFramework.Core
             if (vidPanelAnimator != null) { vidPanelAnimator.Play("Video Panel Out"); }
 
             QualitySettings.SetQualityLevel(CurrentQualityLevelIni);
-            vSyncToggle.isOn = VsyncIni;
+            vSyncToggle.isOn = VSyncIni;
             aaCombo.value = MsaaIni;
             afCombo.value = AnisoFilterLevelIni;
             renderDistSlider.value = RenderDistIni;
@@ -278,7 +248,6 @@ namespace GameFramework.Core
             shadowCascadesSlider.value = ShadowCascadeIni;
 
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
-            pauseMenuTitleText.text = "Main Menu";
             vidPanel.SetActive(false);
             audioPanel.SetActive(false);
             mainPanel.SetActive(true);
@@ -311,7 +280,7 @@ namespace GameFramework.Core
 
         public void UpdateTex(float textureQuality)
         {
-            int f = Mathf.RoundToInt(textureQuality);
+            var f = Mathf.RoundToInt(textureQuality);
             QualitySettings.masterTextureLimit = f;
         }
 
@@ -353,7 +322,7 @@ namespace GameFramework.Core
 
         public void UpdateCascades(float cascades)
         {
-            int c = Mathf.RoundToInt(cascades);
+            var c = Mathf.RoundToInt(cascades);
             switch (c)
             {
                 case 1:
@@ -406,7 +375,7 @@ namespace GameFramework.Core
         public void NextPreset()
         {
             QualitySettings.IncreaseLevel();
-            int cur = QualitySettings.GetQualityLevel();
+            var cur = QualitySettings.GetQualityLevel();
             presetLabel.text = _presets[cur];
             shadowDistSlider.value = shadowDist[cur];
             aaCombo.value = cur;
@@ -415,7 +384,7 @@ namespace GameFramework.Core
         public void LastPreset()
         {
             QualitySettings.DecreaseLevel();
-            int cur = QualitySettings.GetQualityLevel();
+            var cur = QualitySettings.GetQualityLevel();
             presetLabel.text = _presets[cur];
             shadowDistSlider.value = shadowDist[cur];
             aaCombo.value = cur;
@@ -426,10 +395,12 @@ namespace GameFramework.Core
 
         private void DefaultSettings()
         {
-            MasterVolumeIni = 0.75f;
+            MasterVolumeIni = 0.8f;
+            //    TODO : Separate this value with its own slider
+            if (bgMusic != null) { bgMusic.volume = MasterVolumeIni; }
             CurrentQualityLevelIni = _presets.Length - 1;
             MsaaIni = 2;
-            VsyncIni = true;
+            VSyncIni = true;
             AnisoFilterLevelIni = 1;
             RenderDistIni = 800.0f;
             ShadowDistIni = shadowDist[CurrentQualityLevelIni];
@@ -463,18 +434,18 @@ namespace GameFramework.Core
                 presetLabel.text = _presets[CurrentQualityLevelIni];
             }
 
-            if (VsyncIni && QualitySettings.vSyncCount == 0)
+            if (VSyncIni && QualitySettings.vSyncCount == 0)
             {
                 QualitySettings.vSyncCount = 1;
             }
-            else if (!VsyncIni && QualitySettings.vSyncCount > 0)
+            else if (!VSyncIni && QualitySettings.vSyncCount > 0)
             {
                 QualitySettings.vSyncCount = 0;
             }
-            if (vSyncToggle.isOn != VsyncIni)
+            if (vSyncToggle.isOn != VSyncIni)
             {
                 MuteEventListener(vSyncToggle.onValueChanged);
-                vSyncToggle.isOn = VsyncIni;
+                vSyncToggle.isOn = VSyncIni;
                 UnMuteEventListener(vSyncToggle.onValueChanged);
             }
 
@@ -571,8 +542,8 @@ namespace GameFramework.Core
 
         private static void MuteEventListener(UnityEngine.Events.UnityEventBase eventBase)
         {
-            int count = eventBase.GetPersistentEventCount();
-            for (int x = 0; x < count; x++)
+            var count = eventBase.GetPersistentEventCount();
+            for (var x = 0; x < count; x++)
             {
                 eventBase.SetPersistentListenerState(x, UnityEngine.Events.UnityEventCallState.Off);
             }
@@ -580,8 +551,8 @@ namespace GameFramework.Core
 
         private static void UnMuteEventListener(UnityEngine.Events.UnityEventBase eventBase)
         {
-            int count = eventBase.GetPersistentEventCount();
-            for (int x = 0; x < count; x++)
+            var count = eventBase.GetPersistentEventCount();
+            for (var x = 0; x < count; x++)
             {
                 eventBase.SetPersistentListenerState(x, UnityEngine.Events.UnityEventCallState.RuntimeOnly);
             }

@@ -10,6 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a703e82492520042b54833ceb5b8514, type: 3}
-  m_Name: onApplicationQuit
+  m_Name: onFinishSceneTransition
   m_EditorClassIdentifier: 
-  eventName: Application Quit
+  eventName: Finish Scene Transition

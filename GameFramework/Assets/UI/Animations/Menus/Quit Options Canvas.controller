@@ -6,7 +6,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Quit Panel
+  m_Name: Quit Options Canvas
   serializedVersion: 5
   m_AnimatorParameters: []
   m_AnimatorLayers:

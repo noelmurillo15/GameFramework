@@ -15,36 +15,24 @@ namespace ANM.Framework
     public class SceneTransitionManager : MonoBehaviour
     {
         [SerializeField] private CanvasGroup canvasGroup;
-        [SerializeField] private float fadeOutDelay = 2f;
+        [SerializeField] private float fadeOutDelay = 1.5f;
         [SerializeField] private float fadeInDelay = 0.5f;
-
-        private const string MenuUiSceneName = "Menu Ui";
-        private const string CreditsSceneName = "ExitScreen";
-        private const string GameplaySceneName = "Level 1";
-        
-        
-        public float ScreenMaskBrightness
-        {
-            get => _screenMaskBrightness;
-            set
-            {
-                _screenMaskBrightness = value;
-                FadeInImmediate();
-            }
-        }
-        private float _screenMaskBrightness = 0.5f;
 
         public GameEvent onLoadScene;
         public GameEvent onFinishLoadScene;
         
-        [SerializeField] private string[] _sceneNames = null;
-        private Coroutine _currentFade = null;
+        private const string MenuUiSceneName = "Menu Ui";
+        private const string CreditsSceneName = "Credits";
+        private const string GameplaySceneName = "Level 1";
+        
+        private string[] _sceneNames;
+        private Coroutine _currentFade;
         
 
         private void Start()
         {
-            FadeInImmediate();
             canvasGroup = GetComponent<CanvasGroup>();
+            FadeInImmediate();
             
             var sceneNumber = SceneManager.sceneCountInBuildSettings;
             _sceneNames = new string[sceneNumber];
@@ -52,25 +40,10 @@ namespace ANM.Framework
                 _sceneNames[i] = Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i));
             
             if (IsThisSceneActive(MenuUiSceneName)) return;
-            LoadMenuUi();
+            LoadMenu();
         }
         
-        public static bool IsMainMenuActive()
-        {
-            return IsThisSceneActive(MenuUiSceneName);
-        }
-        
-        private static string GetCurrentSceneName()
-        {
-            return SceneManager.GetActiveScene().name;
-        }
-        
-        private static bool IsThisSceneActive(string sceneName)
-        {
-            return GetCurrentSceneName().Contains(sceneName);
-        }
-        
-        private void LoadMenuUi()
+        private void LoadMenu()
         {
             if (SceneManager.GetSceneByName(MenuUiSceneName).isLoaded) return;
             SceneManager.LoadSceneAsync(MenuUiSceneName, LoadSceneMode.Additive).completed += operation =>
@@ -81,46 +54,44 @@ namespace ANM.Framework
             };
         }
         
+        public void LoadGameplay()
+        {
+            StartCoroutine(LoadMultiScene(GameplaySceneName));
+        }
+        
         public void LoadCredits()
         {
-            StartCoroutine(LoadNewScene(CreditsSceneName));
+            StartCoroutine(LoadSimpleScene(CreditsSceneName));
         }
 
         public void ReloadCurrentScene()
-        {
-            string sceneToBeReloaded = GetCurrentSceneName();
+        {    //    TODO : Currently bugged
+            var sceneToBeReloaded = GetCurrentSceneName();
             if (SceneManager.SetActiveScene(SceneManager.GetSceneByName(MenuUiSceneName)))
             {
                 SceneManager.UnloadSceneAsync(sceneToBeReloaded).completed += operation =>
                 {
-                    StartCoroutine(LoadNewScene(sceneToBeReloaded));
+                    StartCoroutine(LoadMultiScene(sceneToBeReloaded));
                 };
             }
         }
         
-        public void LoadSceneByBuildIndex(int index)
+        public static bool IsMainMenuActive()
         {
-            if (index > _sceneNames.Length - 1 || index < 0)
-            {
-                Debug.Log("Scene Index out of range : " + index);
-            }
-            else
-            {
-                StartCoroutine(LoadNewScene(index));
-            }
+            return IsThisSceneActive(MenuUiSceneName);
         }
-        
-        public void SwitchToLoadedScene(string sceneName)
+
+        public static void SwitchToLoadedScene(string sceneName)
         {
             if (!SceneManager.GetSceneByName(sceneName).isLoaded) return;
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
         }
 
-        public void UnloadAllSceneExcept(string sceneName)
+        public static void UnloadAllSceneExceptMenu()
         {
             for (var i = 0; i < SceneManager.sceneCount; i++)
             {
-                if (SceneManager.GetSceneAt(i).name ==  sceneName)
+                if (SceneManager.GetSceneAt(i).name.Contains(MenuUiSceneName))
                 {
                     SceneManager.SetActiveScene(SceneManager.GetSceneAt(i));
                     continue;
@@ -133,39 +104,37 @@ namespace ANM.Framework
                 }
             }
         }
-        
-        private IEnumerator LoadNewScene(int index)
-        {
-            onLoadScene.Raise();
-            yield return FadeOut();
-            AsyncOperation async = SceneManager.LoadSceneAsync(index, LoadSceneMode.Additive);
-            while (!async.isDone) { yield return null; }
-            SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(index));
-            onFinishLoadScene.Raise();
-            yield return FadeIn(fadeInDelay);
-        }
 
-        private IEnumerator LoadNewScene(string sceneName)
+        private IEnumerator LoadMultiScene(string sceneName)
         {
-            onLoadScene.Raise();
             yield return FadeOut();
-            AsyncOperation async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-            while (!async.isDone) { yield return null; }
+            onLoadScene.Raise();
+            yield return LoadAdditiveScene(sceneName);
+            onFinishLoadScene.Raise();
+            yield return FadeIn();
+        }
+        
+        private static IEnumerator LoadAdditiveScene(string sceneName)
+        {
+            yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
-            onFinishLoadScene.Raise();
-            yield return FadeIn(fadeInDelay);
         }
         
-        public void LoadSceneEvent()
-        {    //    Handled by onStartSceneTransition ScriptableObject
-            GameManager.Instance.IsSceneTransitioning = true;
+        private static IEnumerator LoadSimpleScene(string sceneName)
+        {
+            yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+        }
+        
+        private static string GetCurrentSceneName()
+        {
+            return SceneManager.GetActiveScene().name;
+        }
+        
+        private static bool IsThisSceneActive(string sceneName)
+        {
+            return GetCurrentSceneName().Contains(sceneName);
         }
 
-        public void FinishLoadSceneEvent()
-        {    //    Handled by onFinishSceneTransition ScriptableObject
-            GameManager.Instance.IsSceneTransitioning = false;
-        }
-        
         #region Screen Fade
         private void FadeOutImmediate()
         {
@@ -174,7 +143,7 @@ namespace ANM.Framework
         
         private void FadeInImmediate()
         {
-            canvasGroup.alpha = ScreenMaskBrightness;
+            canvasGroup.alpha = 0f;
         }
 
         public Coroutine FadeOut()
@@ -182,9 +151,9 @@ namespace ANM.Framework
             return Fade(1f, fadeOutDelay);
         }
 
-        private Coroutine FadeIn(float time)
+        private Coroutine FadeIn()
         {
-            return Fade(ScreenMaskBrightness, time);
+            return Fade(0f, fadeInDelay);
         }
 
         private Coroutine Fade(float target, float time)

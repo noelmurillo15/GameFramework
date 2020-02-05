@@ -186,7 +186,7 @@ PrefabInstance:
     - target: {fileID: 9134924182243395236, guid: 43fece8ebee45824394b99111301a7f3,
         type: 3}
       propertyPath: m_Name
-      value: Credits Scene
+      value: CreditsScene
       objectReference: {fileID: 0}
     - target: {fileID: 9134924183922800388, guid: 43fece8ebee45824394b99111301a7f3,
         type: 3}

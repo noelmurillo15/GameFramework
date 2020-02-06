@@ -11,10 +11,8 @@ namespace ANM.Framework
 {
     public sealed class GameManager : MonoBehaviour
     {
-        private static GameManager _instance;
-        public static GameManager Instance
-        {  get  {  if (_instance == null) { _instance = FindObjectOfType<GameManager>(); }  return _instance;  }  }
-        
+        public static GameManager Instance { get; private set; }
+
         [HideInInspector] public SceneTransitionManager sceneTransitionManager = null;
         public GameEvent onApplicationQuitEvent = null;
         
@@ -29,9 +27,9 @@ namespace ANM.Framework
 
         private void Awake()
         {
-            if (_instance != null && _instance != this) { Destroy(gameObject); return; }
+            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             DontDestroyOnLoad(gameObject);
-            _instance = this;
+            Instance = this;
             
             SaveSettings.SettingsLoadedIni = false;
             _saveSettings = new SaveSettings();
@@ -39,31 +37,9 @@ namespace ANM.Framework
 
             sceneTransitionManager = gameObject.GetComponentInChildren<SceneTransitionManager>();
             sceneTransitionManager.ScreenMaskBrightness = 0f;
-            Time.timeScale = 1;
+            Reset();
         }
-
-        public void Reset()
-        {
-            Time.timeScale = 1;
-            _isGamePaused = false;
-        }
-
-        public void OnPauseEvent()
-        {
-            SwitchToLoadedScene("Menu Ui");
-            SetIsGamePaused(true);
-            _displayFps = false;
-            Time.timeScale = 0;
-        }
-
-        public void OnResumeEvent()
-        {
-            SwitchToLoadedScene("Level 1");
-            SetIsGamePaused(false);
-            _displayFps = true;
-            Time.timeScale = 1;
-        }
-
+        
         private void Update()
         {
             _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
@@ -83,6 +59,24 @@ namespace ANM.Framework
             var fps = 1.0f / _deltaTime;
             var text = $"{msecs:0.0} ms ({fps:0.} fps)";
             GUI.Label(rect, text, style);
+        }
+
+        public void Reset()
+        {
+            Time.timeScale = 1;
+            _isGamePaused = false;
+        }
+
+        public void OnPauseEvent()
+        {
+            SwitchToLoadedScene("Menu Ui");
+            SetIsGamePaused(true);
+        }
+
+        public void OnResumeEvent()
+        {
+            SwitchToLoadedScene("Level 1");
+            SetIsGamePaused(false);
         }
 
         #region Game Settings
@@ -128,7 +122,7 @@ namespace ANM.Framework
 
         public void UnloadAllLoadedScenes()
         {
-            sceneTransitionManager.UnloadAllSceneExcept("ExitScreen");
+            sceneTransitionManager.UnloadAllSceneExcept("Credits");
         }
 
         public void UnloadScenesExceptMenu()
@@ -154,6 +148,7 @@ namespace ANM.Framework
         public void SetIsGamePaused(bool b)
         {
             _isGamePaused = b;
+            //Time.timeScale = b ? 0 : 1;
         }
 
         #region External JavaScript Library

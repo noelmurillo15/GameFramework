@@ -15,11 +15,11 @@ namespace ANM.Framework
     public class SceneTransitionManager : MonoBehaviour
     {
         [SerializeField] private CanvasGroup canvasGroup;
-        [SerializeField] private float fadeOutDelay = 2f;
+        [SerializeField] private float fadeOutDelay = 1.5f;
         [SerializeField] private float fadeInDelay = 0.5f;
 
         private const string MenuUiSceneName = "Menu Ui";
-        private const string CreditsSceneName = "ExitScreen";
+        private const string CreditsSceneName = "Credits";
         private const string GameplaySceneName = "Level 1";
         
         
@@ -136,36 +136,24 @@ namespace ANM.Framework
         
         private IEnumerator LoadNewScene(int index)
         {
-            onLoadScene.Raise();
             yield return FadeOut();
-            AsyncOperation async = SceneManager.LoadSceneAsync(index, LoadSceneMode.Additive);
-            while (!async.isDone) { yield return null; }
+            onLoadScene.Raise();
+            yield return SceneManager.LoadSceneAsync(index, LoadSceneMode.Additive);
             SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(index));
             onFinishLoadScene.Raise();
-            yield return FadeIn(fadeInDelay);
+            yield return FadeIn();
         }
 
         private IEnumerator LoadNewScene(string sceneName)
         {
-            onLoadScene.Raise();
             yield return FadeOut();
-            AsyncOperation async = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-            while (!async.isDone) { yield return null; }
+            onLoadScene.Raise();
+            yield return SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
             SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
             onFinishLoadScene.Raise();
-            yield return FadeIn(fadeInDelay);
-        }
-        
-        public void LoadSceneEvent()
-        {    //    Handled by onStartSceneTransition ScriptableObject
-            GameManager.Instance.IsSceneTransitioning = true;
+            yield return FadeIn();
         }
 
-        public void FinishLoadSceneEvent()
-        {    //    Handled by onFinishSceneTransition ScriptableObject
-            GameManager.Instance.IsSceneTransitioning = false;
-        }
-        
         #region Screen Fade
         private void FadeOutImmediate()
         {
@@ -174,7 +162,7 @@ namespace ANM.Framework
         
         private void FadeInImmediate()
         {
-            canvasGroup.alpha = ScreenMaskBrightness;
+            canvasGroup.alpha = 0f;
         }
 
         public Coroutine FadeOut()
@@ -182,9 +170,9 @@ namespace ANM.Framework
             return Fade(1f, fadeOutDelay);
         }
 
-        private Coroutine FadeIn(float time)
+        private Coroutine FadeIn()
         {
-            return Fade(ScreenMaskBrightness, time);
+            return Fade(0f, fadeInDelay);
         }
 
         private Coroutine Fade(float target, float time)

@@ -102,16 +102,24 @@ namespace ANM.Framework
 
         public void Pause()
         {
+            onGamePauseEvent.Raise();
+        }
+        
+        public void OnPauseEvent()
+        {
             menuUiCamera.gameObject.SetActive(true);
             TurnOnMainPanel();
-            onGamePauseEvent.Raise();
         }
 
         public void Resume()
         {
             onGameResumeEvent.Raise();
-            menuUiCamera.gameObject.SetActive(false);
+        }
+
+        public void OnResumeEvent()
+        {
             TurnOffAllPanels();
+            menuUiCamera.gameObject.SetActive(false);
         }
 
         public void QuitOptions()

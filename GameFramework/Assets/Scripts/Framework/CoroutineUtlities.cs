@@ -9,11 +9,8 @@ namespace ANM.Framework
         {
             while (true)
             {
-                float pauseEndTime = Time.realtimeSinceStartup + delay;
-                while (Time.realtimeSinceStartup < pauseEndTime)
-                {
-                    yield return 0;
-                }
+                var endTime = Time.realtimeSinceStartup + delay;
+                while (Time.realtimeSinceStartup < endTime) yield return 0;
                 break;
             }
         }

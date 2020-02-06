@@ -8,7 +8,6 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 
 namespace ANM.Framework
@@ -52,6 +51,7 @@ namespace ANM.Framework
         [SerializeField] private Button videoPanelSelectedObj = null;
         [SerializeField] private Button quitPanelSelectedObj = null;
 
+        private SceneTransitionManager _sceneTransition;
         private PlayerControls _controls;
         private EventSystem _eventSystem;
         private GameManager _gameManager;
@@ -70,7 +70,7 @@ namespace ANM.Framework
         private void Start()
         {
             _gameManager = GameManager.Instance;
-            _gameManager.SwitchToLoadedScene("Level 1");
+            SceneTransitionManager.SwitchToLoadedScene(GameManager.GameplaySceneName);
             _gameManager.SetIsMainMenuActive(SceneTransitionManager.IsMainMenuActive());
 
             var isMainMenu = _gameManager.GetIsMainMenuActive();
@@ -79,6 +79,8 @@ namespace ANM.Framework
 
             UpdateSelectedObject(isMainMenu ? 
                 mainPanelSelectedObj : pausePanelSelectedObj);
+
+            _sceneTransition = _gameManager.GetComponentInChildren<SceneTransitionManager>();
             
             pausePanel.SetActive(false);
             videoPanel.SetActive(false);
@@ -123,7 +125,7 @@ namespace ANM.Framework
         #region Menu UI Interactions
         public void StartGame()
         {
-            _gameManager.StartGameEvent();
+            StartCoroutine(_sceneTransition.LoadMultiScene(GameManager.GameplaySceneName));
         }
 
         public void Pause()
@@ -133,6 +135,7 @@ namespace ANM.Framework
 
         public void OnPauseEvent()
         {
+            SceneTransitionManager.SwitchToLoadedScene(GameManager.MenuUiSceneName);
             menuUiCamera.gameObject.SetActive(true);
             TurnOnMainPanel();
         }
@@ -144,8 +147,9 @@ namespace ANM.Framework
 
         public void OnResumeEvent()
         {
-            menuUiCamera.gameObject.SetActive(false);
             TurnOffAllPanels();
+            menuUiCamera.gameObject.SetActive(false);
+            SceneTransitionManager.SwitchToLoadedScene(GameManager.GameplaySceneName);
         }
 
         public void QuitOptions()
@@ -184,7 +188,7 @@ namespace ANM.Framework
             mainPanel.SetActive(true);
             _gameManager.Reset();
             _gameManager.SetIsMainMenuActive(true);
-            _gameManager.UnloadScenesExceptMenu();
+            SceneTransitionManager.UnloadAllSceneExceptMenu();
             UpdateSelectedObject(mainPanelSelectedObj);
         }
 
@@ -214,9 +218,7 @@ namespace ANM.Framework
         public void QuitGame()
         {
             onGameResumeEvent.Raise();
-            //_gameManager.onApplicationQuitEvent.Raise();
-            //_gameManager.UnloadScenesExceptMenu();
-            _gameManager.LoadCredits();
+            StartCoroutine(SceneTransitionManager.LoadSimpleScene(GameManager.CreditsSceneName));
         }
         
         private void TurnOffAllPanels()

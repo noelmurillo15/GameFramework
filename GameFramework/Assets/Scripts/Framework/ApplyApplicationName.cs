@@ -4,7 +4,7 @@ using UnityEngine;
 namespace ANM.Framework
 {
     [RequireComponent(typeof(TMP_Text))]
-    public class ApplicationNameTMP : MonoBehaviour
+    public class ApplyApplicationName : MonoBehaviour
     {
         private void Awake()
         {

@@ -13,10 +13,13 @@ namespace ANM.Framework
     {
         public static GameManager Instance { get; private set; }
 
-        [HideInInspector] public SceneTransitionManager sceneTransitionManager = null;
-        [SerializeField] private bool _displayFps = false;
+        [SerializeField] private bool displayFps = false;
         [SerializeField] private bool _isMainMenuActive = false;
         [SerializeField] private bool _isGamePaused = false;
+        
+        public const string MenuUiSceneName = "Menu Ui";
+        public const string CreditsSceneName = "Credits";
+        public const string GameplaySceneName = "Level 1";
         
         private float _deltaTime;
         private SaveSettings _saveSettings;
@@ -31,33 +34,9 @@ namespace ANM.Framework
             SaveSettings.SettingsLoadedIni = false;
             _saveSettings = new SaveSettings();
             _saveSettings.Initialize();
-
-            sceneTransitionManager = gameObject.GetComponentInChildren<SceneTransitionManager>();
             Time.timeScale = 1;
         }
-
-        public void Reset()
-        {
-            Time.timeScale = 1;
-            _isGamePaused = false;
-        }
-
-        public void OnPauseEvent()
-        {
-            SwitchToLoadedScene("Menu Ui");
-            SetIsGamePaused(true);
-            _displayFps = false;
-            Time.timeScale = 0;
-        }
-
-        public void OnResumeEvent()
-        {
-            SwitchToLoadedScene("Level 1");
-            SetIsGamePaused(false);
-            _displayFps = true;
-            Time.timeScale = 1;
-        }
-
+        
         private void Update()
         {
             _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
@@ -65,7 +44,7 @@ namespace ANM.Framework
 
         private void OnGUI()
         {
-            if (!_displayFps) return;
+            if (!displayFps) return;
             var style = new GUIStyle();
             int w = Screen.width, h = Screen.height;
             h *= 2 / 100;
@@ -79,27 +58,27 @@ namespace ANM.Framework
             GUI.Label(rect, text, style);
         }
 
+        public void Reset()
+        {
+            SetIsGamePaused(false);
+        }
+
+        public void OnPauseEvent()
+        {
+            SetIsGamePaused(true);
+        }
+
+        public void OnResumeEvent()
+        {
+            SetIsGamePaused(false);
+        }
+
         #region Game Events
-        public void StartGameEvent()
-        {
-            sceneTransitionManager.LoadGameplay();
-        }
-
-        public void ReloadScene()
-        {
-            //    TODO : Fox current reload scene function
-        }
-
         public void SaveGameSettings()
         {
             _saveSettings.SaveGameSettings();
         }
         
-        public void LoadCredits()
-        {
-            sceneTransitionManager.LoadCredits();
-        }
-
         private void OnDestroy()
         {
             if (Instance != this) return;
@@ -107,16 +86,6 @@ namespace ANM.Framework
             GC.Collect();
         }
         #endregion
-
-        public void SwitchToLoadedScene(string sceneName)
-        {
-            SceneTransitionManager.SwitchToLoadedScene(sceneName);
-        }
-
-        public void UnloadScenesExceptMenu()
-        {
-            SceneTransitionManager.UnloadAllSceneExceptMenu();
-        }
 
         public bool GetIsMainMenuActive()
         {
@@ -136,6 +105,7 @@ namespace ANM.Framework
         public void SetIsGamePaused(bool b)
         {
             _isGamePaused = b;
+            Time.timeScale = b ? 0 : 1;
         }
     }
 }

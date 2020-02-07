@@ -49,16 +49,16 @@ namespace ANM.Framework
 
         public bool LoadGameSettings()
         {
-            var path = Application.persistentDataPath + _fileName;
-            if (!VerifyDirectory(path)) return false;
-            OverwriteGameSettings(File.ReadAllText(path));
+            var filePath = Application.persistentDataPath + _fileName;
+            if (!VerifyDirectory(filePath)) return false;
+            OverwriteGameSettings(File.ReadAllText(filePath));
             return true;
         }
 
         public void SaveGameSettings()
         {
-            var path = Application.persistentDataPath + _fileName;
-            if (VerifyDirectory(path)) { File.Delete(path); }
+            var filePath = Application.persistentDataPath + _fileName;
+            if (VerifyDirectory(filePath)) { File.Delete(filePath); }
             
             masterVolume = MasterVolumeIni;
             effectVolume = EffectVolumeIni;
@@ -73,30 +73,23 @@ namespace ANM.Framework
             anisoFilterLevel = AnisoFilterLevelIni;
             
             _jsonString = JsonUtility.ToJson(this);
-            File.WriteAllText(path, _jsonString);
+            File.WriteAllText(filePath, _jsonString);
         }
 
         private void OverwriteGameSettings(string jsonString)
         {
-            try
-            {
-                SaveSettings read = (SaveSettings)CreateJsonObj(jsonString);
-                MasterVolumeIni = read.masterVolume;
-                EffectVolumeIni = read.effectVolume;
-                BackgroundVolumeIni = read.backgroundVolume;
-                RenderDistIni = read.renderDist;
-                ShadowDistIni = read.shadowDist;
-                MsaaIni = read.msaa;
-                VsyncIni = read.vsync;
-                TextureLimitIni = read.textureLimit;
-                CurrentQualityLevelIni = read.currentQualityLevel;
-                ShadowCascadeIni = read.shadowCascade;
-                AnisoFilterLevelIni = read.anisoFilterLevel;
-            }
-            catch (FileLoadException)
-            {
-                Debug.LogError("Could not read game settings from json file");
-            }
+            var jsonObj = (SaveSettings) CreateJsonObj(jsonString);
+            MasterVolumeIni = jsonObj.masterVolume;
+            EffectVolumeIni = jsonObj.effectVolume;
+            BackgroundVolumeIni = jsonObj.backgroundVolume;
+            RenderDistIni = jsonObj.renderDist;
+            ShadowDistIni = jsonObj.shadowDist;
+            MsaaIni = jsonObj.msaa;
+            VsyncIni = jsonObj.vsync;
+            TextureLimitIni = jsonObj.textureLimit;
+            CurrentQualityLevelIni = jsonObj.currentQualityLevel;
+            ShadowCascadeIni = jsonObj.shadowCascade;
+            AnisoFilterLevelIni = jsonObj.anisoFilterLevel;
         }
 
         private bool VerifyDirectory(string filePath)

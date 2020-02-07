@@ -10,8 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4584561711588576654}
   - component: {fileID: 6811511897152541556}
-  - component: {fileID: 3886840564206206538}
-  - component: {fileID: 3058153591819103670}
   m_Layer: 2
   m_Name: PersistantGameManager
   m_TagString: Untagged
@@ -47,63 +45,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneTransitionManager: {fileID: 0}
-  _displayFps: 1
-  _isMainMenuActive: 0
-  _isGamePaused: 0
---- !u!114 &3886840564206206538
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3767201531871434903}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f31f339eddb2bcd4d8be9d9c73c05819, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  event: {fileID: 11400000, guid: 2ddc1194658849545a5e09c4f0fca76f, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6811511897152541556}
-        m_MethodName: OnPauseEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!114 &3058153591819103670
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3767201531871434903}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f31f339eddb2bcd4d8be9d9c73c05819, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  event: {fileID: 11400000, guid: 94f4f5d27b45d9b4aa13ba85d2f9fee3, type: 2}
-  response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6811511897152541556}
-        m_MethodName: OnResumeEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  displayFps: 1
+  isMainMenuActive: 0
+  isGamePaused: 0
 --- !u!1 &4883749686108049239
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,7 +229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasGroup: {fileID: 2050860196882241502}
-  fadeOutDelay: 2
+  fadeOutDelay: 1.5
   fadeInDelay: 0.5
   onLoadScene: {fileID: 11400000, guid: 960ec40a11cf9704899d03535503cb53, type: 2}
   onFinishLoadScene: {fileID: 11400000, guid: 252edc7ab68f40a498f05de1f53a33d5, type: 2}

@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿/*
+ * CoroutineUtilities - Used to run co-routines when TimeScale = 0
+ */
+
+using UnityEngine;
 using System.Collections;
 
 namespace ANM.Framework
@@ -9,11 +13,8 @@ namespace ANM.Framework
         {
             while (true)
             {
-                float pauseEndTime = Time.realtimeSinceStartup + delay;
-                while (Time.realtimeSinceStartup < pauseEndTime)
-                {
-                    yield return 0;
-                }
+                var endTime = Time.realtimeSinceStartup + delay;
+                while (Time.realtimeSinceStartup < endTime) yield return 0;
                 break;
             }
         }

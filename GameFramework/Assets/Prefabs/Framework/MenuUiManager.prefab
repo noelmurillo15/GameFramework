@@ -4516,6 +4516,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4999482101664155740}
   - component: {fileID: 2642513976394726501}
+  - component: {fileID: 4029626172274463673}
   - component: {fileID: 9153148682173533211}
   m_Layer: 5
   m_Name: GameTitle Text (TMP)
@@ -4551,6 +4552,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3318397444998864921}
   m_CullTransparentMesh: 0
+--- !u!114 &4029626172274463673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3318397444998864921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e886063042393c64aa529ed4a9eaa74c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &9153148682173533211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13611,7 +13624,7 @@ GameObject:
   - component: {fileID: 2577690640278668105}
   - component: {fileID: 1755589712112157007}
   m_Layer: 0
-  m_Name: Menu Ui Manager
+  m_Name: MenuUiManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

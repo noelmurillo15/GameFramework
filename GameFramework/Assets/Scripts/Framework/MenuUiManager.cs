@@ -58,7 +58,7 @@ namespace ANM.Framework
 
         private void Start()
         {
-            GameManager.SwitchToLoadedScene("Level 1");
+            SceneTransitionManager.SwitchToLoadedScene("Level 1");
             _gameManager.SetIsMainMenuActive(SceneTransitionManager.IsMainMenuActive());
             
             mainPanel.SetActive(_gameManager.GetIsMainMenuActive());
@@ -73,9 +73,7 @@ namespace ANM.Framework
         private void Update()
         {
             if (_gameManager.GetIsMainMenuActive()) return;
-
             if (!Input.GetKeyDown(KeyCode.Tab)) return;
-            
             if (!_gameManager.GetIsGamePaused()) { Pause(); }
             else { Resume(); }
         }
@@ -107,7 +105,9 @@ namespace ANM.Framework
 
         public void OnPauseEvent()
         {
+            SceneTransitionManager.SwitchToLoadedScene("Menu Ui");
             menuUiCamera.gameObject.SetActive(true);
+            _gameManager.SetIsGamePaused(true);
             TurnOnMainPanel();
         }
 
@@ -118,8 +118,10 @@ namespace ANM.Framework
         
         public void OnResumeEvent()
         {
-            menuUiCamera.gameObject.SetActive(false);
             TurnOffAllPanels();
+            _gameManager.SetIsGamePaused(false);
+            menuUiCamera.gameObject.SetActive(false);
+            SceneTransitionManager.SwitchToLoadedScene("Level 1");
         }
 
         public void QuitOptions()
@@ -154,11 +156,11 @@ namespace ANM.Framework
             mainPanel.SetActive(true);
             _gameManager.Reset();
             _gameManager.SetIsMainMenuActive(true);
-            GameManager.UnloadScenesExceptMenu();
+            SceneTransitionManager.UnloadAllSceneExceptMenu();
         }
 
         public void StartLoadSceneEvent()
-        {
+        {    //    Handled by onStartSceneTransition ScriptableObject
             if (SceneTransitionManager.IsMainMenuActive())
             {
                 menuUiCamera.gameObject.SetActive(false);
@@ -183,7 +185,7 @@ namespace ANM.Framework
         public void QuitGame()
         {
             onGameResumeEvent.Raise();
-            GameManager.UnloadScenesExceptMenu();
+            SceneTransitionManager.UnloadAllSceneExceptMenu();
             _gameManager.LoadCredits();
         }
         

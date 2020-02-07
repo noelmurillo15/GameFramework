@@ -1,7 +1,8 @@
 ﻿/*
  * GameManager - Backbone of the game application
- * Contains the most important data used throughout the game (ie: Score, Settings)
+ * Contains the most important data used throughout the game (ie: Game Settings)
  * Created by : Allan N. Murillo
+ * Last Edited : 2/7/2020
  */
 
 using System;
@@ -14,9 +15,10 @@ namespace ANM.Framework
         public static GameManager Instance { get; private set; }
 
         [HideInInspector] public SceneTransitionManager sceneTransitionManager;
-        [SerializeField] private bool _displayFps = false;
-        [SerializeField] private bool _isMainMenuActive = false;
-        [SerializeField] private bool _isGamePaused = false;
+        
+        [SerializeField] private bool displayFps;
+        [SerializeField] private bool isMainMenuActive;
+        [SerializeField] private bool isGamePaused;
         
         private float _deltaTime;
         private SaveSettings _saveSettings;
@@ -33,31 +35,9 @@ namespace ANM.Framework
             _saveSettings.Initialize();
 
             sceneTransitionManager = gameObject.GetComponentInChildren<SceneTransitionManager>();
-            Time.timeScale = 1;
+            Reset();
         }
-
-        public void Reset()
-        {
-            Time.timeScale = 1;
-            _isGamePaused = false;
-        }
-
-        public void OnPauseEvent()
-        {
-            SwitchToLoadedScene("Menu Ui");
-            SetIsGamePaused(true);
-            _displayFps = false;
-            Time.timeScale = 0;
-        }
-
-        public void OnResumeEvent()
-        {
-            SwitchToLoadedScene("Level 1");
-            SetIsGamePaused(false);
-            _displayFps = true;
-            Time.timeScale = 1;
-        }
-
+        
         private void Update()
         {
             _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
@@ -65,7 +45,7 @@ namespace ANM.Framework
 
         private void OnGUI()
         {
-            if (!_displayFps) return;
+            if (!displayFps) return;
             var style = new GUIStyle();
             int w = Screen.width, h = Screen.height;
             h *= 2 / 100;
@@ -79,15 +59,14 @@ namespace ANM.Framework
             GUI.Label(rect, text, style);
         }
 
-        #region Game Events
+        public void Reset()
+        {
+            SetIsGamePaused(false);
+        }
+
         public void StartGameEvent()
         {
             sceneTransitionManager.LoadGameplay();
-        }
-
-        public void ReloadScene()
-        {
-            sceneTransitionManager.ReloadCurrentScene();
         }
 
         public void SaveGameSettings()
@@ -100,42 +79,32 @@ namespace ANM.Framework
             sceneTransitionManager.LoadCredits();
         }
 
+        public bool GetIsMainMenuActive()
+        {
+            return isMainMenuActive;
+        }
+
+        public void SetIsMainMenuActive(bool b)
+        {
+            isMainMenuActive = b;
+        }
+        
+        public bool GetIsGamePaused()
+        {
+            return isGamePaused;
+        }
+
+        public void SetIsGamePaused(bool b)
+        {
+            isGamePaused = b;
+            Time.timeScale = b ? 0 : 1;
+        }
+        
         private void OnDestroy()
         {
             if (Instance != this) return;
             Resources.UnloadUnusedAssets();
             GC.Collect();
-        }
-        #endregion
-
-        public static void SwitchToLoadedScene(string sceneName)
-        {
-            SceneTransitionManager.SwitchToLoadedScene(sceneName);
-        }
-
-        public static void UnloadScenesExceptMenu()
-        {
-            SceneTransitionManager.UnloadAllSceneExceptMenu();
-        }
-
-        public bool GetIsMainMenuActive()
-        {
-            return _isMainMenuActive;
-        }
-
-        public void SetIsMainMenuActive(bool b)
-        {
-            _isMainMenuActive = b;
-        }
-        
-        public bool GetIsGamePaused()
-        {
-            return _isGamePaused;
-        }
-
-        public void SetIsGamePaused(bool b)
-        {
-            _isGamePaused = b;
         }
     }
 }

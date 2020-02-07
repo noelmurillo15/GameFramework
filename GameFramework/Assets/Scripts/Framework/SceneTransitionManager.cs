@@ -64,18 +64,6 @@ namespace ANM.Framework
             StartCoroutine(LoadSimpleScene(CreditsSceneName));
         }
 
-        public void ReloadCurrentScene()
-        {    //    TODO : Currently bugged
-            var sceneToBeReloaded = GetCurrentSceneName();
-            if (SceneManager.SetActiveScene(SceneManager.GetSceneByName(MenuUiSceneName)))
-            {
-                SceneManager.UnloadSceneAsync(sceneToBeReloaded).completed += operation =>
-                {
-                    StartCoroutine(LoadMultiScene(sceneToBeReloaded));
-                };
-            }
-        }
-        
         public static bool IsMainMenuActive()
         {
             return IsThisSceneActive(MenuUiSceneName);

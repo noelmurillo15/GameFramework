@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿/*
+ * CoroutineUtilities - Used for co-routines to be able to run when TimeScale = 0
+ */
+
+using UnityEngine;
 using System.Collections;
 
 namespace ANM.Framework

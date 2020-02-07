@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb7b371bb85074740984166d8fad6a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayFps: 0
+  displayFps: 1
   _isMainMenuActive: 0
   _isGamePaused: 0
 --- !u!114 &3886840564206206538

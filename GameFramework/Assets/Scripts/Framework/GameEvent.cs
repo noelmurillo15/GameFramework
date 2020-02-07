@@ -1,6 +1,8 @@
 ﻿/*
- * GameEvent - Manages GameSettings UI & Functionality
+ * GameEvent - An event that is saved as a Scriptable Object (can be accessed from any scene)
+ * Use a GameEventListener.cs to call a certain function when a GameEvent is Raised()
  * Created by : Allan N. Murillo
+ * Last Edited : 2/7/2020
  */
 
 using UnityEngine;

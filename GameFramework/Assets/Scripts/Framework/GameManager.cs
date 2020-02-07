@@ -1,7 +1,8 @@
 ﻿/*
  * GameManager - Backbone of the game application
- * Contains the most important data used throughout the game (ie: Score, Settings)
+ * Contains the most important data used throughout the game (ie: Game Settings)
  * Created by : Allan N. Murillo
+ * Last Edited : 2/7/2020
  */
 
 using System;
@@ -14,8 +15,8 @@ namespace ANM.Framework
         public static GameManager Instance { get; private set; }
 
         [SerializeField] private bool displayFps = false;
-        [SerializeField] private bool _isMainMenuActive = false;
-        [SerializeField] private bool _isGamePaused = false;
+        [SerializeField] private bool isMainMenuActive = false;
+        [SerializeField] private bool isGamePaused = false;
         
         public const string MenuUiSceneName = "Menu Ui";
         public const string CreditsSceneName = "Credits";
@@ -89,22 +90,22 @@ namespace ANM.Framework
 
         public bool GetIsMainMenuActive()
         {
-            return _isMainMenuActive;
+            return isMainMenuActive;
         }
 
         public void SetIsMainMenuActive(bool b)
         {
-            _isMainMenuActive = b;
+            isMainMenuActive = b;
         }
         
         public bool GetIsGamePaused()
         {
-            return _isGamePaused;
+            return isGamePaused;
         }
 
         public void SetIsGamePaused(bool b)
         {
-            _isGamePaused = b;
+            isGamePaused = b;
             Time.timeScale = b ? 0 : 1;
         }
     }

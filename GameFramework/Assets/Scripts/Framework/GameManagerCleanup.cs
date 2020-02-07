@@ -1,6 +1,7 @@
 ﻿/*
  * GameManagerCleanup- Destroys the GameManager once the credits scene has finished loading
  * Created by : Allan N. Murillo
+ * Last Edited : 2/7/2020
  */
 
 using UnityEngine;

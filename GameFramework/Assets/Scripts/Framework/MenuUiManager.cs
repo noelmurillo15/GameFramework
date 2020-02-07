@@ -1,6 +1,7 @@
 ﻿/*
- * GameSettingsManager - Manages GameSettings Ui & Functionality
+ * MenuUiManager - Handles Menu Ui & Functionality
  * Created by : Allan N. Murillo
+ * Last Edited : 2/7/2020
  */
 
 using TMPro;

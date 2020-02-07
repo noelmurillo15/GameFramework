@@ -1,6 +1,7 @@
 ﻿/*
  * SaveSettings - Save/Loads game settings to/from a JSON file
  * Created by : Allan N. Murillo
+ * Last Edited : 2/7/2020
  */
 
 using System.IO;
@@ -78,18 +79,18 @@ namespace ANM.Framework
 
         private void OverwriteGameSettings(string jsonString)
         {
-            var settings = (SaveSettings) CreateJsonObj(jsonString);
-            MasterVolumeIni = settings.masterVolume;
-            EffectVolumeIni = settings.effectVolume;
-            BackgroundVolumeIni = settings.backgroundVolume;
-            RenderDistIni = settings.renderDist;
-            ShadowDistIni = settings.shadowDist;
-            MsaaIni = settings.msaa;
-            VsyncIni = settings.vsync;
-            TextureLimitIni = settings.textureLimit;
-            CurrentQualityLevelIni = settings.currentQualityLevel;
-            ShadowCascadeIni = settings.shadowCascade;
-            AnisoFilterLevelIni = settings.anisoFilterLevel;
+            var jsonObj = (SaveSettings) CreateJsonObj(jsonString);
+            MasterVolumeIni = jsonObj.masterVolume;
+            EffectVolumeIni = jsonObj.effectVolume;
+            BackgroundVolumeIni = jsonObj.backgroundVolume;
+            RenderDistIni = jsonObj.renderDist;
+            ShadowDistIni = jsonObj.shadowDist;
+            MsaaIni = jsonObj.msaa;
+            VsyncIni = jsonObj.vsync;
+            TextureLimitIni = jsonObj.textureLimit;
+            CurrentQualityLevelIni = jsonObj.currentQualityLevel;
+            ShadowCascadeIni = jsonObj.shadowCascade;
+            AnisoFilterLevelIni = jsonObj.anisoFilterLevel;
         }
 
         private bool VerifyDirectory(string filePath)

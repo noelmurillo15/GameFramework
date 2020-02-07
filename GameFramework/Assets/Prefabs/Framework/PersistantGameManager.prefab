@@ -47,24 +47,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneTransitionManager: {fileID: 0}
+  displayFps: 0
+  isMainMenuActive: 0
+  isGamePaused: 0
   onApplicationQuitEvent: {fileID: 11400000, guid: 52a7bfe1d2077f9489ef2b50d443575d,
     type: 2}
-  _deltaTime: 0
-  _displayFps: 1
-  _isMainMenuActive: 0
-  _isGamePaused: 0
-  _saveSettings:
-    masterVolume: 0
-    effectVolume: 0
-    backgroundVolume: 0
-    currentQualityLevel: 0
-    vsync: 0
-    msaa: 0
-    renderDist: 0
-    shadowDist: 0
-    textureLimit: 0
-    anisoFilterLevel: 0
-    shadowCascade: 0
 --- !u!114 &3886840564206206538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -300,8 +287,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasGroup: {fileID: 2050860196882241502}
-  fadeOutDelay: 2
+  fadeOutDelay: 1.5
   fadeInDelay: 0.5
   onLoadScene: {fileID: 11400000, guid: 960ec40a11cf9704899d03535503cb53, type: 2}
   onFinishLoadScene: {fileID: 11400000, guid: 252edc7ab68f40a498f05de1f53a33d5, type: 2}
-  _sceneNames: []

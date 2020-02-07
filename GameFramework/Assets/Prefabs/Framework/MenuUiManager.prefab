@@ -4846,7 +4846,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 4fe8d7da72fecb642a0a141ac1d1a71d, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
@@ -6037,7 +6037,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 221450cbb8710744ba584b942145e18f, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
@@ -13680,6 +13680,11 @@ MonoBehaviour:
   - 500
   bgMusic: {fileID: 0}
   sfx: []
+  mainPanelSelectedObj: {fileID: 6566709221132279466}
+  pausePanelSelectedObj: {fileID: 853455659481688398}
+  audioPanelSelectedObj: {fileID: 8394218798904029191}
+  videoPanelSelectedObj: {fileID: 13368923472662344}
+  quitPanelSelectedObj: {fileID: 7196528485979835204}
 --- !u!114 &9172708232059517893
 MonoBehaviour:
   m_ObjectHideFlags: 0

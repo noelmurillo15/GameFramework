@@ -1,5 +1,5 @@
 ﻿/*
- * GameSettingsManager - Manages GameSettings UI & Functionality
+ * MenuUiManager - Handles interactions with the Menu Ui
  * Created by : Allan N. Murillo
  */
 
@@ -8,6 +8,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 namespace ANM.Framework
 {
@@ -44,6 +45,13 @@ namespace ANM.Framework
         [SerializeField] private AudioSource bgMusic = null;
         [SerializeField] private AudioSource[] sfx = null;
         
+        [SerializeField] private Button mainPanelSelectedObj = null;
+        [SerializeField] private Button pausePanelSelectedObj = null;
+        [SerializeField] private Button audioPanelSelectedObj = null;
+        [SerializeField] private Button videoPanelSelectedObj = null;
+        [SerializeField] private Button quitPanelSelectedObj = null;
+
+        private EventSystem _eventSystem;
         private GameManager _gameManager;
         private string[] _presets;
         
@@ -52,13 +60,15 @@ namespace ANM.Framework
         {
             _presets = QualitySettings.names;
             _gameManager = GameManager.Instance;
+            _eventSystem = FindObjectOfType<EventSystem>();
+            
             if (!SaveSettings.SettingsLoadedIni) { DefaultSettings(); }
             ApplyIniSettings();
         }
 
         private void Start()
         {
-            _gameManager.SwitchToLoadedScene("Level 1");
+            SceneTransitionManager.SwitchToLoadedScene("Level 1");
             _gameManager.SetIsMainMenuActive(SceneTransitionManager.IsMainMenuActive());
             
             mainPanel.SetActive(_gameManager.GetIsMainMenuActive());
@@ -135,6 +145,8 @@ namespace ANM.Framework
             {
                 quitOptionsPanel.SetActive(true);
             }
+            _eventSystem.SetSelectedGameObject(quitPanelSelectedObj.gameObject);
+            quitPanelSelectedObj.OnSelect(null);
         }
 
         public void QuitCancel()
@@ -143,10 +155,12 @@ namespace ANM.Framework
                 quitOptionsPanelAnimator.Play("QuitPanelOut");
             else
                 quitOptionsPanel.SetActive(false);
+            
+            TurnOnMainPanel();
         }
 
         public void ReturnToMenu()
-        {    //    TODO : using this and trying to start a new game will freeze the game
+        {
             _gameManager.onApplicationQuitEvent.Raise();
             menuUiCamera.gameObject.SetActive(true);
             videoPanel.SetActive(false);
@@ -155,7 +169,9 @@ namespace ANM.Framework
             mainPanel.SetActive(true);
             _gameManager.Reset();
             _gameManager.SetIsMainMenuActive(true);
-            _gameManager.UnloadScenesExceptMenu();
+            SceneTransitionManager.UnloadAllSceneExceptMenu();
+            _eventSystem.SetSelectedGameObject(mainPanelSelectedObj.gameObject);
+            mainPanelSelectedObj.OnSelect(null);
         }
 
         public void StartLoadSceneEvent()
@@ -185,7 +201,7 @@ namespace ANM.Framework
         {
             onGameResumeEvent.Raise();
             _gameManager.onApplicationQuitEvent.Raise();
-            _gameManager.UnloadScenesExceptMenu();
+            SceneTransitionManager.UnloadAllSceneExceptMenu();
             _gameManager.LoadCredits();
         }
         
@@ -199,8 +215,18 @@ namespace ANM.Framework
         
         private void TurnOnMainPanel()
         {
-            if (_gameManager.GetIsMainMenuActive())  mainPanel.SetActive(true);
-            else  pausePanel.SetActive(true);
+            if (_gameManager.GetIsMainMenuActive())
+            {
+                mainPanel.SetActive(true);
+                _eventSystem.SetSelectedGameObject(mainPanelSelectedObj.gameObject);
+                mainPanelSelectedObj.OnSelect(null);
+            }
+            else
+            {
+                pausePanel.SetActive(true);
+                _eventSystem.SetSelectedGameObject(pausePanelSelectedObj.gameObject);
+                pausePanelSelectedObj.OnSelect(null);
+            }
             videoPanel.SetActive(false);
             audioPanel.SetActive(false);
         }
@@ -228,6 +254,8 @@ namespace ANM.Framework
             if (audioPanelAnimator == null) return;
             audioPanelAnimator.enabled = true;
             audioPanelAnimator.Play("Audio Panel In");
+            _eventSystem.SetSelectedGameObject(audioPanelSelectedObj.gameObject);
+            audioPanelSelectedObj.OnSelect(null);
         }
         
         private IEnumerator SaveAudioSettings()
@@ -278,6 +306,8 @@ namespace ANM.Framework
             if (videoPanelAnimator == null) return;
             videoPanelAnimator.enabled = true;
             videoPanelAnimator.Play("Video Panel In");
+            _eventSystem.SetSelectedGameObject(videoPanelSelectedObj.gameObject);
+            videoPanelSelectedObj.OnSelect(null);
         }
         
         private IEnumerator SaveVideoSettings()
@@ -481,6 +511,7 @@ namespace ANM.Framework
             SaveSettings.ShadowDistIni = shadowDist[SaveSettings.CurrentQualityLevelIni];
             SaveSettings.ShadowCascadeIni = 3;
             SaveSettings.TextureLimitIni = 0;
+            SaveSettings.SettingsLoadedIni = true;
         }
 
         private void ApplyIniSettings()

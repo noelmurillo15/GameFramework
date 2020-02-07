@@ -1,5 +1,5 @@
 ﻿/*
- * GameEventListeners - Listens for Game Events raised and responds
+ * GameEventListeners - Listens for Game Events raised and responds via a UnityEvent
  * Created by : Allan N. Murillo
  */
 

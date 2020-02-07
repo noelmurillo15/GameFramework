@@ -13,16 +13,17 @@ namespace ANM.Framework
     {
         public static GameManager Instance { get; private set; }
 
-        [HideInInspector] public SceneTransitionManager sceneTransitionManager = null;
+        [HideInInspector] public SceneTransitionManager sceneTransitionManager;
+        
+        [SerializeField] private bool displayFps = false;
+        [SerializeField] private bool isMainMenuActive = false;
+        [SerializeField] private bool isGamePaused = false;
+        
         public GameEvent onApplicationQuitEvent = null;
+        public bool IsSceneTransitioning { get; set; }
         
-        public bool IsSceneTransitioning { get; set; } = false;
-        
-        [SerializeField] private float _deltaTime = 0.0f;
-        [SerializeField] private bool _displayFps = false;
-        [SerializeField] private bool _isMainMenuActive = false;
-        [SerializeField] private bool _isGamePaused = false;
-        [SerializeField] private SaveSettings _saveSettings = null;
+        private float _deltaTime;
+        private SaveSettings _saveSettings;
 
 
         private void Awake()
@@ -36,7 +37,6 @@ namespace ANM.Framework
             _saveSettings.Initialize();
 
             sceneTransitionManager = gameObject.GetComponentInChildren<SceneTransitionManager>();
-            sceneTransitionManager.ScreenMaskBrightness = 0f;
             Reset();
         }
         
@@ -47,7 +47,7 @@ namespace ANM.Framework
 
         private void OnGUI()
         {
-            if (!_displayFps) return;
+            if (!displayFps) return;
             var style = new GUIStyle();
             int w = Screen.width, h = Screen.height;
             h *= 2 / 100;
@@ -64,32 +64,29 @@ namespace ANM.Framework
         public void Reset()
         {
             Time.timeScale = 1;
-            _isGamePaused = false;
+            isGamePaused = false;
         }
 
         public void OnPauseEvent()
         {
-            SwitchToLoadedScene("Menu Ui");
+            SceneTransitionManager.SwitchToLoadedScene("Menu Ui");
             SetIsGamePaused(true);
         }
 
         public void OnResumeEvent()
         {
-            SwitchToLoadedScene("Level 1");
+            SceneTransitionManager.SwitchToLoadedScene("Level 1");
             SetIsGamePaused(false);
         }
 
-        #region Game Settings
         public void LoadSettingsFromIndexedDb()
         {    //    When playing in WebGL, a Javascript plugin will initialize SceneLoader via LoadSettingsFromIndexedDb()
             _saveSettings.LoadGameSettings();
         }
-        #endregion
 
-        #region Game Events
         public void StartGameEvent()
         {
-            sceneTransitionManager.LoadSceneByBuildIndex(2);
+            sceneTransitionManager.LoadGameplay();
         }
 
         public void ReloadScene()
@@ -113,42 +110,26 @@ namespace ANM.Framework
             Resources.UnloadUnusedAssets();
             GC.Collect();
         }
-        #endregion
-
-        public void SwitchToLoadedScene(string sceneName)
-        {
-            sceneTransitionManager.SwitchToLoadedScene(sceneName);
-        }
-
-        public void UnloadAllLoadedScenes()
-        {
-            sceneTransitionManager.UnloadAllSceneExcept("Credits");
-        }
-
-        public void UnloadScenesExceptMenu()
-        {
-            sceneTransitionManager.UnloadAllSceneExcept("Menu Ui");
-        }
 
         public bool GetIsMainMenuActive()
         {
-            return _isMainMenuActive;
+            return isMainMenuActive;
         }
 
         public void SetIsMainMenuActive(bool b)
         {
-            _isMainMenuActive = b;
+            isMainMenuActive = b;
         }
         
         public bool GetIsGamePaused()
         {
-            return _isGamePaused;
+            return isGamePaused;
         }
 
         public void SetIsGamePaused(bool b)
         {
-            _isGamePaused = b;
-            //Time.timeScale = b ? 0 : 1;
+            isGamePaused = b;
+            Time.timeScale = b ? 0 : 1;
         }
 
         #region External JavaScript Library

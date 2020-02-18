@@ -2,12 +2,13 @@
  * GameEvent - An event that is saved as a Scriptable Object (can be accessed from any scene)
  * Use a GameEventListener.cs to call a certain function when a GameEvent is Raised()
  * Created by : Allan N. Murillo
+ * Last Edited : 2/17/2020
  */
 
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace ANM.Framework
+namespace ANM.Framework.Events
 {
     [CreateAssetMenu(menuName = "GameEvent")]
     public class GameEvent : ScriptableObject

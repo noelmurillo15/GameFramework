@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>WebGL Framework</title>
+  <script src="ButtonFunctions.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: white;
+      overflow: hidden;
+    }
+
+    #canvas {
+      width: auto;
+      height: 100vh;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+<div id="controls" style="position: absolute;">
+  <button style="position: relative;" onclick="LoadGame()">Play</button>
+  <button style="position: relative;" onclick="CloseGame()">Quit</button>
+</div>
+<iframe id="iMainFrame" style="width: 100vw; height: 100vh; z-index: 0;" src="" allowfullscreen></iframe>
+</body>
+
+</html>

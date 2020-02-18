@@ -5,7 +5,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace ANM.Framework
+namespace ANM.Framework.Utils
 {
     public static class CoroutineUtilities
     {

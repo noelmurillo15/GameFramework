@@ -1,12 +1,13 @@
 ﻿/*
  * SaveSettings - Save/Loads game settings to/from a JSON file
  * Created by : Allan N. Murillo
+ * Last Edited : 2/17/2020
  */
 
 using System.IO;
 using UnityEngine;
 
-namespace ANM.Framework
+namespace ANM.Framework.Settings
 {
     [System.Serializable]
     public class SaveSettings
@@ -18,25 +19,25 @@ namespace ANM.Framework
         public float effectVolume;
         public float backgroundVolume;
         public int currentQualityLevel;
-        public bool vsync;
         public int msaa;
         public float renderDist;
         public float shadowDist;
         public int textureLimit;
-        public int anisoFilterLevel;
+        public int anisotropicFilteringLevel;
         public int shadowCascade;
+        public bool displayFps;
 
         internal static float MasterVolumeIni;
         internal static float EffectVolumeIni;
         internal static float BackgroundVolumeIni;
         internal static int CurrentQualityLevelIni;
-        internal static bool VsyncIni;
         internal static int MsaaIni;
         internal static float RenderDistIni;
         internal static float ShadowDistIni;
         internal static int TextureLimitIni;
-        internal static int AnisoFilterLevelIni;
+        internal static int AnisotropicFilteringLevelIni;
         internal static int ShadowCascadeIni;
+        internal static bool DisplayFpsIni;
         internal static bool SettingsLoadedIni;
 
 
@@ -64,33 +65,47 @@ namespace ANM.Framework
             renderDist = RenderDistIni;
             shadowDist = ShadowDistIni;
             msaa = MsaaIni;
-            vsync = VsyncIni;
             textureLimit = TextureLimitIni;
             currentQualityLevel = CurrentQualityLevelIni;
             shadowCascade = ShadowCascadeIni;
-            anisoFilterLevel = AnisoFilterLevelIni;
+            anisotropicFilteringLevel = AnisotropicFilteringLevelIni;
+            displayFps = DisplayFpsIni;
             
             _jsonString = JsonUtility.ToJson(this);
             File.WriteAllText(filePath, _jsonString);
-            
-            //  Sync with Web Browser's IndexedDB via JavaScript
-            if (Application.platform == RuntimePlatform.WebGLPlayer) {  Sync();  }
         }
 
         private void OverwriteGameSettings(string jsonString)
         {
             var jsonObj = (SaveSettings) CreateJsonObj(jsonString);
+            DefaultSettings();
             MasterVolumeIni = jsonObj.masterVolume;
             EffectVolumeIni = jsonObj.effectVolume;
             BackgroundVolumeIni = jsonObj.backgroundVolume;
             RenderDistIni = jsonObj.renderDist;
             ShadowDistIni = jsonObj.shadowDist;
             MsaaIni = jsonObj.msaa;
-            VsyncIni = jsonObj.vsync;
             TextureLimitIni = jsonObj.textureLimit;
             CurrentQualityLevelIni = jsonObj.currentQualityLevel;
             ShadowCascadeIni = jsonObj.shadowCascade;
-            AnisoFilterLevelIni = jsonObj.anisoFilterLevel;
+            AnisotropicFilteringLevelIni = jsonObj.anisotropicFilteringLevel;
+            DisplayFpsIni = jsonObj.displayFps;
+        }
+        
+        public static void DefaultSettings()
+        {
+            MasterVolumeIni = 0.8f;
+            EffectVolumeIni = 0.8f;
+            BackgroundVolumeIni = 0.8f;
+            CurrentQualityLevelIni = 3;
+            MsaaIni = 2;
+            AnisotropicFilteringLevelIni = 1;
+            RenderDistIni = 800.0f;
+            ShadowDistIni = 150;
+            ShadowCascadeIni = 3;
+            TextureLimitIni = 0;
+            DisplayFpsIni = true;
+            SettingsLoadedIni = true;
         }
 
         private bool VerifyDirectory(string filePath)
@@ -101,19 +116,11 @@ namespace ANM.Framework
         #region External JS LIBRARY
 #if UNITY_WEBGL && !UNITY_EDITOR
         [System.Runtime.InteropServices.DllImport("__Internal")]
-        static extern void InitilaizeJsLib();
-        [System.Runtime.InteropServices.DllImport("__Internal")]
-        static extern void SyncPersistantData();
+        static extern void InitializeJsLib();
 
-
-        public void Initialize() { InitilaizeJsLib(); }
-
-        //  Unity WebGL stores all files that must persist between sessions to the browser IndexedDB.
-        //  This function makes sure Unity flushes all pending file system write operations to the IndexedDB file system from memory   
-        public void Sync() { SyncPersistantData(); }
+        public void Initialize() { InitializeJsLib(); }
 #else
-        public void Initialize() {  SettingsLoadedIni = LoadGameSettings();  }
-        public void Sync() { }
+        public void Initialize() {  SettingsLoadedIni = LoadGameSettings();}
 #endif
         #endregion
     }

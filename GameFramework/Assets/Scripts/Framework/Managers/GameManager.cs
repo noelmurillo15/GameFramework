@@ -2,7 +2,7 @@
  * GameManager - Backbone of the game application
  * Contains data that needs to persist and be accessed from anywhere
  * Created by : Allan N. Murillo
- * Last Edited : 2/17/2020
+ * Last Edited : 2/22/2020
  */
 
 using System;
@@ -48,8 +48,8 @@ namespace ANM.Framework.Managers
         {
             SceneExtension.StartSceneLoadEvent += OnStartLoadSceneEvent;
             SceneExtension.FinishSceneLoadEvent += OnFinishLoadSceneEvent;
-            if (SceneExtension.IsSceneActive(SceneExtension.SplashSceneName))
-                StartCoroutine(SceneExtension.ForceSwitchToMenu());
+            if (SceneExtension.IsThisSceneActive(SceneExtension.SplashSceneName))
+                StartCoroutine(SceneExtension.ForceMenuSceneSequence());
         }
 
         private void Update()
@@ -95,16 +95,14 @@ namespace ANM.Framework.Managers
         public void SetIsGamePaused(bool b)
         {
             isGamePaused = b;
-            if(isGamePaused)
-                RaisePauseEvent();
-            else 
-                RaiseResumeEvent();
+            if(isGamePaused) RaisePauseEvent();
+            else RaiseResumeEvent();
             Time.timeScale = b ? 0 : 1;
         }
         
         public void ReloadScene()
         {
-            StartCoroutine(SceneExtension.ReloadScene());
+            StartCoroutine(SceneExtension.ReloadCurrentSceneSequence());
         }
 
         public void Reset()
@@ -122,7 +120,7 @@ namespace ANM.Framework.Managers
         public void LoadCredits()
         {
             HardReset();
-            StartCoroutine(SceneExtension.LoadSimpleScene(
+            StartCoroutine(SceneExtension.LoadSingleSceneSequence(
                 SceneExtension.CreditsSceneName, true));
         }
 
@@ -137,8 +135,7 @@ namespace ANM.Framework.Managers
         public bool GetIsGamePaused()  {  return isGamePaused;  }
 
         public bool GetIsSceneTransitioning()  {  return isSceneTransitioning;  }
-        
-        
+
         private void TogglePause()
         {
             SetIsGamePaused(!GetIsGamePaused());

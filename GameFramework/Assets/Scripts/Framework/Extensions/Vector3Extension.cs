@@ -19,6 +19,11 @@ namespace ANM.Framework.Extensions
         {
             return new Vector3(original.x, 0f, original.z);
         }
+        
+        public static bool IsFacingTowards(this Vector3 source, Vector3 target)
+        {
+            return Vector3.Dot(source, target) >= 0.96f;
+        }
 
         public static Vector3 DirectionTo(this Vector3 source, Vector3 destination)
         {

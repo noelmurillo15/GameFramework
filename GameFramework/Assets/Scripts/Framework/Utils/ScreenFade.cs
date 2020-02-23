@@ -1,7 +1,7 @@
 ﻿/*
  * ScreenFade - Fades the screen in-between loading scenes
  * Created by : Allan N. Murillo
- * Last Edited : 2/17/2020
+ * Last Edited : 2/22/2020
  */
 
 using UnityEngine;
@@ -16,7 +16,7 @@ namespace ANM.Framework.Utils
     {
         [SerializeField] private CanvasGroup canvasGroup;
         [SerializeField] private float fadeOutDelay = 1f;
-        [SerializeField] private float fadeInDelay = 0.5f;
+        [SerializeField] private float fadeInDelay = 1f;
         private Coroutine _currentFade;
         
         
@@ -46,7 +46,10 @@ namespace ANM.Framework.Utils
             if(!wait)
                 FadeOutImmediate();
             else
+            {
+                FadeInImmediate();
                 FadeOut();
+            }
         }
         
         private void FinishLoadSceneEvent(bool wait)
@@ -54,7 +57,10 @@ namespace ANM.Framework.Utils
             if(!wait)
                 FadeInImmediate();
             else
+            {
+                FadeOutImmediate();
                 FadeIn();
+            }
         }
 
         private Coroutine FadeOut()

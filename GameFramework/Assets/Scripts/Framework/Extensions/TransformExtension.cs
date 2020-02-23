@@ -14,5 +14,10 @@ namespace ANM.Framework.Extensions
         {
             return source.position.DirectionTo(other.position);
         }
+
+        public static bool IsFacingTowards(this Transform source, Transform target)
+        {
+            return source.position.IsFacingTowards(target.position);
+        }
     }
 }

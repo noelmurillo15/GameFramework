@@ -324,7 +324,7 @@ GameObject:
   - component: {fileID: 9134924182243395234}
   - component: {fileID: 8763899930207309092}
   m_Layer: 2
-  m_Name: Credits Scene
+  m_Name: CreditsScene
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -400,6 +400,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c33b52bab0d3e54191de7c7fd2308de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  quitDelay: 3
 --- !u!1 &9134924183665045770
 GameObject:
   m_ObjectHideFlags: 0
@@ -613,7 +614,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 1
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0

@@ -1,12 +1,13 @@
 ﻿/*
-* ApplyProductName - Used to apply the Game Name to a TMP_Text component
-* Created by : Allan N. Murillo
-*/
+ * ApplyProductName - Used to apply the Game Name to a TMP_Text component
+ * Created by : Allan N. Murillo
+ * Last Edited : 2/17/2020
+ */
 
 using TMPro;
 using UnityEngine;
 
-namespace ANM.Framework
+namespace ANM.Framework.Utils
 {
     [RequireComponent(typeof(TMP_Text))]
     public class ApplyProductName : MonoBehaviour

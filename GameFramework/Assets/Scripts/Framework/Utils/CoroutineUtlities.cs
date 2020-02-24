@@ -1,11 +1,11 @@
 ﻿/*
- * CoroutineUtilities - Used to run co-routines when TimeScale = 0
+ * CoroutineUtilities - Used for co-routines to be able to run when TimeScale = 0
  */
 
 using UnityEngine;
 using System.Collections;
 
-namespace ANM.Framework
+namespace ANM.Framework.Utils
 {
     public static class CoroutineUtilities
     {
@@ -14,7 +14,10 @@ namespace ANM.Framework
             while (true)
             {
                 var endTime = Time.realtimeSinceStartup + delay;
-                while (Time.realtimeSinceStartup < endTime) yield return 0;
+                while (Time.realtimeSinceStartup < endTime)
+                {
+                    yield return 0;
+                }
                 break;
             }
         }

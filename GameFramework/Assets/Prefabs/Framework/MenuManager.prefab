@@ -1615,8 +1615,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_RepeatDelay: 0.5
   m_RepeatRate: 0.1
-  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
   m_PointAction: {fileID: 1054132383583890850, guid: ca9f5fa95ffab41fb9a615ab714db018,
     type: 3}
   m_MoveAction: {fileID: 3710738434707379630, guid: ca9f5fa95ffab41fb9a615ab714db018,
@@ -1639,6 +1637,9 @@ MonoBehaviour:
     type: 3}
   m_TrackedDeviceSelectAction: {fileID: 2559092417903258184, guid: ca9f5fa95ffab41fb9a615ab714db018,
     type: 3}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_DeselectOnBackgroundClick: 1
 --- !u!1 &1071109204027476196
 GameObject:
   m_ObjectHideFlags: 0
@@ -14110,11 +14111,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainPanel: {fileID: 5860703799937203206}
-  quitOptionsPanel: {fileID: 329588069009404438}
   pausePanel: {fileID: 1408325634255861249}
   audioSettingsPanel: {fileID: 1897628522808736492}
   videoSettingsPanel: {fileID: 5452087819553998316}
-  quitOptionsPanelAnimator: {fileID: 5389489073522489336}
+  quitPanel: {fileID: 7063268726968520818}
   fpsDisplayToggle: {fileID: 1556689858335956797}
   menuUiCamera: {fileID: 5695821433675544876}
   mainPanelSelectedObj: {fileID: 6566709221132279466}
@@ -15606,6 +15606,7 @@ GameObject:
   - component: {fileID: 2816120325164850933}
   - component: {fileID: 7138887762331158706}
   - component: {fileID: 7403791020345480340}
+  - component: {fileID: 7063268726968520818}
   m_Layer: 5
   m_Name: Quit Options Canvas
   m_TagString: Untagged
@@ -15693,6 +15694,20 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &7063268726968520818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8711578890383124022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ba6fd17e8ee40d0873ed6692794524d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  quitOptionsPanel: {fileID: 329588069009404438}
+  quitOptionsPanelAnimator: {fileID: 5389489073522489336}
 --- !u!1 &8736597521836022187
 GameObject:
   m_ObjectHideFlags: 0

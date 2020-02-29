@@ -15,13 +15,12 @@ namespace ANM.Framework.Managers
     public class MenuManager : MonoBehaviour
     {
         [SerializeField] private GameObject mainPanel = null;
-        [SerializeField] private GameObject quitOptionsPanel = null;
         [SerializeField] private GameObject pausePanel = null;
         
         [SerializeField] private AudioSettingsPanel audioSettingsPanel = null;
         [SerializeField] private VideoSettingsPanel videoSettingsPanel = null;
+        [SerializeField] private QuitOptionsPanel quitPanel = null;
         
-        [SerializeField] private Animator quitOptionsPanelAnimator = null;
         [SerializeField] private Toggle fpsDisplayToggle = null;
         [SerializeField] private Camera menuUiCamera = null;
         
@@ -37,20 +36,16 @@ namespace ANM.Framework.Managers
         {
             _gameManager = GameManager.Instance;
             _eventSystem = FindObjectOfType<EventSystem>();
-            if (!SaveSettings.SettingsLoadedIni)
-                SaveSettings.DefaultSettings();
+            if (!SaveSettings.SettingsLoadedIni) SaveSettings.DefaultSettings();
             ApplyIniSettings();
         }
 
         private void Start()
         {
             var isMenuActive = SceneExtension.IsThisSceneActive(SceneExtension.MenuUiSceneName);
-            _gameManager.SetIsMainMenuActive(isMenuActive);
-
-            TurnOffAllPanels();
             mainPanel.SetActive(isMenuActive);
+            _gameManager.SetIsMainMenuActive(isMenuActive);
             menuUiCamera.gameObject.SetActive(isMenuActive);
-            
             SceneExtension.StartSceneLoadEvent += OnStartLoadSceneEvent;
             SceneExtension.FinishSceneLoadEvent += OnFinishLoadSceneEvent;
         }
@@ -77,8 +72,7 @@ namespace ANM.Framework.Managers
         
         private void OnStartLoadSceneEvent(bool b)
         {
-            if (quitOptionsPanelAnimator.transform.GetChild(0).gameObject.activeSelf)
-                quitOptionsPanelAnimator.Play("QuitPanelOut");
+            TurnOffAllPanels();
         }
         
         private void OnFinishLoadSceneEvent(bool b)
@@ -130,9 +124,7 @@ namespace ANM.Framework.Managers
         
         private void TurnOffAllPanels()
         {
-            if (quitOptionsPanelAnimator.transform.GetChild(0).gameObject.activeSelf)
-                quitOptionsPanelAnimator.Play("QuitPanelOut");
-            
+            quitPanel.TurnOffPanel();
             videoSettingsPanel.TurnOffPanel();
             mainPanel.SetActive(false);
             pausePanel.SetActive(false);
@@ -141,11 +133,10 @@ namespace ANM.Framework.Managers
 
         private void ApplyIniSettings()
         {
+            ToggleFpsDisplay(SaveSettings.DisplayFpsIni);
             audioSettingsPanel.ApplyAudioSettings();
             videoSettingsPanel.ApplyVideoSettings();
-            ToggleFpsDisplay(SaveSettings.DisplayFpsIni);
         }
-        
         
         public void StartGame()
         {
@@ -178,28 +169,16 @@ namespace ANM.Framework.Managers
         
         public void QuitOptions()
         {
+            quitPanel.TurnOnPanel();
             videoSettingsPanel.TurnOffPanel();
             audioSettingsPanel.TurnOffPanel();
-            if (quitOptionsPanelAnimator != null)
-            {
-                quitOptionsPanelAnimator.enabled = true;
-                quitOptionsPanelAnimator.Play("QuitPanelIn");
-            }
-            else
-            {
-                quitOptionsPanel.SetActive(true);
-            }
             _eventSystem.SetSelectedGameObject(quitPanelSelectedObj.gameObject);
             quitPanelSelectedObj.OnSelect(null);
         }
 
         public void QuitCancel()
         {
-            if (quitOptionsPanelAnimator != null)
-                quitOptionsPanelAnimator.Play("QuitPanelOut");
-            else
-                quitOptionsPanel.SetActive(false);
-            
+            quitPanel.TurnOffPanel();
             TurnOnMainPanel();
         }
         

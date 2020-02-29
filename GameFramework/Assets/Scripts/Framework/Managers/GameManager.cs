@@ -36,13 +36,11 @@ namespace ANM.Framework.Managers
         private void Awake()
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-            DontDestroyOnLoad(gameObject);
-            Instance = this;
-            
             SaveSettings.SettingsLoadedIni = false;
+            DontDestroyOnLoad(gameObject);
             _save = new SaveSettings();
             _save.LoadGameSettings();
-            Reset();
+            Instance = this;
         }
         
         private void ControllerSetup()
@@ -100,8 +98,8 @@ namespace ANM.Framework.Managers
         public void SetIsGamePaused(bool b)
         {
             isGamePaused = b;
-            if(isGamePaused) RaisePauseEvent();
-            else RaiseResumeEvent();
+            if(isGamePaused) RaisePause();
+            else RaiseResume();
             Time.timeScale = b ? 0 : 1;
         }
         
@@ -118,14 +116,15 @@ namespace ANM.Framework.Managers
         
         public void HardReset()
         {
-            RaiseAppQuitEvent();
+            RaiseAppQuit();
             Reset();
         }
 
         public void LoadCredits()
         {
             HardReset();
-            StartCoroutine(SceneExtension.LoadSingleSceneSequence(SceneExtension.CreditsSceneName, true));
+            StartCoroutine(SceneExtension.LoadSingleSceneSequence(
+                SceneExtension.CreditsSceneName, true));
         }
 
         public void SetDisplayFps(bool b)  {  displayFps = b;  }
@@ -146,17 +145,17 @@ namespace ANM.Framework.Managers
             SetIsGamePaused(!GetIsGamePaused());
         }
         
-        private void RaisePauseEvent()
+        private void RaisePause()
         {
             onGamePause.Raise();
         }
 
-        private void RaiseResumeEvent()
+        private void RaiseResume()
         {
             onGameResume.Raise();
         }
         
-        private void RaiseAppQuitEvent()
+        private void RaiseAppQuit()
         {
             onApplicationQuit.Raise();
         }

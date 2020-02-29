@@ -11,13 +11,13 @@ using ANM.Framework.Extensions;
 
 namespace ANM.Framework.Utils
 {
-    [RequireComponent(typeof(BoxCollider2D))]
+    [RequireComponent(typeof(BoxCollider))]
     public class ScenePortal : MonoBehaviour
     {
         [SerializeField] private int sceneToLoad = -1;
         private const string PlayerTag = "Player";
 
-        private void OnTriggerEnter2D(Collider2D other)
+        private void OnTriggerEnter(Collider other)
         {
             if (other.tag.Equals(PlayerTag))
             {

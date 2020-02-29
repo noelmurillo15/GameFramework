@@ -23,8 +23,8 @@ namespace ANM.Framework.Utils
         private void Start()
         {
             if (gameObject.GetComponentInParent<GameManager>() != GameManager.Instance) return;
-            SceneExtension.StartSceneLoadEvent += StartLoadSceneEvent;
-            SceneExtension.FinishSceneLoadEvent += FinishLoadSceneEvent;
+            SceneExtension.StartSceneLoadEvent += StartLoadScene;
+            SceneExtension.FinishSceneLoadEvent += FinishLoadScene;
             canvasGroup = GetComponent<CanvasGroup>();
             FadeInImmediate();
         }
@@ -32,17 +32,16 @@ namespace ANM.Framework.Utils
         private void OnDestroy()
         {
             if (gameObject.GetComponentInParent<GameManager>() != GameManager.Instance) return;
-            SceneExtension.StartSceneLoadEvent -= StartLoadSceneEvent;
-            SceneExtension.FinishSceneLoadEvent -= FinishLoadSceneEvent;
+            SceneExtension.StartSceneLoadEvent -= StartLoadScene;
+            SceneExtension.FinishSceneLoadEvent -= FinishLoadScene;
         }
 
         private void FadeOutImmediate() { canvasGroup.alpha = 1f; }
         private void FadeInImmediate() { canvasGroup.alpha = 0f; }
         
-        private void StartLoadSceneEvent(bool wait)
+        private void StartLoadScene(bool wait)
         {
-            if(!wait)
-                FadeOutImmediate();
+            if(!wait) FadeOutImmediate();
             else
             {
                 FadeInImmediate();
@@ -50,10 +49,9 @@ namespace ANM.Framework.Utils
             }
         }
         
-        private void FinishLoadSceneEvent(bool wait)
+        private void FinishLoadScene(bool wait)
         {
-            if(!wait)
-                FadeInImmediate();
+            if(!wait) FadeInImmediate();
             else
             {
                 FadeOutImmediate();
@@ -75,7 +73,8 @@ namespace ANM.Framework.Utils
         {
             while (!Mathf.Approximately(canvasGroup.alpha, target))
             {
-                canvasGroup.alpha = Mathf.MoveTowards(canvasGroup.alpha, target, Time.deltaTime / time);
+                canvasGroup.alpha = Mathf.MoveTowards(
+                    canvasGroup.alpha, target, Time.deltaTime / time);
                 yield return null;
             }
         }

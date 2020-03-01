@@ -82,7 +82,7 @@ namespace ANM.Framework.Extensions
                 SetThisSceneActive(menu);
                 if (!unloadAll) yield break;
                 UnloadAllScenesExcept(MenuUiSceneName);
-                CallOnFinishSceneLoadEvent();
+                CallOnFinishSceneLoadEvent(true);
                 yield break;
             }
             LoadSingleSceneWithOnFinish(MenuUiSceneName);

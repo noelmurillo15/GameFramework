@@ -2,7 +2,7 @@
  * GameManager - Backbone of the game application
  * Contains data that needs to persist and be accessed from anywhere
  * Created by : Allan N. Murillo
- * Last Edited : 2/22/2020
+ * Last Edited : 2/24/2020
  */
 
 using System;
@@ -25,7 +25,6 @@ namespace ANM.Framework.Managers
         [Space] [Header("Local Game Info")]
         [SerializeField] private bool displayFps = false;
         [SerializeField] private bool isGamePaused = false;
-        [SerializeField] private bool isMainMenuActive = false;
         [SerializeField] private bool isSceneTransitioning = false;
         
         private float _deltaTime;
@@ -35,12 +34,11 @@ namespace ANM.Framework.Managers
         private void Awake()
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-            DontDestroyOnLoad(gameObject);
-            Instance = this;
-            
             SaveSettings.SettingsLoadedIni = false;
+            DontDestroyOnLoad(gameObject);
             _save = new SaveSettings();
             _save.Initialize();
+            Instance = this;
             Reset();
         }
 
@@ -48,6 +46,11 @@ namespace ANM.Framework.Managers
         {
             SceneExtension.StartSceneLoadEvent += OnStartLoadSceneEvent;
             SceneExtension.FinishSceneLoadEvent += OnFinishLoadSceneEvent;
+            Invoke(nameof(Initialize), 1f);
+        }
+
+        private void Initialize()
+        {
             if (SceneExtension.IsThisSceneActive(SceneExtension.SplashSceneName))
                 StartCoroutine(SceneExtension.ForceMenuSceneSequence());
         }
@@ -55,7 +58,6 @@ namespace ANM.Framework.Managers
         private void Update()
         {
             _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
-            if (GetIsMainMenuActive()) return;
             if (!Input.GetKeyDown(KeyCode.Tab)) return;
             TogglePause();
         }
@@ -92,17 +94,44 @@ namespace ANM.Framework.Managers
             Quit();
         }
         
-        public void SetIsGamePaused(bool b)
+        private void TogglePause()
+        {
+            SetPause(!GetIsGamePaused());
+        }
+        
+        private void RaisePause() { onGamePause.Raise(); }
+
+        private void RaiseResume() { onGameResume.Raise(); }
+        
+        private void RaiseAppQuit() { onApplicationQuit.Raise(); }
+
+        private void OnStartLoadSceneEvent(bool b) { isSceneTransitioning = true; }
+
+        private void OnFinishLoadSceneEvent(bool b) { isSceneTransitioning = false; }
+        
+        private void LoadSettingsFromIndexedDb()
+        {    //    WebGL Only : Called from WebBrowserInteraction.jslib plugin
+            SaveSettings.SettingsLoadedIni = _save.LoadGameSettings();
+        }
+        
+        public void SetPause(bool b)
         {
             isGamePaused = b;
-            if(isGamePaused) RaisePauseEvent();
-            else RaiseResumeEvent();
+            if(isGamePaused) RaisePause();
+            else RaiseResume();
             Time.timeScale = b ? 0 : 1;
         }
         
         public void ReloadScene()
         {
             StartCoroutine(SceneExtension.ReloadCurrentSceneSequence());
+        }
+        
+        public void LoadCredits()
+        {
+            HardReset();
+            StartCoroutine(SceneExtension.LoadSingleSceneSequence(
+                SceneExtension.CreditsSceneName, true));
         }
 
         public void Reset()
@@ -113,63 +142,18 @@ namespace ANM.Framework.Managers
         
         public void HardReset()
         {
-            RaiseAppQuitEvent();
+            RaiseAppQuit();
             Reset();
         }
 
-        public void LoadCredits()
-        {
-            HardReset();
-            StartCoroutine(SceneExtension.LoadSingleSceneSequence(
-                SceneExtension.CreditsSceneName, true));
-        }
-
+        public void SaveGameEngineSettings()  {  _save.SaveGameSettings();  }
+        
         public void SetDisplayFps(bool b)  {  displayFps = b;  }
 
-        public void SaveGameSettings()  {  _save.SaveGameSettings();  }
-        
-        public void SetIsMainMenuActive(bool b)  {  isMainMenuActive = b;  }
-        
-        public bool GetIsMainMenuActive()  {  return isMainMenuActive;  }
+        public bool GetIsSceneTransitioning()  {  return isSceneTransitioning;  }
         
         public bool GetIsGamePaused()  {  return isGamePaused;  }
-
-        public bool GetIsSceneTransitioning()  {  return isSceneTransitioning;  }
-
-        private void TogglePause()
-        {
-            SetIsGamePaused(!GetIsGamePaused());
-        }
         
-        private void RaisePauseEvent()
-        {
-            onGamePause.Raise();
-        }
-
-        private void RaiseResumeEvent()
-        {
-            onGameResume.Raise();
-        }
-        
-        private void RaiseAppQuitEvent()
-        {
-            onApplicationQuit.Raise();
-        }
-
-        private void OnStartLoadSceneEvent(bool b)
-        {
-            isSceneTransitioning = true;
-        }
-
-        private void OnFinishLoadSceneEvent(bool b)
-        {
-            isSceneTransitioning = false;
-        }
-        
-        private void LoadSettingsFromIndexedDb()
-        {    //    WebGL Only : Called from WebBrowserInteraction.jslib plugin
-            SaveSettings.SettingsLoadedIni = _save.LoadGameSettings();
-        }
         
         #region External JavaScript Library
 #if UNITY_WEBGL && !UNITY_EDITOR

@@ -2,7 +2,7 @@
  * GameEvent - An event that is saved as a Scriptable Object (can be accessed from any scene)
  * Use a GameEventListener.cs to call a certain function when a GameEvent is Raised()
  * Created by : Allan N. Murillo
- * Last Edited : 2/17/2020
+ * Last Edited : 2/24/2020
  */
 
 using UnityEngine;
@@ -19,11 +19,6 @@ namespace ANM.Framework.Events
 
         public void Raise()
         {
-            if (_listeners.Count <= 0)
-            {
-                Debug.Log(eventName + " was Raised with no Listeners!");
-            }
-            
             for (var x = 0; x < _listeners.Count; x++)
             {
                 _listeners[x].OnEventRaised();

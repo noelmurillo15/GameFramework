@@ -1,7 +1,7 @@
 ﻿/*
  * AudioSettings - Handles displaying / configuring audio settings
  * Created by : Allan N. Murillo
- * Last Edited : 2/17/2020
+ * Last Edited : 3/1/2020
  */
 
 using System;
@@ -15,11 +15,8 @@ using UnityEngine.EventSystems;
 
 namespace ANM.Framework.Settings
 {
-    public class AudioSettingsPanel : MonoBehaviour
+    public class AudioSettingsPanel : MonoBehaviour, IPanel
     {
-        [SerializeField] private GameObject audioPanel = null;
-        [SerializeField] private Animator audioPanelAnimator = null;
-        
         [SerializeField] private Slider audioMasterVolumeSlider = null;
         [SerializeField] private Slider effectsVolumeSlider = null;
         [SerializeField] private Slider backgroundVolumeSlider = null;
@@ -28,40 +25,49 @@ namespace ANM.Framework.Settings
         
         [SerializeField] private AudioSource bgMusic = null;
         [SerializeField] private AudioSource[] sfx = null;
+        
+        private GameObject _panel;
+        private Animator _audioPanelAnimator;
 
         
         private void Start()
         {
-            TurnOffPanel();
-        }
-
-        public void TurnOffPanel()
-        {
-            audioPanel.SetActive(false);
+            _audioPanelAnimator = GetComponent<Animator>();
+            _panel = _audioPanelAnimator.transform.GetChild(0).gameObject;
         }
         
+        public void TurnOnPanel()
+        {
+            if (!_panel.activeSelf)
+                _audioPanelAnimator.Play("Audio Panel In");
+        } 
+        
+        public void TurnOffPanel()
+        {
+            if (_panel.activeSelf)
+                _audioPanelAnimator.Play("Audio Panel Out");
+        }
+
         public void AudioPanelIn(EventSystem eventSystem)
         {
-            if (audioPanelAnimator == null) return;
-            audioPanelAnimator.enabled = true;
-            audioPanelAnimator.Play("Audio Panel In");
+            TurnOnPanel();
             eventSystem.SetSelectedGameObject(GetSelectObject());
             audioPanelSelectedObj.OnSelect(null);
         }
         
         public IEnumerator SaveAudioSettings()
         {
-            audioPanelAnimator.Play("Audio Panel Out");
+            TurnOffPanel();
             SaveSettings.MasterVolumeIni = audioMasterVolumeSlider.value;
             SaveSettings.EffectVolumeIni = effectsVolumeSlider.value;
             SaveSettings.BackgroundVolumeIni = backgroundVolumeSlider.value;
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
-            GameManager.Instance.SaveGameSettings();
+            GameManager.Instance.SaveGameEngineSettings();
         }
 
         public IEnumerator RevertAudioSettings()
         {
-            audioPanelAnimator.Play("Audio Panel Out");
+            TurnOffPanel();
             audioMasterVolumeSlider.value = SaveSettings.MasterVolumeIni;
             effectsVolumeSlider.value = SaveSettings.EffectVolumeIni;
             backgroundVolumeSlider.value = SaveSettings.BackgroundVolumeIni;

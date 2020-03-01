@@ -1,7 +1,7 @@
 ﻿/*
  * SaveSettings - Save/Loads game settings to/from a JSON file
  * Created by : Allan N. Murillo
- * Last Edited : 2/17/2020
+ * Last Edited : 2/24/2020
  */
 
 using System.IO;

@@ -1,7 +1,7 @@
 ﻿/*
  * AudioSettings - Handles displaying / configuring audio settings
  * Created by : Allan N. Murillo
- * Last Edited : 3/1/2020
+ * Last Edited : 3/2/2020
  */
 
 using System;
@@ -13,9 +13,9 @@ using ANM.Framework.Managers;
 using ANM.Framework.Extensions;
 using UnityEngine.EventSystems;
 
-namespace ANM.Framework.Settings
+namespace ANM.Framework.Options
 {
-    public class AudioSettingsPanel : MonoBehaviour, IPanel
+    public class AudioOptionsPanel : MonoBehaviour, IPanel
     {
         [SerializeField] private Slider audioMasterVolumeSlider = null;
         [SerializeField] private Slider effectsVolumeSlider = null;

@@ -7,7 +7,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using ANM.Framework.Settings;
+using ANM.Framework.Options;
 using ANM.Framework.Extensions;
 using UnityEngine.EventSystems;
 
@@ -20,8 +20,8 @@ namespace ANM.Framework.Managers
         [SerializeField] private GameObject mainPanel = null;
         [SerializeField] private GameObject pausePanel = null;
         
-        [SerializeField] private AudioSettingsPanel audioSettingsPanel = null;
-        [SerializeField] private VideoSettingsPanel videoSettingsPanel = null;
+        [SerializeField] private AudioOptionsPanel audioOptionsPanel = null;
+        [SerializeField] private VideoOptionsPanel videoOptionsPanel = null;
         [SerializeField] private QuitOptionsPanel quitPanel = null;
         
         [SerializeField] private Toggle fpsDisplayToggle = null;
@@ -30,7 +30,8 @@ namespace ANM.Framework.Managers
         [SerializeField] private Button mainPanelSelectedObj = null;
         [SerializeField] private Button pausePanelSelectedObj = null;
         [SerializeField] private Button quitPanelSelectedObj = null;
-        
+
+        private bool _isPaused;
         private EventSystem _eventSystem;
         private GameManager _gameManager;
         private IPanel[] _menuPanels;
@@ -52,6 +53,7 @@ namespace ANM.Framework.Managers
             SceneExtension.StartSceneLoadEvent += OnStartLoadScene;
             TurnOffAllPanels();
             TurnOnMainPanel();
+            _isPaused = false;
         }
 
         private void OnGUI()
@@ -64,7 +66,7 @@ namespace ANM.Framework.Managers
             style.alignment = TextAnchor.UpperLeft;
             style.fontSize = h * 2 / 100;
             style.normal.textColor = Color.white;
-            var text = _gameManager.GetIsGamePaused() 
+            var text = _isPaused
                 ? "Press TAB to Resume" 
                 : "Press TAB to Pause";
             GUI.Label(rect, text, style);
@@ -103,6 +105,7 @@ namespace ANM.Framework.Managers
         {
             if (!SceneExtension.TrySwitchToScene(SceneExtension.MenuUiSceneName)) return;
             TurnOnMainPanel();
+            _isPaused = true;
         }
         
         private void OnResume()
@@ -110,6 +113,7 @@ namespace ANM.Framework.Managers
             if (!SceneExtension.TrySwitchToScene(SceneExtension.GameplaySceneName)) return;
             menuUiCamera.gameObject.SetActive(false);
             TurnOffAllPanels();
+            _isPaused = false;
         }
         
         private void TurnOnMainPanel()
@@ -131,8 +135,8 @@ namespace ANM.Framework.Managers
         private void ApplyIniSettings()
         {
             ToggleFpsDisplay(SaveSettings.DisplayFpsIni);
-            audioSettingsPanel.ApplyAudioSettings();
-            videoSettingsPanel.ApplyVideoSettings();
+            audioOptionsPanel.ApplyAudioSettings();
+            videoOptionsPanel.ApplyVideoSettings();
         }
         
         
@@ -159,36 +163,36 @@ namespace ANM.Framework.Managers
         public void Audio()
         {
             TurnOffAllPanels();
-            audioSettingsPanel.AudioPanelIn(_eventSystem);
+            audioOptionsPanel.AudioPanelIn(_eventSystem);
         }
         
         public void Video()
         {
             TurnOffAllPanels();
-            videoSettingsPanel.VideoPanelIn(_eventSystem);
+            videoOptionsPanel.VideoPanelIn(_eventSystem);
         }
         
         public void UpdateAudioSettings()
         {
-            StartCoroutine(audioSettingsPanel.SaveAudioSettings());
+            StartCoroutine(audioOptionsPanel.SaveAudioSettings());
             TurnOnMainPanel();
         }
         
         public void UpdateVideoSettings()
         {
-            StartCoroutine(videoSettingsPanel.SaveVideoSettings());
+            StartCoroutine(videoOptionsPanel.SaveVideoSettings());
             TurnOnMainPanel();
         }
 
         public void CancelAudioSettings()
         {
-            StartCoroutine(audioSettingsPanel.RevertAudioSettings());
+            StartCoroutine(audioOptionsPanel.RevertAudioSettings());
             TurnOnMainPanel();
         }
 
         public void CancelVideoSettings()
         {
-            StartCoroutine(videoSettingsPanel.RevertVideoSettings());
+            StartCoroutine(videoOptionsPanel.RevertVideoSettings());
             TurnOnMainPanel();
         }
         
@@ -209,8 +213,8 @@ namespace ANM.Framework.Managers
         
         public void QuitOptions()
         {
-            videoSettingsPanel.TurnOffPanel();
-            audioSettingsPanel.TurnOffPanel();
+            videoOptionsPanel.TurnOffPanel();
+            audioOptionsPanel.TurnOffPanel();
             quitPanel.TurnOnPanel();
             _eventSystem.SetSelectedGameObject(quitPanelSelectedObj.gameObject);
             quitPanelSelectedObj.OnSelect(null);

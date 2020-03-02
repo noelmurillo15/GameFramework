@@ -1,12 +1,12 @@
 ﻿/*
  * MenuManager - Handles interactions with the Menu Ui
  * Created by : Allan N. Murillo
- * Last Edited : 3/1/2020
+ * Last Edited : 3/2/2020
  */
 
 using UnityEngine;
 
-namespace ANM.Framework.Settings
+namespace ANM.Framework.Options
 {
     public class QuitOptionsPanel : MonoBehaviour, IPanel
     {

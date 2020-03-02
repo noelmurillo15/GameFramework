@@ -1,7 +1,7 @@
 ﻿/*
  * VideoSettings - Handles displaying / configuring video settings
  * Created by : Allan N. Murillo
- * Last Edited : 3/1/2020
+ * Last Edited : 3/2/2020
  */
 
 using TMPro;
@@ -14,9 +14,9 @@ using ANM.Framework.Managers;
 using ANM.Framework.Extensions;
 using UnityEngine.EventSystems;
 
-namespace ANM.Framework.Settings
+namespace ANM.Framework.Options
 {
-    public class VideoSettingsPanel : MonoBehaviour, IPanel
+    public class VideoOptionsPanel : MonoBehaviour, IPanel
     {
         [SerializeField] private TMP_Dropdown msaaDropdown = null;
         [SerializeField] private TMP_Dropdown anisotropicDropdown = null;

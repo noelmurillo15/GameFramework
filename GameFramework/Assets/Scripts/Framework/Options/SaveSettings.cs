@@ -1,13 +1,13 @@
 ﻿/*
  * SaveSettings - Save/Loads game settings to/from a JSON file
  * Created by : Allan N. Murillo
- * Last Edited : 2/24/2020
+ * Last Edited : 3/2/2020
  */
 
 using System.IO;
 using UnityEngine;
 
-namespace ANM.Framework.Settings
+namespace ANM.Framework.Options
 {
     [System.Serializable]
     public class SaveSettings

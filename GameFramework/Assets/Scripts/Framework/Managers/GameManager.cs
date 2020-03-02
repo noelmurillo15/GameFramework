@@ -8,7 +8,7 @@
 using System;
 using UnityEngine;
 using ANM.Framework.Events;
-using ANM.Framework.Settings;
+using ANM.Framework.Options;
 using ANM.Framework.Extensions;
 
 namespace ANM.Framework.Managers
@@ -25,7 +25,6 @@ namespace ANM.Framework.Managers
         [Space] [Header("Local Game Info")]
         [SerializeField] private bool displayFps = false;
         [SerializeField] private bool isGamePaused = false;
-        [SerializeField] private bool isSceneTransitioning = false;
         
         private float _deltaTime;
         private SaveSettings _save;
@@ -44,8 +43,6 @@ namespace ANM.Framework.Managers
 
         private void Start()
         {
-            SceneExtension.StartSceneLoadEvent += OnStartLoadSceneEvent;
-            SceneExtension.FinishSceneLoadEvent += OnFinishLoadSceneEvent;
             Invoke(nameof(Initialize), 1f);
         }
 
@@ -87,17 +84,12 @@ namespace ANM.Framework.Managers
         private void OnDestroy()
         {
             if (Instance != this) return;
-            SceneExtension.StartSceneLoadEvent -= OnStartLoadSceneEvent;
-            SceneExtension.FinishSceneLoadEvent -= OnFinishLoadSceneEvent;
             Resources.UnloadUnusedAssets();
             GC.Collect();
             Quit();
         }
         
-        private void TogglePause()
-        {
-            SetPause(!GetIsGamePaused());
-        }
+        private void TogglePause() { SetPause(!isGamePaused); }
         
         private void RaisePause() { onGamePause.Raise(); }
 
@@ -105,10 +97,6 @@ namespace ANM.Framework.Managers
         
         private void RaiseAppQuit() { onApplicationQuit.Raise(); }
 
-        private void OnStartLoadSceneEvent(bool b) { isSceneTransitioning = true; }
-
-        private void OnFinishLoadSceneEvent(bool b) { isSceneTransitioning = false; }
-        
         private void LoadSettingsFromIndexedDb()
         {    //    WebGL Only : Called from WebBrowserInteraction.jslib plugin
             SaveSettings.SettingsLoadedIni = _save.LoadGameSettings();
@@ -117,7 +105,7 @@ namespace ANM.Framework.Managers
         public void SetPause(bool b)
         {
             isGamePaused = b;
-            if(isGamePaused) RaisePause();
+            if(b) RaisePause();
             else RaiseResume();
             Time.timeScale = b ? 0 : 1;
         }
@@ -150,10 +138,6 @@ namespace ANM.Framework.Managers
         
         public void SetDisplayFps(bool b)  {  displayFps = b;  }
 
-        public bool GetIsSceneTransitioning()  {  return isSceneTransitioning;  }
-        
-        public bool GetIsGamePaused()  {  return isGamePaused;  }
-        
         
         #region External JavaScript Library
 #if UNITY_WEBGL && !UNITY_EDITOR
@@ -165,8 +149,8 @@ namespace ANM.Framework.Managers
         private void Quit() {  QuitGame(); }
         private void WindowLostFocus() { LostFocus(); }
 #else
-        private void Quit() { }
-        private void WindowLostFocus() { }
+        private static void Quit() { }
+        private static void WindowLostFocus() { }
 #endif
         #endregion
     }

@@ -14187,8 +14187,8 @@ MonoBehaviour:
   isMainMenuActive: 0
   mainPanel: {fileID: 5860703799937203206}
   pausePanel: {fileID: 1408325634255861249}
-  audioSettingsPanel: {fileID: 1897628522808736492}
-  videoSettingsPanel: {fileID: 5452087819553998316}
+  audioOptionsPanel: {fileID: 1897628522808736492}
+  videoOptionsPanel: {fileID: 5452087819553998316}
   quitPanel: {fileID: 7110930004554666847}
   fpsDisplayToggle: {fileID: 1556689858335956797}
   menuUiCamera: {fileID: 5695821433675544876}

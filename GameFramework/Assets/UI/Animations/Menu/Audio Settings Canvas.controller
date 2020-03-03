@@ -37,13 +37,13 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -4958144428646934498}
-    m_Position: {x: 390, y: 140, z: 0}
+    m_Position: {x: 380, y: 10, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -7737330706455528642}
     m_Position: {x: 210, y: 60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1988974472043627708}
-    m_Position: {x: 390.50522, y: -19.420929, z: 0}
+    m_Position: {x: 380, y: 110, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -62,7 +62,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Audio Panel In
-  m_Speed: 1
+  m_Speed: 4
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []
@@ -110,7 +110,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Audio Panel Out
-  m_Speed: -1
+  m_Speed: -4
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []

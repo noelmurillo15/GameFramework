@@ -2,14 +2,14 @@
  * GameManager - Backbone of the game application
  * Contains data that needs to persist and be accessed from anywhere
  * Created by : Allan N. Murillo
- * Last Edited : 2/22/2020
+ * Last Edited : 3/3/2020
  */
 
 using System;
 using UnityEngine;
 using ANM.Framework.Events;
-using ANM.Framework.Settings;
 using ANM.Framework.Extensions;
+using ANM.Framework.Options;
 
 namespace ANM.Framework.Managers
 {
@@ -25,29 +25,24 @@ namespace ANM.Framework.Managers
         [Space] [Header("Local Game Info")]
         [SerializeField] private bool displayFps = false;
         [SerializeField] private bool isGamePaused = false;
-        [SerializeField] private bool isMainMenuActive = false;
-        [SerializeField] private bool isSceneTransitioning = false;
         
-        private SaveSettings _save;
         private float _deltaTime;
+        private SaveSettings _save;
 
 
         private void Awake()
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
-            DontDestroyOnLoad(gameObject);
-            Instance = this;
-            
             SaveSettings.SettingsLoadedIni = false;
+            Application.targetFrameRate = 60;
+            DontDestroyOnLoad(gameObject);
             _save = new SaveSettings();
-            _save.LoadGameSettings();
-            Reset();
+            _save.Initialize();
+            Instance = this;
         }
 
         private void Start()
         {
-            SceneExtension.StartSceneLoadEvent += OnStartLoadSceneEvent;
-            SceneExtension.FinishSceneLoadEvent += OnFinishLoadSceneEvent;
             Invoke(nameof(Initialize), 1f);
         }
 
@@ -60,7 +55,6 @@ namespace ANM.Framework.Managers
         private void Update()
         {
             _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
-            if (GetIsMainMenuActive()) return;
             if (!Input.GetKeyDown(KeyCode.Tab)) return;
             TogglePause();
         }
@@ -84,83 +78,35 @@ namespace ANM.Framework.Managers
         private void OnDestroy()
         {
             if (Instance != this) return;
-            SceneExtension.StartSceneLoadEvent -= OnStartLoadSceneEvent;
-            SceneExtension.FinishSceneLoadEvent -= OnFinishLoadSceneEvent;
             Resources.UnloadUnusedAssets();
             GC.Collect();
         }
         
-        public void SetIsGamePaused(bool b)
+        private void SetPause(bool b)
         {
             isGamePaused = b;
-            if(isGamePaused) RaisePauseEvent();
-            else RaiseResumeEvent();
+            if(b) RaisePause();
+            else RaiseResume();
             Time.timeScale = b ? 0 : 1;
         }
         
-        public void ReloadScene()
-        {
-            StartCoroutine(SceneExtension.ReloadCurrentSceneSequence());
-        }
+        private void RaisePause() { onGamePause.Raise(); }
 
-        public void Reset()
-        {
-            Time.timeScale = 1;
-            isGamePaused = false;
-        }
+        private void RaiseResume() { onGameResume.Raise(); }
+        
+        private void RaiseAppQuit() { onApplicationQuit.Raise(); }
+
         
         public void HardReset()
         {
-            RaiseAppQuitEvent();
-            Reset();
+            SetPause(false);
+            RaiseAppQuit();
         }
-
-        public void LoadCredits()
-        {
-            HardReset();
-            StartCoroutine(SceneExtension.LoadSingleSceneSequence(SceneExtension.CreditsSceneName, true));
-        }
-
-        public void SetDisplayFps(bool b)  {  displayFps = b;  }
-
+        
         public void SaveGameSettings()  {  _save.SaveGameSettings();  }
         
-        public void SetIsMainMenuActive(bool b)  {  isMainMenuActive = b;  }
-        
-        public bool GetIsMainMenuActive()  {  return isMainMenuActive;  }
-        
-        public bool GetIsGamePaused()  {  return isGamePaused;  }
+        public void SetDisplayFps(bool b)  {  displayFps = b;  }
 
-        public bool GetIsSceneTransitioning()  {  return isSceneTransitioning;  }
-
-        private void TogglePause()
-        {
-            SetIsGamePaused(!GetIsGamePaused());
-        }
-        
-        private void RaisePauseEvent()
-        {
-            onGamePause.Raise();
-        }
-
-        private void RaiseResumeEvent()
-        {
-            onGameResume.Raise();
-        }
-        
-        private void RaiseAppQuitEvent()
-        {
-            onApplicationQuit.Raise();
-        }
-
-        private void OnStartLoadSceneEvent(bool b)
-        {
-            isSceneTransitioning = true;
-        }
-
-        private void OnFinishLoadSceneEvent(bool b)
-        {
-            isSceneTransitioning = false;
-        }
+        public void TogglePause() { SetPause(!isGamePaused); }
     }
 }

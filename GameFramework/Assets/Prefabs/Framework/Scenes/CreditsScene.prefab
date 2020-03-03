@@ -400,7 +400,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c33b52bab0d3e54191de7c7fd2308de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quitDelay: 3
+  quitDelay: 1
 --- !u!1 &9134924183665045770
 GameObject:
   m_ObjectHideFlags: 0

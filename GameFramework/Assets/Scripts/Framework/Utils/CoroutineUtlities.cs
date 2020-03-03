@@ -14,10 +14,7 @@ namespace ANM.Framework.Utils
             while (true)
             {
                 var endTime = Time.realtimeSinceStartup + delay;
-                while (Time.realtimeSinceStartup < endTime)
-                {
-                    yield return 0;
-                }
+                while (Time.realtimeSinceStartup < endTime) yield return 0;
                 break;
             }
         }

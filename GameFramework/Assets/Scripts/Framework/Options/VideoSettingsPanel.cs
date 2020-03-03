@@ -1,7 +1,7 @@
 ﻿/*
  * VideoSettings - Handles displaying / configuring video settings
  * Created by : Allan N. Murillo
- * Last Edited : 2/17/2020
+ * Last Edited : 3/3/2020
  */
 
 using TMPro;
@@ -14,14 +14,10 @@ using ANM.Framework.Managers;
 using ANM.Framework.Extensions;
 using UnityEngine.EventSystems;
 
-namespace ANM.Framework.Settings
+namespace ANM.Framework.Options
 {
-    public class VideoSettingsPanel : MonoBehaviour
+    public class VideoSettingsPanel : MonoBehaviour, IPanel
     {
-        [SerializeField] private GameObject videoPanel = null;
-        [SerializeField] private Animator videoPanelAnimator = null;
-        
-        [SerializeField] private Toggle vsyncToggle = null;
         [SerializeField] private TMP_Dropdown msaaDropdown = null;
         [SerializeField] private TMP_Dropdown anisotropicDropdown = null;
         [SerializeField] private Slider renderDistSlider = null;
@@ -34,38 +30,46 @@ namespace ANM.Framework.Settings
         
         [SerializeField] private Button videoPanelSelectedObj = null;
 
-        private Camera myCamera;
+        private Camera _myCamera;
         private string[] _presets;
+        private GameObject _panel;
+        private Animator _videoPanelAnimator;
 
 
         private void Awake()
         {
-            myCamera = Camera.main;
+            _myCamera = Camera.main;
             _presets = QualitySettings.names;
         }
 
         private void Start()
         {
-            TurnOffPanel();
+            _videoPanelAnimator = GetComponent<Animator>();
+            _panel = _videoPanelAnimator.transform.GetChild(0).gameObject;
         }
+        
+        public void TurnOnPanel()
+        {
+            if (!_panel.activeSelf)
+                _videoPanelAnimator.Play("Video Panel In");
+        } 
         
         public void TurnOffPanel()
         {
-            videoPanel.SetActive(false);
+            if (_panel.activeSelf)
+                _videoPanelAnimator.Play("Video Panel Out");
         }
         
         public void VideoPanelIn(EventSystem eventSystem)
         {
-            if (videoPanelAnimator == null) return;
-            videoPanelAnimator.enabled = true;
-            videoPanelAnimator.Play("Video Panel In");
+            TurnOnPanel();
             eventSystem.SetSelectedGameObject(GetSelectObject());
             videoPanelSelectedObj.OnSelect(null);
         }
         
         public IEnumerator SaveVideoSettings()
         {
-            videoPanelAnimator.Play("Video Panel Out");
+            TurnOffPanel();
             SaveSettings.CurrentQualityLevelIni = QualitySettings.GetQualityLevel();
             SaveSettings.MsaaIni = msaaDropdown.value;
             SaveSettings.AnisotropicFilteringLevelIni = anisotropicDropdown.value;
@@ -73,14 +77,13 @@ namespace ANM.Framework.Settings
             SaveSettings.TextureLimitIni = (int)masterTexSlider.value;
             SaveSettings.ShadowDistIni = shadowDistSlider.value;
             SaveSettings.ShadowCascadeIni = (int)shadowCascadesSlider.value;
-            SaveSettings.VsyncIni = vsyncToggle.isOn;
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
             GameManager.Instance.SaveGameSettings();
         }
 
         public IEnumerator RevertVideoSettings()
         {
-            videoPanelAnimator.Play("Video Panel Out");
+            TurnOffPanel();
             QualitySettings.SetQualityLevel(SaveSettings.CurrentQualityLevelIni);
             msaaDropdown.value = SaveSettings.MsaaIni;
             anisotropicDropdown.value = SaveSettings.AnisotropicFilteringLevelIni;
@@ -88,13 +91,11 @@ namespace ANM.Framework.Settings
             masterTexSlider.value = SaveSettings.TextureLimitIni;
             shadowDistSlider.value = SaveSettings.ShadowDistIni;
             shadowCascadesSlider.value = SaveSettings.ShadowCascadeIni;
-            vsyncToggle.isOn = SaveSettings.VsyncIni;
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
         }
         
         public void ApplyVideoSettings()
         {
-            OverrideVsync();
             OverrideGraphicsPreset();
             OverrideAnisotropicFiltering();
             OverrideMasterTextureQuality();
@@ -106,20 +107,8 @@ namespace ANM.Framework.Settings
         
         public void UpdateRenderDistance(float renderDistance)
         {
-            try
-            {
-                myCamera.farClipPlane = renderDistance;
-            }
-            catch
-            {
-                myCamera = Camera.main;
-                myCamera.farClipPlane = renderDistance;
-            }
-        }
-
-        public void UpdateVsync(bool toggle)
-        {
-            QualitySettings.vSyncCount = toggle ? 1 : 0;
+            if (_myCamera == null) return;
+            _myCamera.farClipPlane = renderDistance;
         }
 
         public void UpdateMasterTextureQuality(float textureQuality)
@@ -272,8 +261,10 @@ namespace ANM.Framework.Settings
 
         private void OverrideRenderDistance()
         {
-            if (Math.Abs(myCamera.farClipPlane - SaveSettings.RenderDistIni) > 0f)
-                myCamera.farClipPlane = SaveSettings.RenderDistIni;
+            if (_myCamera == null) return;
+            
+            if (Math.Abs(_myCamera.farClipPlane - SaveSettings.RenderDistIni) > 0f)
+                _myCamera.farClipPlane = SaveSettings.RenderDistIni;
 
             if (!(Math.Abs(renderDistSlider.value - SaveSettings.RenderDistIni) > 0f)) return;
             EventExtension.MuteEventListener(renderDistSlider.onValueChanged);
@@ -312,15 +303,6 @@ namespace ANM.Framework.Settings
             EventExtension.MuteEventListener(masterTexSlider.onValueChanged);
             masterTexSlider.value = SaveSettings.TextureLimitIni;
             EventExtension.UnMuteEventListener(masterTexSlider.onValueChanged);
-        }
-
-        private void OverrideVsync()
-        {
-            var intendedVsync = SaveSettings.VsyncIni;
-            EventExtension.MuteEventListener(vsyncToggle.onValueChanged);
-            vsyncToggle.isOn = intendedVsync;
-            EventExtension.UnMuteEventListener(vsyncToggle.onValueChanged);
-            QualitySettings.vSyncCount = intendedVsync ? 1 : 0;
         }
 
         private void PresetOverride(int currentValue)

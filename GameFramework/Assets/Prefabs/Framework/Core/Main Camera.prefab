@@ -13,12 +13,12 @@ GameObject:
   - component: {fileID: 1050059630299650932}
   - component: {fileID: 5894823612373551051}
   - component: {fileID: 8857468862375106843}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &1050059630299650930
 Transform:
@@ -43,7 +43,7 @@ Camera:
   m_GameObject: {fileID: 1050059630299650935}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -57,9 +57,9 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 60
+  near clip plane: 1
+  far clip plane: 100
+  field of view: 90
   orthographic: 0
   orthographic size: 5
   m_Depth: 0

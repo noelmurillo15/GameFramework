@@ -2,14 +2,14 @@
  * GameManager - Backbone of the game application
  * Contains data that needs to persist and be accessed from anywhere
  * Created by : Allan N. Murillo
- * Last Edited : 3/3/2020
+ * Last Edited : 3/4/2020
  */
 
 using System;
 using UnityEngine;
 using ANM.Framework.Events;
-using ANM.Framework.Extensions;
 using ANM.Framework.Options;
+using ANM.Framework.Extensions;
 
 namespace ANM.Framework.Managers
 {
@@ -34,7 +34,7 @@ namespace ANM.Framework.Managers
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             SaveSettings.SettingsLoadedIni = false;
-            Application.targetFrameRate = 60;
+            Application.targetFrameRate = -1;
             DontDestroyOnLoad(gameObject);
             _save = new SaveSettings();
             _save.Initialize();
@@ -43,7 +43,7 @@ namespace ANM.Framework.Managers
 
         private void Start()
         {
-            Invoke(nameof(Initialize), 1f);
+            Invoke(nameof(Initialize), 2f);
         }
 
         private void Initialize()
@@ -55,8 +55,6 @@ namespace ANM.Framework.Managers
         private void Update()
         {
             _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
-            if (!Input.GetKeyDown(KeyCode.Tab)) return;
-            TogglePause();
         }
 
         private void OnGUI()
@@ -84,15 +82,24 @@ namespace ANM.Framework.Managers
         
         private void SetPause(bool b)
         {
-            isGamePaused = b;
+            if (isGamePaused == b) return;
             if(b) RaisePause();
             else RaiseResume();
-            Time.timeScale = b ? 0 : 1;
         }
-        
-        private void RaisePause() { onGamePause.Raise(); }
 
-        private void RaiseResume() { onGameResume.Raise(); }
+        private void RaisePause()
+        {
+            Time.timeScale = 0;
+            isGamePaused = true;
+            onGamePause.Raise();
+        }
+
+        private void RaiseResume()
+        {
+            Time.timeScale = 1;
+            isGamePaused = false;
+            onGameResume.Raise();
+        }
         
         private void RaiseAppQuit() { onApplicationQuit.Raise(); }
 

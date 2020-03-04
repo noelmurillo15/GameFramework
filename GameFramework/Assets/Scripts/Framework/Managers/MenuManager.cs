@@ -1,7 +1,7 @@
 ﻿/*
  * MenuManager - Handles interactions with the Menu Ui
  * Created by : Allan N. Murillo
- * Last Edited : 3/3/2020
+ * Last Edited : 3/4/2020
  */
 
 using System.Linq;
@@ -15,25 +15,25 @@ namespace ANM.Framework.Managers
 {
     public class MenuManager : MonoBehaviour
     {
-        [SerializeField] private Camera menuUiCamera = null;
+        [Header("Menu Panels")]
         [SerializeField] private GameObject mainPanel = null;
         [SerializeField] private GameObject pausePanel = null;
-        
-        [SerializeField] private AudioSettingsPanel audioOptionsPanel = null;
-        [SerializeField] private VideoSettingsPanel videoOptionsPanel = null;
+        [SerializeField] private AudioOptionsPanel audioOptionsPanel = null;
+        [SerializeField] private VideoOptionsPanel videoOptionsPanel = null;
         [SerializeField] private QuitOptionsPanel quitOptionsPanel = null;
-        
-        [SerializeField] private Toggle fpsDisplayToggle = null;
-        [SerializeField] private Toggle vsyncToggle = null;
-        
+
+        [Space]
         [SerializeField] private Button mainPanelSelectedObj = null;
         [SerializeField] private Button pausePanelSelectedObj = null;
         [SerializeField] private Button quitPanelSelectedObj = null;
 
+        [Space] [Header("Local Game Info")]
+        [SerializeField] private bool isSceneTransitioning = false;
         [SerializeField] private bool isMainMenuActive = false;
         [SerializeField] private int lastSceneBuildIndex = 0;
-
+        
         private bool _isPaused;
+        private Camera _menuUiCamera;
         private EventSystem _eventSystem;
         private GameManager _gameManager;
         private IPanel[] _menuPanels;
@@ -41,6 +41,7 @@ namespace ANM.Framework.Managers
 
         private void Awake()
         {
+            isSceneTransitioning = true;
             _gameManager = GameManager.Instance;
             _eventSystem = FindObjectOfType<EventSystem>();
             if (!SaveSettings.SettingsLoadedIni) SaveSettings.DefaultSettings();
@@ -48,6 +49,7 @@ namespace ANM.Framework.Managers
 
         private void Start()
         {
+            _menuUiCamera = GetComponentInChildren<Camera>();
             isMainMenuActive = SceneExtension.IsThisSceneActive(SceneExtension.MenuUiSceneName);
             _menuPanels = FindObjectsOfType<MonoBehaviour>().OfType<IPanel>().ToArray();
             SceneExtension.FinishSceneLoadEvent += OnFinishLoadScene;
@@ -56,6 +58,13 @@ namespace ANM.Framework.Managers
             TurnOffAllPanels();
             TurnOnMainPanel();
             _isPaused = false;
+        }
+
+        private void Update()
+        {
+            if (isMainMenuActive || isSceneTransitioning) return;
+            if (!Input.GetKeyDown(KeyCode.Tab)) return;
+            TogglePause();
         }
 
         private void OnGUI()
@@ -82,6 +91,7 @@ namespace ANM.Framework.Managers
 
         private void OnStartLoadScene(bool b1, bool b2)
         {
+            isSceneTransitioning = true;
             isMainMenuActive = false;
             TurnOffAllPanels();
         }
@@ -100,7 +110,8 @@ namespace ANM.Framework.Managers
                 _eventSystem.SetSelectedGameObject(pausePanelSelectedObj.gameObject);
                 pausePanelSelectedObj.OnSelect(null);
             }
-            menuUiCamera.gameObject.SetActive(isMainMenuActive);
+            _menuUiCamera.gameObject.SetActive(isMainMenuActive);
+            isSceneTransitioning = false;
         }
         
         private void OnPause()
@@ -114,7 +125,7 @@ namespace ANM.Framework.Managers
         private void OnResume()
         {
             if (!SceneExtension.TrySwitchToScene(lastSceneBuildIndex)) return;
-            menuUiCamera.gameObject.SetActive(false);
+            _menuUiCamera.gameObject.SetActive(false);
             TurnOffAllPanels();
             _isPaused = false;
         }
@@ -137,10 +148,9 @@ namespace ANM.Framework.Managers
 
         private void ApplyIniSettings()
         {
-            ToggleFpsDisplay(SaveSettings.DisplayFpsIni);
             audioOptionsPanel.ApplyAudioSettings();
             videoOptionsPanel.ApplyVideoSettings();
-            ToggleVsync(SaveSettings.VsyncIni);
+            
         }
         
         private void LoadCredits()
@@ -226,24 +236,6 @@ namespace ANM.Framework.Managers
         {
             StartCoroutine(videoOptionsPanel.RevertVideoSettings());
             TurnOnMainPanel();
-        }
-
-        public void ToggleVsync(bool b)
-        {
-            EventExtension.MuteEventListener(vsyncToggle.onValueChanged);
-            QualitySettings.vSyncCount = b ? 1 : 0;
-            vsyncToggle.isOn = b;
-            SaveSettings.VsyncIni = b;
-            EventExtension.UnMuteEventListener(vsyncToggle.onValueChanged);
-        }
-
-        public void ToggleFpsDisplay(bool b)
-        {
-            EventExtension.MuteEventListener(fpsDisplayToggle.onValueChanged);
-            GameManager.Instance.SetDisplayFps(b);
-            fpsDisplayToggle.isOn = b;
-            SaveSettings.DisplayFpsIni = b;
-            EventExtension.UnMuteEventListener(fpsDisplayToggle.onValueChanged);
         }
     }
 }

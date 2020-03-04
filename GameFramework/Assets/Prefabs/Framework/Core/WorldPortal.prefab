@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1796046458851103896}
   - component: {fileID: 1796046458851103897}
   - component: {fileID: 1796046458851103894}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: WorldPortal
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -1,5 +1,5 @@
 ﻿/*
- * SaveSettings - Save/Loads game settings to/from a JSON file
+ * SaveSettings - Save/Loads game settings (audio, video) to/from a JSON file
  * Created by : Allan N. Murillo
  * Last Edited : 3/3/2020
  */
@@ -14,7 +14,7 @@ namespace ANM.Framework.Options
     {
         private static string _jsonString;
         private static string _fileName = "/GameSettings.json";
-        
+
         public float masterVolume;
         public float effectVolume;
         public float backgroundVolume;
@@ -59,8 +59,11 @@ namespace ANM.Framework.Options
         public void SaveGameSettings()
         {
             var filePath = Application.persistentDataPath + _fileName;
-            if (VerifyDirectory(filePath)) { File.Delete(filePath); }
-            
+            if (VerifyDirectory(filePath))
+            {
+                File.Delete(filePath);
+            }
+
             masterVolume = MasterVolumeIni;
             effectVolume = EffectVolumeIni;
             backgroundVolume = BackgroundVolumeIni;
@@ -73,7 +76,7 @@ namespace ANM.Framework.Options
             anisotropicFilteringLevel = AnisotropicFilteringLevelIni;
             displayFps = DisplayFpsIni;
             vsync = VsyncIni;
-            
+
             _jsonString = JsonUtility.ToJson(this);
             File.WriteAllText(filePath, _jsonString);
         }
@@ -95,7 +98,7 @@ namespace ANM.Framework.Options
             DisplayFpsIni = jsonObj.displayFps;
             VsyncIni = jsonObj.vsync;
         }
-        
+
         public static void DefaultSettings()
         {
             MasterVolumeIni = 0.8f;
@@ -117,16 +120,21 @@ namespace ANM.Framework.Options
         {
             return File.Exists(filePath);
         }
-        
+
         #region External JS LIBRARY
+
 #if UNITY_WEBGL && !UNITY_EDITOR
         [System.Runtime.InteropServices.DllImport("__Internal")]
         static extern void InitializeJsLib();
 
         public void Initialize() { InitializeJsLib(); }
 #else
-        public void Initialize() {  SettingsLoadedIni = LoadGameSettings();}
+        public void Initialize()
+        {
+            SettingsLoadedIni = LoadGameSettings();
+        }
 #endif
+
         #endregion
     }
 }

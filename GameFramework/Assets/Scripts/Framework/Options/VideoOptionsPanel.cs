@@ -1,7 +1,7 @@
 ﻿/*
- * VideoOptionsPanel - Handles displaying / configuring video settings
+ * VideoOptionsPanel - Handles displaying / configuring graphics options
  * Created by : Allan N. Murillo
- * Last Edited : 3/3/2020
+ * Last Edited : 3/4/2020
  */
 
 using TMPro;
@@ -18,16 +18,19 @@ namespace ANM.Framework.Options
 {
     public class VideoOptionsPanel : MonoBehaviour, IPanel
     {
+        [SerializeField] private Toggle fpsDisplayToggle = null;
+        [SerializeField] private Toggle vsyncToggle = null;
+        
         [SerializeField] private TMP_Dropdown msaaDropdown = null;
         [SerializeField] private TMP_Dropdown anisotropicDropdown = null;
         [SerializeField] private Slider renderDistSlider = null;
         [SerializeField] private Slider shadowDistSlider = null;
-        
+
         [SerializeField] private Slider masterTexSlider = null;
         [SerializeField] private Slider shadowCascadesSlider = null;
         [SerializeField] private TMP_Text presetLabel = null;
         [SerializeField] private float[] shadowDist = null;
-        
+
         [SerializeField] private Button videoPanelSelectedObj = null;
 
         private Camera _myCamera;
@@ -38,7 +41,7 @@ namespace ANM.Framework.Options
 
         private void Awake()
         {
-            _myCamera = Camera.main;
+            _myCamera = transform.root.GetComponentInChildren<Camera>();
             _presets = QualitySettings.names;
         }
 
@@ -47,26 +50,26 @@ namespace ANM.Framework.Options
             _videoPanelAnimator = GetComponent<Animator>();
             _panel = _videoPanelAnimator.transform.GetChild(0).gameObject;
         }
-        
+
         public void TurnOnPanel()
         {
             if (!_panel.activeSelf)
                 _videoPanelAnimator.Play("Video Panel In");
-        } 
-        
+        }
+
         public void TurnOffPanel()
         {
             if (_panel.activeSelf)
                 _videoPanelAnimator.Play("Video Panel Out");
         }
-        
+
         public void VideoPanelIn(EventSystem eventSystem)
         {
             TurnOnPanel();
             eventSystem.SetSelectedGameObject(GetSelectObject());
             videoPanelSelectedObj.OnSelect(null);
         }
-        
+
         public IEnumerator SaveVideoSettings()
         {
             TurnOffPanel();
@@ -74,9 +77,9 @@ namespace ANM.Framework.Options
             SaveSettings.MsaaIni = msaaDropdown.value;
             SaveSettings.AnisotropicFilteringLevelIni = anisotropicDropdown.value;
             SaveSettings.RenderDistIni = renderDistSlider.value;
-            SaveSettings.TextureLimitIni = (int)masterTexSlider.value;
+            SaveSettings.TextureLimitIni = (int) masterTexSlider.value;
             SaveSettings.ShadowDistIni = shadowDistSlider.value;
-            SaveSettings.ShadowCascadeIni = (int)shadowCascadesSlider.value;
+            SaveSettings.ShadowCascadeIni = (int) shadowCascadesSlider.value;
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
             GameManager.Instance.SaveGameSettings();
         }
@@ -93,18 +96,30 @@ namespace ANM.Framework.Options
             shadowCascadesSlider.value = SaveSettings.ShadowCascadeIni;
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
         }
-        
+
         public void ApplyVideoSettings()
         {
-            OverrideGraphicsPreset();
+            OverrideFpsDisplay(SaveSettings.DisplayFpsIni);
+            OverrideVsync(SaveSettings.VsyncIni);
             OverrideAnisotropicFiltering();
             OverrideMasterTextureQuality();
+            OverrideGraphicsPreset();
             OverrideRenderDistance();
             OverrideShadowDistance();
             OverrideShadowCascade();
             OverrideMsaa();
         }
         
+        public void ToggleVsync(bool b)
+        {
+            QualitySettings.vSyncCount = b ? 1 : 0;
+        }
+
+        public void ToggleFpsDisplay(bool b)
+        {
+            GameManager.Instance.SetDisplayFps(b);
+        }
+
         public void UpdateRenderDistance(float renderDistance)
         {
             if (_myCamera == null) return;
@@ -121,7 +136,7 @@ namespace ANM.Framework.Options
         {
             QualitySettings.shadowDistance = shadowDistance;
         }
-        
+
         public void UpdateAnisotropicFiltering(int level)
         {
             switch (level)
@@ -148,6 +163,7 @@ namespace ANM.Framework.Options
                     c = 2;
                     break;
             }
+
             QualitySettings.shadowCascades = c;
         }
 
@@ -169,7 +185,7 @@ namespace ANM.Framework.Options
                     break;
             }
         }
-        
+
         public void NextPreset()
         {
             QualitySettings.IncreaseLevel();
@@ -198,7 +214,7 @@ namespace ANM.Framework.Options
         {
             QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
         }
-        
+
         private static void DisableMsaa()
         {
             QualitySettings.antiAliasing = 0;
@@ -218,28 +234,50 @@ namespace ANM.Framework.Options
         {
             QualitySettings.antiAliasing = 8;
         }
+
+        private void OverrideFpsDisplay(bool b)
+        {
+            EventExtension.MuteEventListener(fpsDisplayToggle.onValueChanged);
+            GameManager.Instance.SetDisplayFps(b);
+            fpsDisplayToggle.isOn = b;
+            SaveSettings.DisplayFpsIni = b;
+            EventExtension.UnMuteEventListener(fpsDisplayToggle.onValueChanged);
+        }
         
+        private void OverrideVsync(bool b)
+        {
+            EventExtension.MuteEventListener(vsyncToggle.onValueChanged);
+            QualitySettings.vSyncCount = b ? 1 : 0;
+            vsyncToggle.isOn = b;
+            SaveSettings.VsyncIni = b;
+            EventExtension.UnMuteEventListener(vsyncToggle.onValueChanged);
+        }
+
         private void OverrideGraphicsPreset()
         {
             if (QualitySettings.GetQualityLevel() != SaveSettings.CurrentQualityLevelIni)
                 QualitySettings.SetQualityLevel(SaveSettings.CurrentQualityLevelIni);
-            
+
             if (!presetLabel.text.Contains(_presets[SaveSettings.CurrentQualityLevelIni]))
                 presetLabel.text = _presets[SaveSettings.CurrentQualityLevelIni];
         }
-        
+
         private void OverrideMsaa()
         {
             switch (SaveSettings.MsaaIni)
             {
                 case 0 when QualitySettings.antiAliasing != 0:
-                    DisableMsaa(); break;
+                    DisableMsaa();
+                    break;
                 case 1 when QualitySettings.antiAliasing != 2:
-                    TwoMsaa(); break;
+                    TwoMsaa();
+                    break;
                 case 2 when QualitySettings.antiAliasing != 4:
-                    FourMsaa(); break;
+                    FourMsaa();
+                    break;
                 case 3 when QualitySettings.antiAliasing < 8:
-                    EightMsaa(); break;
+                    EightMsaa();
+                    break;
             }
 
             if (msaaDropdown.value == SaveSettings.MsaaIni) return;
@@ -247,11 +285,11 @@ namespace ANM.Framework.Options
             msaaDropdown.value = SaveSettings.MsaaIni;
             EventExtension.UnMuteEventListener(msaaDropdown.onValueChanged);
         }
-        
+
         private void OverrideAnisotropicFiltering()
         {
-            if ((int)QualitySettings.anisotropicFiltering != SaveSettings.AnisotropicFilteringLevelIni)
-                QualitySettings.anisotropicFiltering = (AnisotropicFiltering)SaveSettings.AnisotropicFilteringLevelIni;
+            if ((int) QualitySettings.anisotropicFiltering != SaveSettings.AnisotropicFilteringLevelIni)
+                QualitySettings.anisotropicFiltering = (AnisotropicFiltering) SaveSettings.AnisotropicFilteringLevelIni;
 
             if (anisotropicDropdown.value == SaveSettings.AnisotropicFilteringLevelIni) return;
             EventExtension.MuteEventListener(anisotropicDropdown.onValueChanged);
@@ -262,7 +300,7 @@ namespace ANM.Framework.Options
         private void OverrideRenderDistance()
         {
             if (_myCamera == null) return;
-            
+
             if (Math.Abs(_myCamera.farClipPlane - SaveSettings.RenderDistIni) > 0f)
                 _myCamera.farClipPlane = SaveSettings.RenderDistIni;
 
@@ -271,7 +309,7 @@ namespace ANM.Framework.Options
             renderDistSlider.value = SaveSettings.RenderDistIni;
             EventExtension.UnMuteEventListener(renderDistSlider.onValueChanged);
         }
-        
+
         private void OverrideShadowDistance()
         {
             if (Math.Abs(QualitySettings.shadowDistance - SaveSettings.ShadowDistIni) > 0f)
@@ -282,7 +320,7 @@ namespace ANM.Framework.Options
             shadowDistSlider.value = SaveSettings.ShadowDistIni;
             EventExtension.UnMuteEventListener(shadowDistSlider.onValueChanged);
         }
-        
+
         private void OverrideShadowCascade()
         {
             if (QualitySettings.shadowCascades != SaveSettings.ShadowCascadeIni)
@@ -311,7 +349,7 @@ namespace ANM.Framework.Options
             shadowDistSlider.value = shadowDist[currentValue];
             msaaDropdown.value = currentValue;
         }
-        
+
         private GameObject GetSelectObject()
         {
             return videoPanelSelectedObj.gameObject;

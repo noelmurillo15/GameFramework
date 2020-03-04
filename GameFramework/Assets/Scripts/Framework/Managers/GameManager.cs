@@ -2,7 +2,7 @@
  * GameManager - Backbone of the game application
  * Contains data that needs to persist and be accessed from anywhere
  * Created by : Allan N. Murillo
- * Last Edited : 3/3/2020
+ * Last Edited : 3/4/2020
  */
 
 using System;
@@ -25,16 +25,16 @@ namespace ANM.Framework.Managers
         [Space] [Header("Local Game Info")]
         [SerializeField] private bool displayFps = false;
         [SerializeField] private bool isGamePaused = false;
-
-        private float _delta;
+        
+        private float _deltaTime;
         private SaveSettings _save;
-        private PlayerControls _controls;
 
 
         private void Awake()
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             SaveSettings.SettingsLoadedIni = false;
+            Application.targetFrameRate = -1;
             DontDestroyOnLoad(gameObject);
             _save = new SaveSettings();
             _save.Initialize();
@@ -43,8 +43,7 @@ namespace ANM.Framework.Managers
 
         private void Start()
         {
-            ControlSetup();
-            Invoke(nameof(Initialize), 3f);
+            Invoke(nameof(Initialize), 2f);
         }
 
         private void Initialize()
@@ -53,16 +52,9 @@ namespace ANM.Framework.Managers
                 StartCoroutine(SceneExtension.ForceMenuSceneSequence());
         }
 
-        private void ControlSetup()
-        {
-            if(_controls == null) _controls = new PlayerControls();
-            _controls.Player.PauseToggle.performed += context => TogglePause();
-            _controls.Enable();
-        }
-
         private void Update()
         {
-            _delta += (Time.unscaledDeltaTime - _delta) * 0.1f;
+            _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
         }
 
         private void OnGUI()
@@ -75,8 +67,8 @@ namespace ANM.Framework.Managers
             style.alignment = TextAnchor.UpperLeft;
             style.fontSize = h * 2 / 100;
             style.normal.textColor = Color.white;
-            var msecs = _delta * 1000.0f;
-            var fps = 1.0f / _delta;
+            var msecs = _deltaTime * 1000.0f;
+            var fps = 1.0f / _deltaTime;
             var text = $"{msecs:0.0} ms ({fps:0.} fps)";
             GUI.Label(rect, text, style);
         }
@@ -85,21 +77,29 @@ namespace ANM.Framework.Managers
         {
             if (Instance != this) return;
             Resources.UnloadUnusedAssets();
-            _controls.Disable();
             GC.Collect();
         }
         
         private void SetPause(bool b)
         {
-            isGamePaused = b;
+            if (isGamePaused == b) return;
             if(b) RaisePause();
             else RaiseResume();
-            Time.timeScale = b ? 0 : 1;
         }
-        
-        private void RaisePause() { onGamePause.Raise(); }
 
-        private void RaiseResume() { onGameResume.Raise(); }
+        private void RaisePause()
+        {
+            Time.timeScale = 0;
+            isGamePaused = true;
+            onGamePause.Raise();
+        }
+
+        private void RaiseResume()
+        {
+            Time.timeScale = 1;
+            isGamePaused = false;
+            onGameResume.Raise();
+        }
         
         private void RaiseAppQuit() { onApplicationQuit.Raise(); }
 

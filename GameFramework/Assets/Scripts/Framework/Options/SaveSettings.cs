@@ -1,13 +1,13 @@
 ﻿/*
  * SaveSettings - Save/Loads game settings to/from a JSON file
  * Created by : Allan N. Murillo
- * Last Edited : 2/24/2020
+ * Last Edited : 3/3/2020
  */
 
 using System.IO;
 using UnityEngine;
 
-namespace ANM.Framework.Settings
+namespace ANM.Framework.Options
 {
     [System.Serializable]
     public class SaveSettings
@@ -82,7 +82,6 @@ namespace ANM.Framework.Settings
         {
             var jsonObj = (SaveSettings) CreateJsonObj(jsonString);
             DefaultSettings();
-            VsyncIni = jsonObj.vsync;
             MasterVolumeIni = jsonObj.masterVolume;
             EffectVolumeIni = jsonObj.effectVolume;
             BackgroundVolumeIni = jsonObj.backgroundVolume;
@@ -94,6 +93,7 @@ namespace ANM.Framework.Settings
             ShadowCascadeIni = jsonObj.shadowCascade;
             AnisotropicFilteringLevelIni = jsonObj.anisotropicFilteringLevel;
             DisplayFpsIni = jsonObj.displayFps;
+            VsyncIni = jsonObj.vsync;
         }
         
         public static void DefaultSettings()
@@ -117,5 +117,16 @@ namespace ANM.Framework.Settings
         {
             return File.Exists(filePath);
         }
+        
+        #region External JS LIBRARY
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [System.Runtime.InteropServices.DllImport("__Internal")]
+        static extern void InitializeJsLib();
+
+        public void Initialize() { InitializeJsLib(); }
+#else
+        public void Initialize() {  SettingsLoadedIni = LoadGameSettings();}
+#endif
+        #endregion
     }
 }

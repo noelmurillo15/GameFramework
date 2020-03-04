@@ -1,13 +1,12 @@
 ﻿/*
- * ScenePortal - Used to transition between rooms
+ * ScenePortal - 
  * Created by : Allan N. Murillo
- * Last Edited : 2/22/2020
+ * Last Edited : 2/26/2020
  */
 
 using UnityEngine;
 using System.Linq;
 using System.Collections;
-using ANM.Framework.Extensions;
 
 namespace ANM.Framework.Utils
 {
@@ -17,6 +16,7 @@ namespace ANM.Framework.Utils
         [SerializeField] private int sceneToLoad = -1;
         private const string PlayerTag = "Player";
 
+        
         private void OnTriggerEnter(Collider other)
         {
             if (other.tag.Equals(PlayerTag))
@@ -28,23 +28,21 @@ namespace ANM.Framework.Utils
         private IEnumerator Transition()
         {
             if (sceneToLoad < 0)  {  yield break;  }
-            
             DontDestroyOnLoad(gameObject);
-            var buildIndex = SceneExtension.GetCurrentSceneBuildIndex();
-            //    TODO : Disable Player Movement / Input
             
-            yield return SceneExtension.LoadMultiSceneWithBuildIndexSequence(sceneToLoad, true);
+            //    TODO : Scene Transition - get current scene build index, Transition to new scene
+            //    Find new player controller, UpdatePlayerSpawnPosition, enable controller & agent
             
-            //    TODO : Disable Player Movement / Input... again (new scene just loaded)
-                //    Update player spawn position and re-enable Player Movement / Input
+            //UpdatePlayerSpawnPosition(GetOtherScenePortal(otherBuildIndex), player.gameObject);
 
+            yield return null;
             Destroy(gameObject);
         }
         
         private static void UpdatePlayerSpawnPosition(ScenePortal otherPortal, GameObject player)
         {
             var spawnPosition = otherPortal.transform.GetChild(0).position;
-            player.transform.position = spawnPosition;
+            player.transform.localPosition = spawnPosition;
             player.transform.rotation = Quaternion.identity;
         }
 
@@ -53,7 +51,6 @@ namespace ANM.Framework.Utils
             if(otherBuildIndex == -1)
                 return FindObjectsOfType<ScenePortal>().FirstOrDefault(portal => portal != this);
             
-            otherBuildIndex -= 1;
             return FindObjectsOfType<ScenePortal>().FirstOrDefault(portal => 
                 portal.name.Contains(otherBuildIndex.ToString()) && portal != this);
         }

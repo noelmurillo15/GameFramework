@@ -2,13 +2,13 @@
  * GameManager - Backbone of the game application
  * Contains data that needs to persist and be accessed from anywhere
  * Created by : Allan N. Murillo
- * Last Edited : 2/24/2020
+ * Last Edited : 3/3/2020
  */
 
 using System;
 using UnityEngine;
 using ANM.Framework.Events;
-using ANM.Framework.Settings;
+using ANM.Framework.Options;
 using ANM.Framework.Extensions;
 
 namespace ANM.Framework.Managers
@@ -25,12 +25,10 @@ namespace ANM.Framework.Managers
         [Space] [Header("Local Game Info")]
         [SerializeField] private bool displayFps = false;
         [SerializeField] private bool isGamePaused = false;
-        [SerializeField] private bool isMainMenuActive = false;
-        [SerializeField] private bool isSceneTransitioning = false;
 
-        private PlayerControls _controls;
+        private float _delta;
         private SaveSettings _save;
-        private float _deltaTime;
+        private PlayerControls _controls;
 
 
         private void Awake()
@@ -39,23 +37,14 @@ namespace ANM.Framework.Managers
             SaveSettings.SettingsLoadedIni = false;
             DontDestroyOnLoad(gameObject);
             _save = new SaveSettings();
-            _save.LoadGameSettings();
+            _save.Initialize();
             Instance = this;
-        }
-        
-        private void ControllerSetup()
-        {
-            if(_controls == null) _controls = new PlayerControls();
-            _controls.Player.PauseToggle.performed += context => TogglePause();
-            _controls.Enable();
         }
 
         private void Start()
         {
-            SceneExtension.StartSceneLoadEvent += OnStartLoadSceneEvent;
-            SceneExtension.FinishSceneLoadEvent += OnFinishLoadSceneEvent;
+            ControlSetup();
             Invoke(nameof(Initialize), 1f);
-            ControllerSetup();
         }
 
         private void Initialize()
@@ -64,9 +53,16 @@ namespace ANM.Framework.Managers
                 StartCoroutine(SceneExtension.ForceMenuSceneSequence());
         }
 
+        private void ControlSetup()
+        {
+            if(_controls == null) _controls = new PlayerControls();
+            _controls.Player.PauseToggle.performed += context => TogglePause();
+            _controls.Enable();
+        }
+
         private void Update()
         {
-            _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
+            _delta += (Time.unscaledDeltaTime - _delta) * 0.1f;
         }
 
         private void OnGUI()
@@ -79,8 +75,8 @@ namespace ANM.Framework.Managers
             style.alignment = TextAnchor.UpperLeft;
             style.fontSize = h * 2 / 100;
             style.normal.textColor = Color.white;
-            var msecs = _deltaTime * 1000.0f;
-            var fps = 1.0f / _deltaTime;
+            var msecs = _delta * 1000.0f;
+            var fps = 1.0f / _delta;
             var text = $"{msecs:0.0} ms ({fps:0.} fps)";
             GUI.Label(rect, text, style);
         }
@@ -88,86 +84,36 @@ namespace ANM.Framework.Managers
         private void OnDestroy()
         {
             if (Instance != this) return;
-            SceneExtension.StartSceneLoadEvent -= OnStartLoadSceneEvent;
-            SceneExtension.FinishSceneLoadEvent -= OnFinishLoadSceneEvent;
             Resources.UnloadUnusedAssets();
             _controls.Disable();
             GC.Collect();
         }
         
-        public void SetIsGamePaused(bool b)
+        private void SetPause(bool b)
         {
             isGamePaused = b;
-            if(isGamePaused) RaisePause();
+            if(b) RaisePause();
             else RaiseResume();
             Time.timeScale = b ? 0 : 1;
         }
         
-        public void ReloadScene()
-        {
-            StartCoroutine(SceneExtension.ReloadCurrentSceneSequence());
-        }
+        private void RaisePause() { onGamePause.Raise(); }
 
-        public void Reset()
-        {
-            Time.timeScale = 1;
-            isGamePaused = false;
-        }
+        private void RaiseResume() { onGameResume.Raise(); }
+        
+        private void RaiseAppQuit() { onApplicationQuit.Raise(); }
+
         
         public void HardReset()
         {
+            SetPause(false);
             RaiseAppQuit();
-            Reset();
         }
-
-        public void LoadCredits()
-        {
-            HardReset();
-            StartCoroutine(SceneExtension.LoadSingleSceneSequence(
-                SceneExtension.CreditsSceneName, true));
-        }
-
-        public void SetDisplayFps(bool b)  {  displayFps = b;  }
-
+        
         public void SaveGameSettings()  {  _save.SaveGameSettings();  }
         
-        public void SetIsMainMenuActive(bool b)  {  isMainMenuActive = b;  }
-        
-        public bool GetIsMainMenuActive()  {  return isMainMenuActive;  }
-        
-        public bool GetIsGamePaused()  {  return isGamePaused;  }
+        public void SetDisplayFps(bool b)  {  displayFps = b;  }
 
-        public bool GetIsSceneTransitioning()  {  return isSceneTransitioning;  }
-
-        private void TogglePause()
-        {
-            if (GetIsMainMenuActive()) return;
-            SetIsGamePaused(!GetIsGamePaused());
-        }
-        
-        private void RaisePause()
-        {
-            onGamePause.Raise();
-        }
-
-        private void RaiseResume()
-        {
-            onGameResume.Raise();
-        }
-        
-        private void RaiseAppQuit()
-        {
-            onApplicationQuit.Raise();
-        }
-
-        private void OnStartLoadSceneEvent(bool b)
-        {
-            isSceneTransitioning = true;
-        }
-
-        private void OnFinishLoadSceneEvent(bool b)
-        {
-            isSceneTransitioning = false;
-        }
+        public void TogglePause() { SetPause(!isGamePaused); }
     }
 }

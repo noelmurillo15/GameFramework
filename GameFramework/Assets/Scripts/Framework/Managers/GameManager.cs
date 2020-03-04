@@ -2,7 +2,7 @@
  * GameManager - Backbone of the game application
  * Contains data that needs to persist and be accessed from anywhere
  * Created by : Allan N. Murillo
- * Last Edited : 2/24/2020
+ * Last Edited : 3/4/2020
  */
 
 using System;
@@ -34,16 +34,16 @@ namespace ANM.Framework.Managers
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             SaveSettings.SettingsLoadedIni = false;
+            Application.targetFrameRate = -1;
             DontDestroyOnLoad(gameObject);
             _save = new SaveSettings();
             _save.Initialize();
             Instance = this;
-            Reset();
         }
 
         private void Start()
         {
-            Invoke(nameof(Initialize), 1f);
+            Invoke(nameof(Initialize), 2f);
         }
 
         private void Initialize()
@@ -55,8 +55,6 @@ namespace ANM.Framework.Managers
         private void Update()
         {
             _deltaTime += (Time.unscaledDeltaTime - _deltaTime) * 0.1f;
-            if (!Input.GetKeyDown(KeyCode.Tab)) return;
-            TogglePause();
         }
 
         private void OnGUI()
@@ -74,7 +72,8 @@ namespace ANM.Framework.Managers
             var text = $"{msecs:0.0} ms ({fps:0.} fps)";
             GUI.Label(rect, text, style);
         }
-        
+
+
         private void OnApplicationFocus(bool hasFocus)
         {
             if (hasFocus) return;
@@ -89,11 +88,26 @@ namespace ANM.Framework.Managers
             Quit();
         }
         
-        private void TogglePause() { SetPause(!isGamePaused); }
-        
-        private void RaisePause() { onGamePause.Raise(); }
+        private void SetPause(bool b)
+        {
+            if (isGamePaused == b) return;
+            if(b) RaisePause();
+            else RaiseResume();
+        }
 
-        private void RaiseResume() { onGameResume.Raise(); }
+        private void RaisePause()
+        {
+            Time.timeScale = 0;
+            isGamePaused = true;
+            onGamePause.Raise();
+        }
+
+        private void RaiseResume()
+        {
+            Time.timeScale = 1;
+            isGamePaused = false;
+            onGameResume.Raise();
+        }
         
         private void RaiseAppQuit() { onApplicationQuit.Raise(); }
 
@@ -101,56 +115,37 @@ namespace ANM.Framework.Managers
         {    //    WebGL Only : Called from WebBrowserInteraction.jslib plugin
             SaveSettings.SettingsLoadedIni = _save.LoadGameSettings();
         }
-        
-        public void SetPause(bool b)
-        {
-            isGamePaused = b;
-            if(b) RaisePause();
-            else RaiseResume();
-            Time.timeScale = b ? 0 : 1;
-        }
-        
-        public void ReloadScene()
-        {
-            StartCoroutine(SceneExtension.ReloadCurrentSceneSequence());
-        }
-        
-        public void LoadCredits()
-        {
-            HardReset();
-            StartCoroutine(SceneExtension.LoadSingleSceneSequence(
-                SceneExtension.CreditsSceneName, true));
-        }
 
-        public void Reset()
-        {
-            Time.timeScale = 1;
-            isGamePaused = false;
-        }
         
         public void HardReset()
         {
+            SetPause(false);
             RaiseAppQuit();
-            Reset();
         }
-
-        public void SaveGameEngineSettings()  {  _save.SaveGameSettings();  }
+        
+        public void SaveGameSettings()  {  _save.SaveGameSettings();  }
         
         public void SetDisplayFps(bool b)  {  displayFps = b;  }
 
+        public void TogglePause() { SetPause(!isGamePaused); }
+
         
-        #region External JavaScript Library
+        #region External JS Lib
 #if UNITY_WEBGL && !UNITY_EDITOR
         [System.Runtime.InteropServices.DllImport("__Internal")]
         static extern void QuitGame();
         [System.Runtime.InteropServices.DllImport("__Internal")]
         static extern void LostFocus();
-
-        private void Quit() {  QuitGame(); }
-        private void WindowLostFocus() { LostFocus(); }
+        
+        private void WindowLostFocus(){
+            LostFocus();
+        }
+        private void Quit(){
+            QuitGame();
+        }
 #else
-        private static void Quit() { }
         private static void WindowLostFocus() { }
+        private static void Quit() { }
 #endif
         #endregion
     }

@@ -2,7 +2,7 @@
  * SceneExtension - Static Class used for async scene transitions via Co-routines from anywhere
  * Classes can subscribe to SceneLoadEvents and be notified before and after a scene transition occured
  * Created by : Allan N. Murillo
- * Last Edited : 2/22/2020
+ * Last Edited : 3/3/2020
  */
 
 using System;
@@ -14,8 +14,8 @@ namespace ANM.Framework.Extensions
 {
     public static class SceneExtension
     {
-        public static event Action<bool> StartSceneLoadEvent = (wait) => { };
-        public static event Action<bool> FinishSceneLoadEvent = (wait) => { };
+        public static event Action<bool, bool> StartSceneLoadEvent = (fade, save) => { };
+        public static event Action<bool, bool> FinishSceneLoadEvent = (fade, save) => { };
 
         public const string SplashSceneName = "Splash";
         public const string MenuUiSceneName = "Menu Ui";
@@ -40,6 +40,14 @@ namespace ANM.Framework.Extensions
             return true;
         }
         
+        public static bool TrySwitchToScene(int buildIndex)
+        {
+            var tryScene = GetSceneFromBuildIndex(buildIndex);
+            if (!IsSceneLoaded(tryScene)) return false;
+            SetThisSceneActive(tryScene);
+            return true;
+        }
+        
         public static IEnumerator LoadSingleSceneSequence(string sceneName, bool fade = false)
         {
             yield return OnStartLoadWithFade(fade);
@@ -52,16 +60,17 @@ namespace ANM.Framework.Extensions
             LoadMultiSceneWithOnFinish(sceneName);
         }
         
-        public static IEnumerator LoadMultiSceneWithBuildIndexSequence(int sceneIndex, bool fade = false)
+        public static IEnumerator LoadMultiSceneWithBuildIndexSequence(int index, bool fade = false, bool save = false)
         {
+            if(index == -1) yield break;
             yield return OnStartLoadWithFade(fade);
             
             if (TrySwitchToScene(MenuUiSceneName)) UnloadAllScenesExcept(MenuUiSceneName);
             else yield return ForceMenuSceneSequence(true);
             
-            yield return SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Additive);
-            SetThisSceneActive(SceneManager.GetSceneByBuildIndex(sceneIndex));
-            CallOnFinishSceneLoadEvent(fade);
+            yield return SceneManager.LoadSceneAsync(index, LoadSceneMode.Additive);
+            SetThisSceneActive(GetSceneFromBuildIndex(index));
+            CallOnFinishSceneLoadEvent(fade, save);
         }
         
         public static IEnumerator ReloadCurrentSceneSequence()
@@ -74,15 +83,21 @@ namespace ANM.Framework.Extensions
             LoadMultiSceneWithOnFinish(reloadSceneName);
         }
         
-        public static IEnumerator ForceMenuSceneSequence(bool unloadAll = false)
+        public static IEnumerator ForceMenuSceneSequence(bool unloadAll = false, bool fade = false, bool save = false, int lastBuildIndex = -1)
         {
+            if (lastBuildIndex != -1)
+            {
+                SetThisSceneActive(GetSceneFromBuildIndex(lastBuildIndex));
+                CallOnStartSceneLoadEvent(fade, save);
+            }
+            
             var menu = GetLoadedScene(MenuUiSceneName);
             if (IsSceneLoaded(menu))
             {
                 SetThisSceneActive(menu);
                 if (!unloadAll) yield break;
                 UnloadAllScenesExcept(MenuUiSceneName);
-                CallOnFinishSceneLoadEvent(true);
+                CallOnFinishSceneLoadEvent(fade);
                 yield break;
             }
             LoadSingleSceneWithOnFinish(MenuUiSceneName);
@@ -118,10 +133,21 @@ namespace ANM.Framework.Extensions
         {
             return SceneManager.GetSceneByName(sceneName);
         }
-
-        private static IEnumerator OnStartLoadWithFade(bool fade = false)
+        
+        private static Scene GetSceneFromBuildIndex(int buildIndex)
         {
-            CallOnStartSceneLoadEvent(fade);
+            return SceneManager.GetSceneByBuildIndex(buildIndex);
+        }
+
+        public static IEnumerator OnStartLoadWithFade(bool fade = false, bool save = false)
+        {
+            CallOnStartSceneLoadEvent(fade, save);
+            if(fade) yield return new WaitForSeconds(1.1f);
+        }
+
+        public static IEnumerator OnFinishedLoadWithFade(bool fade = false)
+        {
+            CallOnFinishSceneLoadEvent(fade);
             if(fade) yield return new WaitForSeconds(1.1f);
         }
 
@@ -146,18 +172,18 @@ namespace ANM.Framework.Extensions
             SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive).completed += 
                 callback => {
                 SetThisSceneActive(GetLoadedScene(sceneName));
-                CallOnFinishSceneLoadEvent(true);
+                CallOnFinishSceneLoadEvent(true, true);
             };
         }
         
-        private static void CallOnStartSceneLoadEvent(bool wait = false)
+        private static void CallOnStartSceneLoadEvent(bool fade = false, bool save = false)
         {
-            StartSceneLoadEvent?.Invoke(wait);
+            StartSceneLoadEvent?.Invoke(fade, save);
         }
         
-        private static void CallOnFinishSceneLoadEvent(bool wait = false)
+        private static void CallOnFinishSceneLoadEvent(bool fade = false, bool load = false)
         {
-            FinishSceneLoadEvent?.Invoke(wait);
+            FinishSceneLoadEvent?.Invoke(fade, load);
         }
     }
 }

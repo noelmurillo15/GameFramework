@@ -1,5 +1,5 @@
 ﻿/*
- * MenuManager - Handles interactions with the Menu Ui
+ * QuitOptionsPanel - Handles Displaying the Quit Ui Panel
  * Created by : Allan N. Murillo
  * Last Edited : 3/2/2020
  */
@@ -12,7 +12,7 @@ namespace ANM.Framework.Options
     {
         private GameObject _panel;
         private Animator _quitOptionsPanelAnimator;
-    
+
         private void Start()
         {
             _quitOptionsPanelAnimator = GetComponent<Animator>();

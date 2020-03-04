@@ -1,7 +1,7 @@
 ﻿/*
  * ScreenFade - Fades the screen in-between loading scenes
  * Created by : Allan N. Murillo
- * Last Edited : 2/24/2020
+ * Last Edited : 3/3/2020
  */
 
 using UnityEngine;
@@ -36,9 +36,9 @@ namespace ANM.Framework.Utils
             SceneExtension.StartSceneLoadEvent -= StartLoadScene;
         }
         
-        private void StartLoadScene(bool wait)
+        private void StartLoadScene(bool fade, bool save)
         {
-            if(!wait) FadeOutImmediate();
+            if(!fade) FadeOutImmediate();
             else
             {
                 FadeInImmediate();
@@ -46,23 +46,23 @@ namespace ANM.Framework.Utils
             }
         }
         
-        private void FinishLoadScene(bool wait)
+        private void FinishLoadScene(bool fade, bool save)
         {
-            if(!wait) FadeInImmediate();
+            if(!fade) FadeInImmediate();
             else
             {
                 FadeOutImmediate();
                 FadeIn();
             }
         }
-
-        private Coroutine FadeOut() { return Fade(1f, fadeOutDelay); }
-
-        private Coroutine FadeIn() { return Fade(0f, fadeInDelay); }
         
+        private void FadeInImmediate() { canvasGroup.alpha = 0f; }
+
         private void FadeOutImmediate() { canvasGroup.alpha = 1f; }
 
-        private void FadeInImmediate() { canvasGroup.alpha = 0f; }
+        private void FadeOut() { Fade(1f, fadeOutDelay); }
+
+        private void FadeIn() { Fade(0f, fadeInDelay); }
 
         private Coroutine Fade(float target, float time)
         {
@@ -75,8 +75,8 @@ namespace ANM.Framework.Utils
         {
             while (!Mathf.Approximately(canvasGroup.alpha, target))
             {
-                canvasGroup.alpha = Mathf.MoveTowards(
-                    canvasGroup.alpha, target, Time.deltaTime / time);
+                canvasGroup.alpha = Mathf.MoveTowards(canvasGroup.alpha, 
+                    target, Time.deltaTime / time);
                 yield return null;
             }
         }

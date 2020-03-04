@@ -166,8 +166,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 254361109627908325}
-  - component: {fileID: 7526012260105538856}
+  - component: {fileID: 4869874698545087329}
   - component: {fileID: 1444163899065349526}
+  - component: {fileID: 7526012260105538856}
   m_Layer: 2
   m_Name: ExitMsg
   m_TagString: Untagged
@@ -194,14 +195,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 50}
   m_SizeDelta: {x: 1920, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &7526012260105538856
-CanvasRenderer:
+--- !u!114 &4869874698545087329
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1306987517261956228}
-  m_CullTransparentMesh: 0
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b64af35d9e8cd446a45940b21733c77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1444163899065349526
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -312,6 +317,14 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &7526012260105538856
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1306987517261956228}
+  m_CullTransparentMesh: 0
 --- !u!1 &9134924182243395236
 GameObject:
   m_ObjectHideFlags: 0
@@ -400,7 +413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c33b52bab0d3e54191de7c7fd2308de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quitDelay: 1
+  quitDelay: 3
 --- !u!1 &9134924183665045770
 GameObject:
   m_ObjectHideFlags: 0
@@ -410,8 +423,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9134924183665045769}
-  - component: {fileID: 9134924183665045879}
+  - component: {fileID: 8373154051103103753}
   - component: {fileID: 9134924183665045768}
+  - component: {fileID: 9134924183665045879}
   m_Layer: 2
   m_Name: Exit Screen Title
   m_TagString: Untagged
@@ -438,14 +452,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -75}
   m_SizeDelta: {x: 1920, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &9134924183665045879
-CanvasRenderer:
+--- !u!114 &8373154051103103753
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9134924183665045770}
-  m_CullTransparentMesh: 0
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b64af35d9e8cd446a45940b21733c77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &9134924183665045768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -556,6 +574,14 @@ MonoBehaviour:
   - {fileID: 0}
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &9134924183665045879
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9134924183665045770}
+  m_CullTransparentMesh: 0
 --- !u!1 &9134924183922800391
 GameObject:
   m_ObjectHideFlags: 0

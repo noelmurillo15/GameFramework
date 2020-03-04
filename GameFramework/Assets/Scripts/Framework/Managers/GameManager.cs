@@ -44,7 +44,7 @@ namespace ANM.Framework.Managers
         private void Start()
         {
             ControlSetup();
-            Invoke(nameof(Initialize), 1f);
+            Invoke(nameof(Initialize), 3f);
         }
 
         private void Initialize()

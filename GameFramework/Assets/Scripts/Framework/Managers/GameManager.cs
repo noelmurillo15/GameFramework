@@ -23,16 +23,21 @@ namespace ANM.Framework.Managers
         [SerializeField] private GameEvent onGamePause = null;
 
         [Space] [Header("Local Game Info")]
-        [SerializeField] private bool displayFps = false;
         [SerializeField] private bool isGamePaused = false;
+        [SerializeField] private bool displayFps = false;
         
-        private float _deltaTime;
         private SaveSettings _save;
+        private float _deltaTime;
 
 
         private void Awake()
         {
-            if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
             SaveSettings.SettingsLoadedIni = false;
             Application.targetFrameRate = -1;
             DontDestroyOnLoad(gameObject);
@@ -101,9 +106,6 @@ namespace ANM.Framework.Managers
             onGameResume.Raise();
         }
         
-        private void RaiseAppQuit() { onApplicationQuit.Raise(); }
-
-        
         public void HardReset()
         {
             SetPause(false);
@@ -111,6 +113,8 @@ namespace ANM.Framework.Managers
         }
         
         public void SaveGameSettings()  {  _save.SaveGameSettings();  }
+        
+        private void RaiseAppQuit() { onApplicationQuit.Raise(); }
         
         public void SetDisplayFps(bool b)  {  displayFps = b;  }
 

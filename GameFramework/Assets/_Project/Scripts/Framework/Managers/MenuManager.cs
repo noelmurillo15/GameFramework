@@ -1,7 +1,7 @@
 ﻿/*
  * MenuManager - Handles interactions with the Menu Ui
  * Created by : Allan N. Murillo
- * Last Edited : 7/15/2020
+ * Last Edited : 8/5/2020
  */
 
 using ANM.Input;
@@ -147,11 +147,10 @@ namespace ANM.Framework.Managers
         public void ReturnToMenu()
         {
             if (isMainMenuActive) return;
-            _gameManager.HardReset();
+            GameManager.HardReset();
             StartCoroutine(SceneExtension.ForceMenuSceneSequence(
                 true, true, true, lastSceneBuildIndex));
             isMainMenuActive = true;
-            //Return();
         }
 
         public void QuitOptions()
@@ -171,6 +170,7 @@ namespace ANM.Framework.Managers
         {
             if (Time.timeScale <= 0) _gameManager.TogglePause();
             isMainMenuActive = true;
+            GameManager.HardReset();
             GameManager.ReturnToMenu(MenuPageType.Credits);
         }
 
@@ -180,7 +180,7 @@ namespace ANM.Framework.Managers
 
         private void ControllerSetup()
         {
-            if (_inputController == null) _inputController = Resources.Load<InputController>("PlayerControls");
+            if (_inputController == null) _inputController = GameManager.GetResourcesManager().GetInputController();
             _inputController.playerControls.Ui.PauseToggle.performed += context => TogglePause();
             _inputController.playerControls.Ui.Enable();
         }
@@ -190,14 +190,13 @@ namespace ANM.Framework.Managers
             _controller.TurnMenuPageOff(_controller.GetCurrentMenuPageType());
             _inputUi.cancel.action.performed -= CancelInput;
             isSceneTransitioning = true;
-            if (Time.timeScale <= 0f) _gameManager.HardReset();
+            if (Time.timeScale <= 0f) _gameManager.SoftReset();
             isMainMenuActive = false;
         }
 
         private void OnFinishLoadScene(bool b1, bool b2)
         {
             isMainMenuActive = SceneExtension.IsThisSceneActive(SceneExtension.MenuUiSceneName);
-            // Debug.Log("Main Menu is Active on Finish Load ? : " + isMainMenuActive);
             if (isMainMenuActive)
             {
                 Return();
@@ -227,13 +226,7 @@ namespace ANM.Framework.Managers
         {
             if (!SceneExtension.TrySwitchToScene(lastSceneBuildIndex)) return;
             _inputUi.cancel.action.performed -= CancelInput;
-            if (!isSceneTransitioning)
-            {
-                _menuUiCamera.gameObject.SetActive(false);
-            }
-
             _controller.TurnMenuPageOff(_controller.GetCurrentMenuPageType());
-
             _isPaused = false;
         }
 

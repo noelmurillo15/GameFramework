@@ -24,6 +24,11 @@ namespace ANM.Framework.Extensions
             return GetCurrentScene().buildIndex;
         }
 
+        public static string GetCurrentSceneName()
+        {
+            return GetCurrentScene().name;
+        }
+
         public static bool IsThisSceneActive(string sceneName)
         {
             return GetCurrentScene().name.Contains(sceneName);
@@ -72,7 +77,7 @@ namespace ANM.Framework.Extensions
 
         public static IEnumerator ReloadCurrentSceneSequence()
         {
-            Debug.Log("[SceneExtension]: ReloadCurrentSceneSequence");
+            //Debug.Log("[SceneExtension]: ReloadCurrentSceneSequence");
             var sceneToReload = GetCurrentScene();
             yield return OnStartLoadWithFade();
             yield return ForceMenuSceneSequence();
@@ -162,7 +167,7 @@ namespace ANM.Framework.Extensions
 
         private static void LoadSingleSceneWithOnFinish(string sceneName)
         {
-            Debug.Log("[SceneExtension]: LoadSingleSceneWithOnFinish - "+sceneName);
+            //Debug.Log("[SceneExtension]: LoadSingleSceneWithOnFinish - "+sceneName);
             SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single).completed +=
                 callback => CallOnFinishSceneLoadEvent(true);
         }
@@ -170,7 +175,7 @@ namespace ANM.Framework.Extensions
         private static void LoadMultiSceneWithOnFinish(string sceneName)
         {
             if (IsThisSceneActive(sceneName)) return;
-            Debug.Log("[SceneExtension]: LoadMultiSceneWithOnFinish - "+sceneName);
+            //Debug.Log("[SceneExtension]: LoadMultiSceneWithOnFinish - "+sceneName);
             SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive).completed +=
                 callback =>
                 {

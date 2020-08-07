@@ -1,18 +1,21 @@
 /*
  * WebBrowserInteraction.jslib - A WebGL Plugin that allows JavaScript functionality to be invoked from C#
  * Created by : Allan N. Murillo
- * Last Edited : 2/17/2020
+ * Last Edited : 8/5/2020
  */
 
 var WebBrowserInteraction = {
-    InitializeJsLib: function () 
+    InitializeJsLib: function ()
     {
-        FS.mkdir('/GameData');   
-        FS.mount(IDBFS, {}, '/GameData');                
-        FS.syncfs(true, function (err) 
-        {       
+        console.log('[JS_LIB]: Initializing!');
+        FS.mkdir('/GameData');
+        FS.mount(IDBFS, {}, '/GameData');
+        FS.syncfs(true, function (err)
+        {
+            assert(!err);
+            console.log('[JS_LIB]: syncing with Indexed Database');
             unityInstance.SendMessage('PersistentGameManager', 'LoadSettingsFromIndexedDb');
-        });     
+        });
     },
     WindowFullscreen : function()
     {
@@ -24,15 +27,28 @@ var WebBrowserInteraction = {
     },
     LostFocus : function()
     {
-        window.alert("Game is now paused, Press OK to continue!");
+        window.alert("Game is Paused. Press OK to continue!");
+    },
+    OpenNewTab : function(url)
+    {
+        url = Pointer_stringify(url);
+        window.open(url, 'blank');
     },
     QuitGame : function()
     {
-        FS.syncfs(false, function (err) 
+        FS.syncfs(false, function (err)
         {
-            unityInstance.SetFullscreen(0);      
-            CloseGame();            
-        });        
-    }        
+            assert(!err);
+
+            if(err){
+                console.log('[JS_LIB]: sync with IDB has Failed!');
+            }
+            else{
+                console.log('[JS_LIB]: Finished sync with IDB - Closing Game');
+                unityInstance.SetFullscreen(0);
+                CloseGame();
+            }
+        });
+    }
 }
 mergeInto(LibraryManager.library, WebBrowserInteraction);

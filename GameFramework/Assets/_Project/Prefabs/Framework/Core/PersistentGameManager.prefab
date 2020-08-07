@@ -297,6 +297,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 1}
   m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -322,6 +323,7 @@ GameObject:
   - component: {fileID: 5312709158924036536}
   - component: {fileID: 2928029943728600898}
   - component: {fileID: 5936554910452989659}
+  - component: {fileID: 8274637924862634039}
   m_Layer: 2
   m_Name: PersistentGameManager
   m_TagString: Untagged
@@ -358,12 +360,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb7b371bb85074740984166d8fad6a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  onApplicationQuit: {fileID: 11400000, guid: 52a7bfe1d2077f9489ef2b50d443575d, type: 2}
   onGameResume: {fileID: 11400000, guid: 94f4f5d27b45d9b4aa13ba85d2f9fee3, type: 2}
   onGamePause: {fileID: 11400000, guid: 2ddc1194658849545a5e09c4f0fca76f, type: 2}
   score: 0
   displayFps: 1
   isGamePaused: 0
+  debug: 0
   customCursor: {fileID: 2800000, guid: 92f7c9223208e13499c06a8f4f3ab309, type: 3}
 --- !u!114 &5936554910452989659
 MonoBehaviour:
@@ -387,6 +389,14 @@ MonoBehaviour:
     - type: 4
       clip: {fileID: 8300000, guid: 32d4b1811dda14a6cb9e059ee8ad17d2, type: 3}
   debug: 0
+--- !u!81 &8274637924862634039
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4783635989119155361}
+  m_Enabled: 1
 --- !u!1 &8959028679463720300
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,7 @@
 ﻿/*
  * LoadSceneButton -
  * Created by : Allan N. Murillo
- * Last Edited : 7/8/2020
+ * Last Edited : 7/17/2020
  */
 
 using UnityEngine;

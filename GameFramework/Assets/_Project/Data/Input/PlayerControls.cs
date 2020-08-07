@@ -1,4 +1,4 @@
-// GENERATED AUTOMATICALLY FROM 'Assets/_Project/Data/Resources/PlayerControls.inputactions'
+// GENERATED AUTOMATICALLY FROM 'Assets/_Project/Data/Input/PlayerControls.inputactions'
 
 using System;
 using System.Collections;
@@ -17,8 +17,128 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         {
             ""name"": ""Gameplay"",
             ""id"": ""7083e2c6-a96b-4ea8-b783-d1672d84e0de"",
-            ""actions"": [],
-            ""bindings"": []
+            ""actions"": [
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""a48a7013-3a4a-4f27-9d14-278a0b2e47d1"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""ea31965d-bcfc-495b-a9c9-883579050367"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""WASD"",
+                    ""id"": ""d18cbea4-3b68-4c6b-a130-a5ebc226472d"",
+                    ""path"": ""Dpad(mode=1)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""bb7b8da9-e700-41c0-9942-7ece94c79479"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""fa0430e4-e354-4c4a-b7ee-b9c33f6540d1"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""94b6384f-1e59-453d-9be6-a7cef0ef2b58"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""a17826f2-3e1c-40f8-897f-9a86416e3970"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""c6ec838c-80ca-4599-be86-f5254451e487"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""61109b9c-eae7-44e2-b5d7-834679eb1708"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""afcf9800-1655-409e-ad7e-1b8af652f6e7"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""0b54d012-ac14-45a0-9a06-512c0ae367ed"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
         },
         {
             ""name"": ""Ui"",
@@ -69,6 +189,22 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""type"": ""PassThrough"",
                     ""id"": ""d22a80e1-01bd-4936-908e-2b24a7a7b3ba"",
                     ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""MiddleClick"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""0616610a-4725-41ed-9709-cd6471b7c9c5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""RightClick"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""4e661b2a-592e-42ad-97c8-166152f88b81"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
                 },
@@ -348,6 +484,28 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""5cf61461-f206-4cff-81fb-91ae73e7eb6e"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""MiddleClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""542546b3-1a57-4819-b843-508c5ed45189"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""RightClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""ef9011cd-63d0-455f-a1c3-aa7b421dc5d8"",
                     ""path"": ""keyboard/Tab"",
                     ""interactions"": """",
@@ -364,6 +522,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
 }");
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
+        m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
         // Ui
         m_Ui = asset.FindActionMap("Ui", throwIfNotFound: true);
         m_Ui_Navigate = m_Ui.FindAction("Navigate", throwIfNotFound: true);
@@ -372,6 +531,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Ui_Point = m_Ui.FindAction("Point", throwIfNotFound: true);
         m_Ui_Click = m_Ui.FindAction("Click", throwIfNotFound: true);
         m_Ui_ScrollWheel = m_Ui.FindAction("ScrollWheel", throwIfNotFound: true);
+        m_Ui_MiddleClick = m_Ui.FindAction("MiddleClick", throwIfNotFound: true);
+        m_Ui_RightClick = m_Ui.FindAction("RightClick", throwIfNotFound: true);
         m_Ui_PauseToggle = m_Ui.FindAction("PauseToggle", throwIfNotFound: true);
     }
 
@@ -422,10 +583,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     // Gameplay
     private readonly InputActionMap m_Gameplay;
     private IGameplayActions m_GameplayActionsCallbackInterface;
+    private readonly InputAction m_Gameplay_Move;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
         public GameplayActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Move => m_Wrapper.m_Gameplay_Move;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -435,10 +598,16 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         {
             if (m_Wrapper.m_GameplayActionsCallbackInterface != null)
             {
+                @Move.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMove;
+                @Move.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMove;
+                @Move.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMove;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
             {
+                @Move.started += instance.OnMove;
+                @Move.performed += instance.OnMove;
+                @Move.canceled += instance.OnMove;
             }
         }
     }
@@ -453,6 +622,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Ui_Point;
     private readonly InputAction m_Ui_Click;
     private readonly InputAction m_Ui_ScrollWheel;
+    private readonly InputAction m_Ui_MiddleClick;
+    private readonly InputAction m_Ui_RightClick;
     private readonly InputAction m_Ui_PauseToggle;
     public struct UiActions
     {
@@ -464,6 +635,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @Point => m_Wrapper.m_Ui_Point;
         public InputAction @Click => m_Wrapper.m_Ui_Click;
         public InputAction @ScrollWheel => m_Wrapper.m_Ui_ScrollWheel;
+        public InputAction @MiddleClick => m_Wrapper.m_Ui_MiddleClick;
+        public InputAction @RightClick => m_Wrapper.m_Ui_RightClick;
         public InputAction @PauseToggle => m_Wrapper.m_Ui_PauseToggle;
         public InputActionMap Get() { return m_Wrapper.m_Ui; }
         public void Enable() { Get().Enable(); }
@@ -492,6 +665,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @ScrollWheel.started -= m_Wrapper.m_UiActionsCallbackInterface.OnScrollWheel;
                 @ScrollWheel.performed -= m_Wrapper.m_UiActionsCallbackInterface.OnScrollWheel;
                 @ScrollWheel.canceled -= m_Wrapper.m_UiActionsCallbackInterface.OnScrollWheel;
+                @MiddleClick.started -= m_Wrapper.m_UiActionsCallbackInterface.OnMiddleClick;
+                @MiddleClick.performed -= m_Wrapper.m_UiActionsCallbackInterface.OnMiddleClick;
+                @MiddleClick.canceled -= m_Wrapper.m_UiActionsCallbackInterface.OnMiddleClick;
+                @RightClick.started -= m_Wrapper.m_UiActionsCallbackInterface.OnRightClick;
+                @RightClick.performed -= m_Wrapper.m_UiActionsCallbackInterface.OnRightClick;
+                @RightClick.canceled -= m_Wrapper.m_UiActionsCallbackInterface.OnRightClick;
                 @PauseToggle.started -= m_Wrapper.m_UiActionsCallbackInterface.OnPauseToggle;
                 @PauseToggle.performed -= m_Wrapper.m_UiActionsCallbackInterface.OnPauseToggle;
                 @PauseToggle.canceled -= m_Wrapper.m_UiActionsCallbackInterface.OnPauseToggle;
@@ -517,6 +696,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @ScrollWheel.started += instance.OnScrollWheel;
                 @ScrollWheel.performed += instance.OnScrollWheel;
                 @ScrollWheel.canceled += instance.OnScrollWheel;
+                @MiddleClick.started += instance.OnMiddleClick;
+                @MiddleClick.performed += instance.OnMiddleClick;
+                @MiddleClick.canceled += instance.OnMiddleClick;
+                @RightClick.started += instance.OnRightClick;
+                @RightClick.performed += instance.OnRightClick;
+                @RightClick.canceled += instance.OnRightClick;
                 @PauseToggle.started += instance.OnPauseToggle;
                 @PauseToggle.performed += instance.OnPauseToggle;
                 @PauseToggle.canceled += instance.OnPauseToggle;
@@ -526,6 +711,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     public UiActions @Ui => new UiActions(this);
     public interface IGameplayActions
     {
+        void OnMove(InputAction.CallbackContext context);
     }
     public interface IUiActions
     {
@@ -535,6 +721,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnPoint(InputAction.CallbackContext context);
         void OnClick(InputAction.CallbackContext context);
         void OnScrollWheel(InputAction.CallbackContext context);
+        void OnMiddleClick(InputAction.CallbackContext context);
+        void OnRightClick(InputAction.CallbackContext context);
         void OnPauseToggle(InputAction.CallbackContext context);
     }
 }

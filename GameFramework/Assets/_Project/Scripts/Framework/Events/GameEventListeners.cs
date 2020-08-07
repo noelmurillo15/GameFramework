@@ -1,7 +1,7 @@
 ﻿/*
  * GameEventListeners - Listens for Game Events raised and responds via a UnityEvent
  * Created by : Allan N. Murillo
- * Last Edited : 2/17/2020
+ * Last Edited : 8/5/2020
  */
 
 using UnityEngine;
@@ -27,6 +27,7 @@ namespace ANM.Framework.Events
 
         public void OnEventRaised()
         {
+            //Debug.Log("["+ @event.eventName + "]: event has been raised!");
             response.Invoke();
         }
     }

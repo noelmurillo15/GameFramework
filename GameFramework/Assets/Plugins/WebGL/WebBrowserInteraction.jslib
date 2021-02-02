@@ -1,7 +1,7 @@
 /*
  * WebBrowserInteraction.jslib - A WebGL Plugin that allows JavaScript functionality to be invoked from C#
  * Created by : Allan N. Murillo
- * Last Edited : 8/5/2020
+ * Last Edited : 12/18/2020
  */
 
 var WebBrowserInteraction = {
@@ -27,7 +27,7 @@ var WebBrowserInteraction = {
     },
     LostFocus : function()
     {
-        window.alert("Game is Paused. Press OK to continue!");
+        unityInstance.SendMessage('PersistentGameManager', 'RaisePause');
     },
     OpenNewTab : function(url)
     {
@@ -46,7 +46,7 @@ var WebBrowserInteraction = {
             else{
                 console.log('[JS_LIB]: Finished sync with IDB - Closing Game');
                 unityInstance.SetFullscreen(0);
-                CloseGame();
+                //CloseGame();
             }
         });
     }

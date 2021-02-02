@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dfd751693c32a847adaa65785cd02da, type: 3}
   m_Name: ResourcesManager
   m_EditorClassIdentifier: 
+  inventory: {fileID: 11400000, guid: 852623a2c9e87ec4896e3034c189d3b6, type: 2}
+  runtime: {fileID: 11400000, guid: 505d15965e065c146baff1538de831dd, type: 2}

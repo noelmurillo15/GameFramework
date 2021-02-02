@@ -1,7 +1,7 @@
 ﻿/*
  * LoadSceneButton -
  * Created by : Allan N. Murillo
- * Last Edited : 7/17/2020
+ * Last Edited : 8/10/2020
  */
 
 using UnityEngine;
@@ -13,7 +13,7 @@ namespace ANM.Framework.Utils
     {
         [SerializeField] private string levelName = string.Empty;
 
-        //    TODO : menu buttons are still active when gameplay scene is active
+
         public void ButtonPressed(bool multiScene = false)
         {
             if (!SceneExtension.IsThisSceneActive(SceneExtension.MenuUiSceneName)) return;

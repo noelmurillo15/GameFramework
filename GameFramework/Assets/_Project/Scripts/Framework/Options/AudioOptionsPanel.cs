@@ -47,12 +47,12 @@ namespace ANM.Framework.Options
                 }
             }
 
-            //_panel.SetActive(false);
+            _panel.SetActive(false);
         }
 
         public void AudioPanelIn(EventSystem eventSystem)
         {
-            //_panel.SetActive(true);
+            _panel.SetActive(true);
             eventSystem.SetSelectedGameObject(GetSelectObject());
             audioPanelSelectedObj.OnSelect(null);
         }
@@ -64,7 +64,7 @@ namespace ANM.Framework.Options
             SaveSettings.BackgroundVolumeIni = backgroundVolumeSlider.value;
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
             GameManager.Instance.SaveGameSettings();
-            //_panel.SetActive(false);
+            _panel.SetActive(false);
         }
 
         public IEnumerator RevertAudioSettings()
@@ -73,7 +73,7 @@ namespace ANM.Framework.Options
             effectsVolumeSlider.value = SaveSettings.EffectVolumeIni;
             backgroundVolumeSlider.value = SaveSettings.BackgroundVolumeIni;
             yield return StartCoroutine(CoroutineUtilities.WaitForRealTime(0.5f));
-            //_panel.SetActive(false);
+            _panel.SetActive(false);
         }
 
         public void ApplyAudioSettings()

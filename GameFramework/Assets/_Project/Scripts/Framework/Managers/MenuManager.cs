@@ -111,31 +111,37 @@ namespace ANM.Framework.Managers
         public void UpdateAudioSettings()
         {
             StartCoroutine(audioOptionsPanel.SaveAudioSettings());
-            Return();
+            BackToPreviousPage();
         }
 
         public void UpdateVideoSettings()
         {
             StartCoroutine(videoOptionsPanel.SaveVideoSettings());
-            Return();
+            BackToPreviousPage();
         }
 
         public void CancelAudioSettings()
         {
             StartCoroutine(audioOptionsPanel.RevertAudioSettings());
-            Return();
+            BackToPreviousPage();
         }
 
         public void CancelVideoSettings()
         {
             StartCoroutine(videoOptionsPanel.RevertVideoSettings());
-            Return();
+            BackToPreviousPage();
         }
 
-        public void Return()
+        public void BackToPreviousPage()
         {
             var target = isMainMenuActive ? MenuPageType.MainMenu : MenuPageType.Pause;
             _controller.TurnMenuPageOff(_controller.GetCurrentMenuPageType(), target);
+        }
+
+        public void PlayAgain()
+        {
+            GameManager.HardReset();
+            _controller.TurnMenuPageOff(_controller.GetCurrentMenuPageType(), MenuPageType.MainMenu);
         }
 
         public void Reset()
@@ -155,6 +161,7 @@ namespace ANM.Framework.Managers
 
         public void QuitOptions()
         {
+            if (quitOptionsPanel == null) return;
             quitOptionsPanel.TurnOnPanel();
             _eventSystem.SetSelectedGameObject(quitPanelSelectedObj.gameObject);
             quitPanelSelectedObj.OnSelect(null);
@@ -162,8 +169,9 @@ namespace ANM.Framework.Managers
 
         public void QuitCancel()
         {
+            if (quitOptionsPanel == null) return;
             quitOptionsPanel.TurnOffPanel();
-            Return();
+            BackToPreviousPage();
         }
 
         public void Quit()
@@ -180,7 +188,7 @@ namespace ANM.Framework.Managers
 
         private void ControllerSetup()
         {
-            if (_inputController == null) _inputController = GameManager.GetResourcesManager().GetInputController();
+            if (_inputController == null) _inputController = GameManager.GetResources().GetInput();
             _inputController.playerControls.Ui.PauseToggle.performed += context => TogglePause();
             _inputController.playerControls.Ui.Enable();
         }
@@ -199,7 +207,7 @@ namespace ANM.Framework.Managers
             isMainMenuActive = SceneExtension.IsThisSceneActive(SceneExtension.MenuUiSceneName);
             if (isMainMenuActive)
             {
-                Return();
+                BackToPreviousPage();
                 _eventSystem.SetSelectedGameObject(mainPanelSelectedObj.gameObject);
                 mainPanelSelectedObj.OnSelect(null);
             }
@@ -218,7 +226,7 @@ namespace ANM.Framework.Managers
             lastSceneBuildIndex = SceneExtension.GetCurrentSceneBuildIndex();
             if (!SceneExtension.TrySwitchToScene(SceneExtension.MenuUiSceneName)) return;
             _inputUi.cancel.action.performed += CancelInput;
-            Return();
+            BackToPreviousPage();
             _isPaused = true;
         }
 
@@ -236,7 +244,7 @@ namespace ANM.Framework.Managers
             videoOptionsPanel.ApplyVideoSettings();
         }
 
-        private void CancelInput(InputAction.CallbackContext callbackContext) => Return();
+        private void CancelInput(InputAction.CallbackContext callbackContext) => BackToPreviousPage();
 
         #endregion
     }

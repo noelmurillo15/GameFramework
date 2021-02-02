@@ -25,6 +25,22 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""f7225671-931d-4a08-8e09-d7a7475843f2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""ResponseKey"",
+                    ""type"": ""Button"",
+                    ""id"": ""a48c7163-9f0b-4916-a99a-3dc4853d5510"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -137,6 +153,72 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2812388c-5811-4b49-956c-3c90e55f2e7f"",
+                    ""path"": ""keyboard/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Num1-4"",
+                    ""id"": ""cc00222c-e0f4-4140-a742-c9cbef1c3bcb"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResponseKey"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""55d5ab0b-c02e-4cdc-814b-468abe37dc8f"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResponseKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""a9486b9e-f36e-447a-837d-bb6917b820f4"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResponseKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""4b16c944-f40d-4607-99cb-186d14249e7e"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResponseKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""c743cf44-2ef9-45d5-999f-6c1e3b752196"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ResponseKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         },
@@ -209,9 +291,33 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
+                    ""name"": ""InventoryToggle"",
+                    ""type"": ""Button"",
+                    ""id"": ""f2fc5cad-2459-48d4-8bdb-fe33d7344615"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
                     ""name"": ""PauseToggle"",
                     ""type"": ""Button"",
                     ""id"": ""fe7de79b-7f18-459c-81d7-caf2192cf682"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""MapToggle"",
+                    ""type"": ""Button"",
+                    ""id"": ""d0321659-c5f9-42f8-9f25-689508239406"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""PdfViewToggle"",
+                    ""type"": ""Button"",
+                    ""id"": ""42bfd243-0d79-408d-80f0-70641fe03b5b"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -506,12 +612,45 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""8d37100a-03c8-4c5a-bf67-9ca41d9933b0"",
+                    ""path"": ""keyboard/I"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryToggle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""ef9011cd-63d0-455f-a1c3-aa7b421dc5d8"",
                     ""path"": ""keyboard/Tab"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""PauseToggle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""77853c2e-6e21-48a3-a7ac-8f120bda10e7"",
+                    ""path"": ""keyboard/M"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MapToggle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""afb02886-9369-45ac-8aa5-cef71212035a"",
+                    ""path"": ""keyboard/P"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""PdfViewToggle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -523,6 +662,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         // Gameplay
         m_Gameplay = asset.FindActionMap("Gameplay", throwIfNotFound: true);
         m_Gameplay_Move = m_Gameplay.FindAction("Move", throwIfNotFound: true);
+        m_Gameplay_Interact = m_Gameplay.FindAction("Interact", throwIfNotFound: true);
+        m_Gameplay_ResponseKey = m_Gameplay.FindAction("ResponseKey", throwIfNotFound: true);
         // Ui
         m_Ui = asset.FindActionMap("Ui", throwIfNotFound: true);
         m_Ui_Navigate = m_Ui.FindAction("Navigate", throwIfNotFound: true);
@@ -533,7 +674,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Ui_ScrollWheel = m_Ui.FindAction("ScrollWheel", throwIfNotFound: true);
         m_Ui_MiddleClick = m_Ui.FindAction("MiddleClick", throwIfNotFound: true);
         m_Ui_RightClick = m_Ui.FindAction("RightClick", throwIfNotFound: true);
+        m_Ui_InventoryToggle = m_Ui.FindAction("InventoryToggle", throwIfNotFound: true);
         m_Ui_PauseToggle = m_Ui.FindAction("PauseToggle", throwIfNotFound: true);
+        m_Ui_MapToggle = m_Ui.FindAction("MapToggle", throwIfNotFound: true);
+        m_Ui_PdfViewToggle = m_Ui.FindAction("PdfViewToggle", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -584,11 +728,15 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Gameplay;
     private IGameplayActions m_GameplayActionsCallbackInterface;
     private readonly InputAction m_Gameplay_Move;
+    private readonly InputAction m_Gameplay_Interact;
+    private readonly InputAction m_Gameplay_ResponseKey;
     public struct GameplayActions
     {
         private @PlayerControls m_Wrapper;
         public GameplayActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Gameplay_Move;
+        public InputAction @Interact => m_Wrapper.m_Gameplay_Interact;
+        public InputAction @ResponseKey => m_Wrapper.m_Gameplay_ResponseKey;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -601,6 +749,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Move.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnMove;
+                @Interact.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnInteract;
+                @Interact.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnInteract;
+                @Interact.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnInteract;
+                @ResponseKey.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnResponseKey;
+                @ResponseKey.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnResponseKey;
+                @ResponseKey.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnResponseKey;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -608,6 +762,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
+                @Interact.started += instance.OnInteract;
+                @Interact.performed += instance.OnInteract;
+                @Interact.canceled += instance.OnInteract;
+                @ResponseKey.started += instance.OnResponseKey;
+                @ResponseKey.performed += instance.OnResponseKey;
+                @ResponseKey.canceled += instance.OnResponseKey;
             }
         }
     }
@@ -624,7 +784,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputAction m_Ui_ScrollWheel;
     private readonly InputAction m_Ui_MiddleClick;
     private readonly InputAction m_Ui_RightClick;
+    private readonly InputAction m_Ui_InventoryToggle;
     private readonly InputAction m_Ui_PauseToggle;
+    private readonly InputAction m_Ui_MapToggle;
+    private readonly InputAction m_Ui_PdfViewToggle;
     public struct UiActions
     {
         private @PlayerControls m_Wrapper;
@@ -637,7 +800,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         public InputAction @ScrollWheel => m_Wrapper.m_Ui_ScrollWheel;
         public InputAction @MiddleClick => m_Wrapper.m_Ui_MiddleClick;
         public InputAction @RightClick => m_Wrapper.m_Ui_RightClick;
+        public InputAction @InventoryToggle => m_Wrapper.m_Ui_InventoryToggle;
         public InputAction @PauseToggle => m_Wrapper.m_Ui_PauseToggle;
+        public InputAction @MapToggle => m_Wrapper.m_Ui_MapToggle;
+        public InputAction @PdfViewToggle => m_Wrapper.m_Ui_PdfViewToggle;
         public InputActionMap Get() { return m_Wrapper.m_Ui; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -671,9 +837,18 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @RightClick.started -= m_Wrapper.m_UiActionsCallbackInterface.OnRightClick;
                 @RightClick.performed -= m_Wrapper.m_UiActionsCallbackInterface.OnRightClick;
                 @RightClick.canceled -= m_Wrapper.m_UiActionsCallbackInterface.OnRightClick;
+                @InventoryToggle.started -= m_Wrapper.m_UiActionsCallbackInterface.OnInventoryToggle;
+                @InventoryToggle.performed -= m_Wrapper.m_UiActionsCallbackInterface.OnInventoryToggle;
+                @InventoryToggle.canceled -= m_Wrapper.m_UiActionsCallbackInterface.OnInventoryToggle;
                 @PauseToggle.started -= m_Wrapper.m_UiActionsCallbackInterface.OnPauseToggle;
                 @PauseToggle.performed -= m_Wrapper.m_UiActionsCallbackInterface.OnPauseToggle;
                 @PauseToggle.canceled -= m_Wrapper.m_UiActionsCallbackInterface.OnPauseToggle;
+                @MapToggle.started -= m_Wrapper.m_UiActionsCallbackInterface.OnMapToggle;
+                @MapToggle.performed -= m_Wrapper.m_UiActionsCallbackInterface.OnMapToggle;
+                @MapToggle.canceled -= m_Wrapper.m_UiActionsCallbackInterface.OnMapToggle;
+                @PdfViewToggle.started -= m_Wrapper.m_UiActionsCallbackInterface.OnPdfViewToggle;
+                @PdfViewToggle.performed -= m_Wrapper.m_UiActionsCallbackInterface.OnPdfViewToggle;
+                @PdfViewToggle.canceled -= m_Wrapper.m_UiActionsCallbackInterface.OnPdfViewToggle;
             }
             m_Wrapper.m_UiActionsCallbackInterface = instance;
             if (instance != null)
@@ -702,9 +877,18 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @RightClick.started += instance.OnRightClick;
                 @RightClick.performed += instance.OnRightClick;
                 @RightClick.canceled += instance.OnRightClick;
+                @InventoryToggle.started += instance.OnInventoryToggle;
+                @InventoryToggle.performed += instance.OnInventoryToggle;
+                @InventoryToggle.canceled += instance.OnInventoryToggle;
                 @PauseToggle.started += instance.OnPauseToggle;
                 @PauseToggle.performed += instance.OnPauseToggle;
                 @PauseToggle.canceled += instance.OnPauseToggle;
+                @MapToggle.started += instance.OnMapToggle;
+                @MapToggle.performed += instance.OnMapToggle;
+                @MapToggle.canceled += instance.OnMapToggle;
+                @PdfViewToggle.started += instance.OnPdfViewToggle;
+                @PdfViewToggle.performed += instance.OnPdfViewToggle;
+                @PdfViewToggle.canceled += instance.OnPdfViewToggle;
             }
         }
     }
@@ -712,6 +896,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     public interface IGameplayActions
     {
         void OnMove(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
+        void OnResponseKey(InputAction.CallbackContext context);
     }
     public interface IUiActions
     {
@@ -723,6 +909,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnScrollWheel(InputAction.CallbackContext context);
         void OnMiddleClick(InputAction.CallbackContext context);
         void OnRightClick(InputAction.CallbackContext context);
+        void OnInventoryToggle(InputAction.CallbackContext context);
         void OnPauseToggle(InputAction.CallbackContext context);
+        void OnMapToggle(InputAction.CallbackContext context);
+        void OnPdfViewToggle(InputAction.CallbackContext context);
     }
 }

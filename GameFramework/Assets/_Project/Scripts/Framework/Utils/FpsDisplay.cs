@@ -1,11 +1,11 @@
 ﻿/*
  * FpsDisplay - Displays current Fps to Gui
  * Created by : Allan N. Murillo
- * Last Edited : 4/27/2020
+ * Last Edited : 1/12/2021
  */
 
-using ANM.Framework.Managers;
 using UnityEngine;
+using ANM.Framework.Managers;
 
 namespace ANM.Utils
 {
@@ -15,15 +15,9 @@ namespace ANM.Utils
         private bool _displayFps = true;
 
 
-        private void OnEnable()
-        {
-            GameManager.Instance?.AttachFpsDisplay(this);
-        }
+        private void OnEnable() => GameManager.Instance?.AttachFpsDisplay(this);
 
-        private void OnDisable()
-        {
-            GameManager.Instance?.AttachFpsDisplay();
-        }
+        private void OnDisable() => GameManager.Instance?.AttachFpsDisplay();
 
         private void Update()
         {
@@ -39,7 +33,7 @@ namespace ANM.Utils
             h *= 2 / 100;
             var rect = new Rect(w - (w * 0.5f), 0, w, h);
             style.alignment = TextAnchor.UpperLeft;
-            style.fontSize = 2 * h / 100;
+            style.fontSize = h * 2 / 100;
             style.normal.textColor = Color.white;
             var msecs = _deltaTime * 1000.0f;
             var fps = 1.0f / _deltaTime;
@@ -47,9 +41,6 @@ namespace ANM.Utils
             GUI.Label(rect, text, style);
         }
 
-        public void ToggleFpsDisplay(bool b)
-        {
-            _displayFps = b;
-        }
+        public void ToggleFpsDisplay(bool b) => _displayFps = b;
     }
 }

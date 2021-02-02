@@ -88,6 +88,7 @@ namespace ANM.Framework.Options
             OverrideFpsDisplay(SaveSettings.DisplayFpsIni);
             OverrideAnisotropicFiltering();
             OverrideMasterTextureQuality();
+            OverrideFullscreen(true);
             OverrideGraphicsPreset();
             OverrideRenderDistance();
             OverrideShadowDistance();
@@ -230,6 +231,14 @@ namespace ANM.Framework.Options
             EventExtension.UnMuteEventListener(fpsDisplayToggle.onValueChanged);
         }
 
+        private void OverrideFullscreen(bool b)
+        {
+            EventExtension.MuteEventListener(fullScreenToggle.onValueChanged);
+            fullScreenToggle.isOn = b;
+            ToggleFullScreen(b);
+            EventExtension.UnMuteEventListener(fullScreenToggle.onValueChanged);
+        }
+
         private void OverrideGraphicsPreset()
         {
             if (QualitySettings.GetQualityLevel() != SaveSettings.CurrentQualityLevelIni)
@@ -335,21 +344,25 @@ namespace ANM.Framework.Options
         #region External JS Lib
 
 #if UNITY_WEBGL && !UNITY_EDITOR
-        [System.Runtime.InteropServices.DllImport("__Internal")]
-        static extern void WindowFullscreen();
-        [System.Runtime.InteropServices.DllImport("__Internal")]
-        static extern void CancelFullscreen();
 
-        private void FullScreen(){
-            WindowFullscreen();
-        }
-        private void ExitFullScreen(){
-            CancelFullscreen();
-        }
+         [System.Runtime.InteropServices.DllImport("__Internal")]
+         static extern void WindowFullscreen();
+         [System.Runtime.InteropServices.DllImport("__Internal")]
+         static extern void CancelFullscreen();
+
+         private void FullScreen() { WindowFullscreen(); }
+         private void ExitFullScreen() { CancelFullscreen(); }
+
 #else
-        private static void FullScreen() { }
 
-        private static void ExitFullScreen() { }
+        private static void FullScreen()
+        {
+            Screen.fullScreen = true;
+            Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+        }
+
+        private static void ExitFullScreen() { Screen.fullScreen = false; }
+
 #endif
 
         #endregion

@@ -1,7 +1,7 @@
 ﻿/*
- * ResourcesManager - Handles the initialization of Game Resources such as the Input Controller
+ * ResourcesManager - Handles the initialization of Game Resources such as the Inventory and the Input Controller
  * Created by : Allan N. Murillo
- * Last Edited : 8/6/2020
+ * Last Edited : 2/1/2021
  */
 
 using ANM.Input;
@@ -17,13 +17,14 @@ namespace ANM.Scriptables
 
         public void Initialize()
         {
-            if (_inputController == null) _inputController = Resources.Load("InputController") as InputController;
+            //Debug.Log("[ResourcesManager]: Initializing");
+            if (_inputController == null) _inputController = Resources.Load("PlayerControls") as InputController;
             if (_inputController == null)
             {
                 Debug.LogWarning("[ResourcesManager]: Player Controls was not loaded properly");
             }
         }
 
-        public InputController GetInputController() => _inputController;
+        public InputController GetInput() => _inputController;
     }
 }

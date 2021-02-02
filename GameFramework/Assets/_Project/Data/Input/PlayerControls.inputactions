@@ -12,6 +12,22 @@
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "f7225671-931d-4a08-8e09-d7a7475843f2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "ResponseKey",
+                    "type": "Button",
+                    "id": "a48c7163-9f0b-4916-a99a-3dc4853d5510",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -124,6 +140,72 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "2812388c-5811-4b49-956c-3c90e55f2e7f",
+                    "path": "keyboard/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "Num1-4",
+                    "id": "cc00222c-e0f4-4140-a742-c9cbef1c3bcb",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ResponseKey",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "55d5ab0b-c02e-4cdc-814b-468abe37dc8f",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ResponseKey",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "a9486b9e-f36e-447a-837d-bb6917b820f4",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ResponseKey",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "4b16c944-f40d-4607-99cb-186d14249e7e",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ResponseKey",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "c743cf44-2ef9-45d5-999f-6c1e3b752196",
+                    "path": "<Keyboard>/4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ResponseKey",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         },
@@ -196,9 +278,33 @@
                     "interactions": ""
                 },
                 {
+                    "name": "InventoryToggle",
+                    "type": "Button",
+                    "id": "f2fc5cad-2459-48d4-8bdb-fe33d7344615",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
                     "name": "PauseToggle",
                     "type": "Button",
                     "id": "fe7de79b-7f18-459c-81d7-caf2192cf682",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "MapToggle",
+                    "type": "Button",
+                    "id": "d0321659-c5f9-42f8-9f25-689508239406",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "PdfViewToggle",
+                    "type": "Button",
+                    "id": "42bfd243-0d79-408d-80f0-70641fe03b5b",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -493,12 +599,45 @@
                 },
                 {
                     "name": "",
+                    "id": "8d37100a-03c8-4c5a-bf67-9ca41d9933b0",
+                    "path": "keyboard/I",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InventoryToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "ef9011cd-63d0-455f-a1c3-aa7b421dc5d8",
                     "path": "keyboard/Tab",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "PauseToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "77853c2e-6e21-48a3-a7ac-8f120bda10e7",
+                    "path": "keyboard/M",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MapToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "afb02886-9369-45ac-8aa5-cef71212035a",
+                    "path": "keyboard/P",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PdfViewToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

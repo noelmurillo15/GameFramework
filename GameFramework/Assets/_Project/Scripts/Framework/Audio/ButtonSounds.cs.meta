@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:GameFramework/Assets/Scripts/Framework/Events/GameEventListeners.cs.meta
-guid: f31f339eddb2bcd4d8be9d9c73c05819
-=======
 guid: 16c635611cfb1a749b4d387d81177b7e
->>>>>>> Standalone_NewInputSystem:GameFramework/Assets/_Project/Scripts/Framework/Audio/ButtonSounds.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

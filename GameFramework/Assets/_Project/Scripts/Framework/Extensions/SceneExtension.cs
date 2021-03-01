@@ -2,7 +2,7 @@
  * SceneExtension - Static Class used for async scene transitions via Co-routines from anywhere
  * Classes can subscribe to SceneLoadEvents and be notified before and after a scene transition occured
  * Created by : Allan N. Murillo
- * Last Edited : 7/8/2020
+ * Last Edited : 1/27/2021
  */
 
 using System;
@@ -16,6 +16,7 @@ namespace ANM.Framework.Extensions
     {
         public static event Action<bool, bool> StartSceneLoadEvent = (fade, save) => { };
         public static event Action<bool, bool> FinishSceneLoadEvent = (fade, save) => { };
+        public static event Action ResetDayEvent = () => { };
         public const string MenuUiSceneName = "Menu Ui";
 
 
@@ -79,7 +80,9 @@ namespace ANM.Framework.Extensions
         {
             //Debug.Log("[SceneExtension]: ReloadCurrentSceneSequence");
             var sceneToReload = GetCurrentScene();
-            yield return OnStartLoadWithFade();
+            yield return OnStartLoadWithFade(true);
+            CallOnResetDayEvent();
+            yield return new WaitForSeconds(3f);
             yield return ForceMenuSceneSequence();
             var reloadSceneName = sceneToReload.name;
             if (IsSceneLoaded(sceneToReload)) UnloadThisActiveScene(sceneToReload);
@@ -182,6 +185,11 @@ namespace ANM.Framework.Extensions
                     SetThisSceneActive(GetLoadedScene(sceneName));
                     CallOnFinishSceneLoadEvent(true, true);
                 };
+        }
+
+        private static void CallOnResetDayEvent()
+        {
+            ResetDayEvent?.Invoke();
         }
 
         private static void CallOnStartSceneLoadEvent(bool fade = false, bool save = false)

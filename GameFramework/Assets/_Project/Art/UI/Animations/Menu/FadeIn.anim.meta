@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:GameFramework/Assets/Resources/GameEvents/onGameResume.asset.meta
-guid: 94f4f5d27b45d9b4aa13ba85d2f9fee3
-=======
 guid: 6811cbd1406610c4b9a76c8c8bc95aac
->>>>>>> Standalone_NewInputSystem:GameFramework/Assets/_Project/Art/UI/Animations/Menu/FadeIn.anim.meta
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 0

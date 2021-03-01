@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:GameFramework/Assets/Resources/GameEvents/onApplicationQuit.asset.meta
-guid: 52a7bfe1d2077f9489ef2b50d443575d
-=======
 guid: ba6459c89f8a7594bb6109b257d46bb7
->>>>>>> Standalone_NewInputSystem:GameFramework/Assets/_Project/Art/UI/Animations/Menu/CustomButtonAnimation.controller.meta
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 0

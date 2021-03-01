@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:GameFramework/Assets/Scripts/Framework/Events/GameEvent.cs.meta
-guid: 4a703e82492520042b54833ceb5b8514
-=======
 guid: 336aed5fd89a4ef4d93beee352536bf1
->>>>>>> Standalone_NewInputSystem:GameFramework/Assets/_Project/Data/Input/PlayerControls.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

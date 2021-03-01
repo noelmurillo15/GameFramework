@@ -186,7 +186,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 11
+  m_SortingOrder: 98
   m_TargetDisplay: 0
 --- !u!114 &5349803139695308594
 MonoBehaviour:
@@ -210,6 +210,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!225 &7661524808451945448
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -298,7 +299,7 @@ MonoBehaviour:
   m_Color: {r: 0.2509804, g: 0.2509804, b: 0.2509804, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
+  m_Maskable: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -365,7 +366,7 @@ MonoBehaviour:
   score: 0
   displayFps: 1
   isGamePaused: 0
-  debug: 0
+  debug: 1
   customCursor: {fileID: 2800000, guid: 92f7c9223208e13499c06a8f4f3ab309, type: 3}
 --- !u!114 &5936554910452989659
 MonoBehaviour:

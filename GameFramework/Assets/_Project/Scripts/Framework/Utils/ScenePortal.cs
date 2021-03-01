@@ -1,7 +1,7 @@
 ﻿/*
  * ScenePortal -
  * Created by : Allan N. Murillo
- * Last Edited : 5/8/2020
+ * Last Edited : 3/1/2020
  */
 
 using UnityEngine;
@@ -37,13 +37,13 @@ namespace ANM.Framework.Utils
             DontDestroyOnLoad(gameObject);
 
             var buildIndex = SceneExtension.GetCurrentSceneBuildIndex();
-            //FindObjectOfType<IsometricMovementMouseClick>().enabled = false;
+            //FindObjectOfType<PlayerController>().enabled = false;
             yield return SceneExtension.LoadMultiSceneWithBuildIndexSequence(sceneToLoad, true);
 
-            //var player = FindObjectOfType<IsometricMovementMouseClick>();
+            //var player = FindObjectOfType<PlayerController>();
             //var cam = FindObjectOfType<PixelPerfectCamera>();
             //player.enabled = false;
-            //var otherPortal = GetOtherScenePortal(buildIndex);
+            var otherPortal = GetOtherScenePortal(buildIndex);
             //UpdatePlayerSpawnPosition(otherPortal, player.gameObject, cam.gameObject);
             //player.enabled = true;
 

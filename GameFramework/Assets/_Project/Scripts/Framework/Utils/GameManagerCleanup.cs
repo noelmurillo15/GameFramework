@@ -23,7 +23,7 @@ namespace ANM.Framework.Utils
             if (GameManager.Instance != null) Destroy(obj: GameManager.Instance.gameObject);
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
-#else
+#elif !UNITY_WEBGL
             Application.Quit();
 #endif
         }

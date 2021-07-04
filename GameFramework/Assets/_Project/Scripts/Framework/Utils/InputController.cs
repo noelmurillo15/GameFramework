@@ -5,6 +5,7 @@
  */
 
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace ANM.Input
 {
@@ -12,8 +13,8 @@ namespace ANM.Input
     public class InputController : ScriptableObject
     {
         public PlayerControls playerControls;
-
-
+        
+        
         private void OnEnable()
         {
             if (playerControls == null) playerControls = new PlayerControls();
@@ -26,6 +27,19 @@ namespace ANM.Input
             if (playerControls == null) return;
             playerControls.Disable();
             playerControls = null;
+        }
+    }
+    
+    //  TODO : create a re-mappable Input system & use input mappings from Usages list for controllers
+    public class BasicRebinding : MonoBehaviour
+    {
+        public InputActionReference triggerAction;
+
+        void ChangeBinding()
+        {
+            InputBinding binding = triggerAction.action.bindings[0];
+            binding.overridePath = "<Keyboard>/#(g)";
+            triggerAction.action.ApplyBindingOverride(0, binding);
         }
     }
 }

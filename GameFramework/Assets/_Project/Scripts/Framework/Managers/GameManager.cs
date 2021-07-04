@@ -149,7 +149,8 @@ namespace ANM.Framework.Managers
         {
             Log("Initialize");
 #if UNITY_EDITOR
-            AudioController.instance.PlayAudio(AudioType.St01, true, 1f);
+            AudioController.instance.PlayAudio(AudioType.St01, true, 2.25f);
+            StartCoroutine(SceneExtension.ForceMenuSceneSequence());
 #else
             AudioController.instance.PlayAudio(AudioType.St01);
             StartCoroutine(SceneExtension.ForceMenuSceneSequence());

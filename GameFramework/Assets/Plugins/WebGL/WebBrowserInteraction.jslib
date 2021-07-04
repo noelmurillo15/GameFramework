@@ -19,11 +19,13 @@ var WebBrowserInteraction = {
     },
     WindowFullscreen : function()
     {
-        unityInstance.SetFullscreen(1);
+        console.log('[JS_LIB]: Fullscreen ON');
+        //unityInstance.SetFullscreen(1);
     },
     CancelFullscreen : function()
     {
-        unityInstance.SetFullscreen(0);
+        console.log('[JS_LIB]: Fullscreen OFF');
+        //unityInstance.SetFullscreen(0);
     },
     LostFocus : function()
     {

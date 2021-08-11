@@ -1,7 +1,7 @@
 ﻿/*
  * GameManagerCleanup- Destroys the GameManager after a certain delay (In Credits Scene)
  * Created by : Allan N. Murillo
- * Last Edited : 2/17/2020
+ * Last Edited : 7/4/2021
  */
 
 using UnityEngine;
@@ -16,14 +16,14 @@ namespace ANM.Framework.Utils
         private void Start()
         {
             Invoke($"ApplicationQuit", quitDelay);
+            if (GameManager.Instance != null) Destroy(obj: GameManager.Instance.gameObject);
         }
 
         private void ApplicationQuit()
         {
-            if (GameManager.Instance != null) Destroy(obj: GameManager.Instance.gameObject);
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
-#elif !UNITY_WEBGL
+#else
             Application.Quit();
 #endif
         }

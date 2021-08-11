@@ -1,7 +1,7 @@
 ﻿/*
  * VideoOptionsPanel - Handles displaying / configuring graphics options
  * Created by : Allan N. Murillo
- * Last Edited : 7/10/2020
+ * Last Edited : 7/4/2021
  */
 
 using TMPro;
@@ -70,6 +70,8 @@ namespace ANM.Framework.Options
             _panel.SetActive(false);
         }
 
+        //  TODO : holding xbox button or pressing esc should bring up settings
+
         public IEnumerator RevertVideoSettings()
         {
             QualitySettings.SetQualityLevel(SaveSettings.CurrentQualityLevelIni);
@@ -83,12 +85,13 @@ namespace ANM.Framework.Options
             _panel.SetActive(false);
         }
 
+        //  TODO : make graphics ui look like Destiny 2 ui
         public void ApplyVideoSettings()
         {
             OverrideFpsDisplay(SaveSettings.DisplayFpsIni);
             OverrideAnisotropicFiltering();
             OverrideMasterTextureQuality();
-#if UNITY_WEBGL || UNITY_EDITOR
+#if UNITY_EDITOR
             //OverrideFullscreen(false);
 #else
             OverrideFullscreen(true);
@@ -345,30 +348,15 @@ namespace ANM.Framework.Options
             return videoPanelSelectedObj.gameObject;
         }
 
-        #region External JS Lib
-
-#if UNITY_WEBGL && !UNITY_EDITOR
-
-         [System.Runtime.InteropServices.DllImport("__Internal")]
-         static extern void WindowFullscreen();
-         [System.Runtime.InteropServices.DllImport("__Internal")]
-         static extern void CancelFullscreen();
-
-         private void FullScreen() { WindowFullscreen(); }
-         private void ExitFullScreen() { CancelFullscreen(); }
-
-#else
-
         private static void FullScreen()
         {
             Screen.fullScreen = true;
             Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
         }
 
-        private static void ExitFullScreen() { Screen.fullScreen = false; }
-
-#endif
-
-        #endregion
+        private static void ExitFullScreen()
+        {
+            Screen.fullScreen = false;
+        }
     }
 }

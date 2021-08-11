@@ -2,17 +2,17 @@
  * GameManager - Backbone of the game application
  * Contains data that needs to persist and be accessed from anywhere
  * Created by : Allan N. Murillo
- * Last Edited : 3/1/2021
+ * Last Edited : 7/4/2021
  */
 
 using System;
-using ANM.Utils;
 using UnityEngine;
-using ANM.Scriptables;
 using ANM.Framework.Audio;
+using ANM.Framework.Utils;
 using ANM.Framework.Events;
 using ANM.Framework.Options;
 using ANM.Framework.Extensions;
+using ANM.Framework.Scriptables;
 using AudioType = ANM.Framework.Audio.AudioType;
 
 namespace ANM.Framework.Managers
@@ -75,29 +75,29 @@ namespace ANM.Framework.Managers
             Cursor.SetCursor(customCursor, Vector2.zero, CursorMode.Auto);
         }
 
-        private void OnApplicationFocus(bool hasFocus)
-        {
-            if (hasFocus) return;
-            WindowLostFocus();
-        }
-
         private void OnDestroy()
         {
             if (Instance != this) return;
             Log("OnDestroy");
             Resources.UnloadUnusedAssets();
             GC.Collect();
-            Quit();
         }
 
         #endregion
 
         #region Public Funcs
 
+        //  Used whenever the gameplay scene Starts
         public void AttachFpsDisplay(FpsDisplay fps = null)
         {
             _fpsDisplay = fps;
             _fpsDisplay?.ToggleFpsDisplay(displayFps);
+            
+            //  
+            var splitScreenManager = FindObjectOfType<SplitScreenManager>();
+            if (splitScreenManager == null) return;
+            splitScreenManager.Initialize();
+            splitScreenManager.EnableSplitScreen();
         }
 
         public void SetDisplayFps(bool b)
@@ -123,15 +123,18 @@ namespace ANM.Framework.Managers
             Log("SoftReset");
             SetScore(0);
             SetPause(false);
+            Cursor.SetCursor(customCursor, Vector2.zero, CursorMode.Auto);
         }
 
         public static void HardReset()
         {
-            Debug.Log("[GM]: Hard Reset!");
+            //Debug.Log("[GM]: HardReset");
+            //  TODO : Reset Game Resources here
         }
 
         public static void ReturnToMenu(MenuPageType pageToLoad)
         {
+            //Debug.Log("[GM]: ReturnToMenu");
             SceneExtension.TrySwitchToScene(SceneExtension.MenuUiSceneName);
             SceneExtension.UnloadAllScenesExcept(SceneExtension.MenuUiSceneName);
             FindObjectOfType<MenuManager>().Reset();
@@ -149,9 +152,9 @@ namespace ANM.Framework.Managers
         {
             Log("Initialize");
 #if UNITY_EDITOR
-            AudioController.instance.PlayAudio(AudioType.St01, true, 1f);
+            AudioController.Instance.PlayAudio(AudioType.St01, true, 1f);
 #else
-            AudioController.instance.PlayAudio(AudioType.St01);
+            AudioController.Instance.PlayAudio(AudioType.St01);
             StartCoroutine(SceneExtension.ForceMenuSceneSequence());
 #endif
         }
@@ -166,14 +169,16 @@ namespace ANM.Framework.Managers
         private void RaisePause()
         {
             if (isGamePaused) return;
-            Time.timeScale = 0;
+            Cursor.SetCursor(customCursor, Vector2.zero, CursorMode.Auto);
             isGamePaused = true;
             onGamePause.Raise();
+            Time.timeScale = 0;
         }
 
         private void RaiseResume()
         {
             if (!isGamePaused) return;
+            Cursor.SetCursor(customCursor, Vector2.zero, CursorMode.Auto);
             Time.timeScale = 1;
             isGamePaused = false;
             onGameResume.Raise();
@@ -181,31 +186,11 @@ namespace ANM.Framework.Managers
 
         private void SetScore(int amount) => score = amount;
 
-        //  Called from WebBrowserInteraction.jslib
-        private void LoadSettingsFromIndexedDb() => SaveSettings.SettingsLoadedIni = _save.LoadGameSettings();
-
         private void Log(string log)
         {
             if (!debug) return;
             Debug.Log("[GM]: " + log);
         }
-
-        #endregion
-
-        #region External JS Lib
-
-#if UNITY_WEBGL && !UNITY_EDITOR
-        [System.Runtime.InteropServices.DllImport("__Internal")]
-        static extern void QuitGame();
-        [System.Runtime.InteropServices.DllImport("__Internal")]
-        static extern void LostFocus();
-
-        private void WindowLostFocus() => LostFocus();
-        private void Quit() => QuitGame();
-#else
-        private static void WindowLostFocus() { }
-        private static void Quit() { }
-#endif
 
         #endregion
     }

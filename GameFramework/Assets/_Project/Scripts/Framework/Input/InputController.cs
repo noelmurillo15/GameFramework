@@ -1,14 +1,14 @@
 ﻿/*
  * InputController - Holds a reference to PlayerControls & contains all Input Events
  * Created by : Allan N. Murillo
- * Last Edited : 3/1/2021
+ * Last Edited : 7/4/2021
  */
 
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
-namespace ANM.Input
+namespace ANM.Framework.Input
 {
     [CreateAssetMenu(menuName = "Single Instance/InputController")]
     public class InputController : ScriptableObject, PlayerControls.IGameplayActions, PlayerControls.IMenuActions

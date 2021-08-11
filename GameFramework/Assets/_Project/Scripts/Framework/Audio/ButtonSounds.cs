@@ -21,7 +21,7 @@ namespace ANM.Framework.Audio
         public void PlayButtonPressedSound()
         {
             if (!(Time.timeSinceLevelLoad > _delay)) return;
-            AudioController.instance?.PlayAudio(AudioType.Sfx01);
+            AudioController.Instance?.RestartAudio(AudioType.Sfx01);
             _delay = Time.timeSinceLevelLoad + 0.3f;
         }
     }

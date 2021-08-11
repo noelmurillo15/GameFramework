@@ -7,7 +7,7 @@
 using UnityEngine;
 using ANM.Framework.Managers;
 
-namespace ANM.Utils
+namespace ANM.Framework.Utils
 {
     public class FpsDisplay : MonoBehaviour
     {
@@ -15,7 +15,7 @@ namespace ANM.Utils
         private bool _displayFps = true;
 
 
-        private void OnEnable() => GameManager.Instance?.AttachFpsDisplay(this);
+        private void Start() => GameManager.Instance?.AttachFpsDisplay(this);
 
         private void OnDisable() => GameManager.Instance?.AttachFpsDisplay();
 

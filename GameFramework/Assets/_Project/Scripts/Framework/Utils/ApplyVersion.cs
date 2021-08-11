@@ -1,13 +1,13 @@
 /*
  * ApplyVersion - Used to apply the current version to a TMP_Text component
  * Created by : Allan N. Murillo
- * Last Edited : 1/22/2021
+ * Last Edited : 7/4/2021
  */
 
 using TMPro;
 using UnityEngine;
 
-namespace ANM
+namespace ANM.Framework.Utils
 {
     [RequireComponent(typeof(TMP_Text))]
     public class ApplyVersion : MonoBehaviour

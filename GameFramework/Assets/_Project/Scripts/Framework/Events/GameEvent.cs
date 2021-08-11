@@ -2,7 +2,7 @@
  * GameEvent - An event that is saved as a Scriptable Object (can be accessed from any scene)
  * Use a GameEventListener.cs to call a certain function when a GameEvent is Raised()
  * Created by : Allan N. Murillo
- * Last Edited : 2/24/2020
+ * Last Edited : 4/8/2021
  */
 
 using UnityEngine;
@@ -10,56 +10,30 @@ using System.Collections.Generic;
 
 namespace ANM.Framework.Events
 {
-    [CreateAssetMenu(menuName = "GameEvent")]
+    [CreateAssetMenu(menuName = "GameEvent", fileName = "New Game Event")]
     public class GameEvent : ScriptableObject
     {
-        public string eventName = string.Empty;
-        private readonly List<GameEventListeners> _listeners = new List<GameEventListeners>();
+        //public string eventName = string.Empty;
+        private readonly HashSet<GameEventListeners> _listeners = new HashSet<GameEventListeners>();
 
 
         public void Raise()
         {
-            for (var x = 0; x < _listeners.Count; x++)
+            foreach (var listener in _listeners)
             {
-                _listeners[x].OnEventRaised();
+                listener.OnEventRaised();
             }
         }
 
-        public void RegisterListener(GameEventListeners listener)
-        {
-            if (_listeners.Contains(listener))
-            {
-                Debug.Log(listener.gameObject.name + " is already contained in " + eventName);
-            }
-            else
-            {
-                _listeners.Add(listener);
-            }
-        }
+        public void RegisterListener(GameEventListeners listener) => _listeners.Add(listener);
 
-        public void UnregisterListener(GameEventListeners listener)
-        {
-            if (_listeners.Contains(listener))
-            {
-                _listeners.Remove(listener);
-            }
-            else
-            {
-                Debug.Log(listener.gameObject.name + " has already been removed from " + eventName);
-            }
-        }
+        public void UnregisterListener(GameEventListeners listener) => _listeners.Remove(listener);
+
         private void UnregisterAllListeners()
         {
-            if (_listeners.Count <= 0) return;
-            for (var x = _listeners.Count - 1; x >= 0; x--)
-            {
-                _listeners.RemoveAt(x);
-            }
+            foreach (var listener in _listeners) _listeners.Remove(listener);
         }
 
-        private void OnDisable()
-        {
-            UnregisterAllListeners();
-        }
+        private void OnDisable() => UnregisterAllListeners();
     }
 }

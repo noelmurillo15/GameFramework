@@ -8,7 +8,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace ANM.Ui
+namespace ANM.Framework.Ui
 {
     public class ButtonToolTip : MonoBehaviour
     {

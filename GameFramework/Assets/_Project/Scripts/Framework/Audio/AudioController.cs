@@ -1,18 +1,19 @@
 ﻿/*
  * AudioController -
  * Created by : Allan N. Murillo
- * Last Edited : 7/8/2020
+ * Last Edited : 6/17/2021
  */
 
 using UnityEngine;
 using System.Linq;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace ANM.Framework.Audio
 {
     public class AudioController : MonoBehaviour
     {
-        public static AudioController instance;
+        #region Data Containers
 
         [System.Serializable]
         public class AudioTrack
@@ -26,16 +27,6 @@ namespace ANM.Framework.Audio
         {
             public AudioType type;
             public AudioClip clip;
-        }
-
-        public AudioTrack[] tracks;
-        public bool debug;
-
-        private enum AudioAction
-        {
-            Start,
-            Stop,
-            Restart
         }
 
         private class AudioJob
@@ -54,6 +45,23 @@ namespace ANM.Framework.Audio
             }
         }
 
+        private enum AudioAction
+        {
+            Start,
+            Stop,
+            Restart
+        }
+
+        #endregion
+
+        public static AudioController Instance;
+
+        public AudioTrack[] tracks;
+        public AudioType currentTrack;
+        public bool loopThruTracks;
+        public bool debug;
+
+        private Queue<AudioJob> _audioQueue;
         private Hashtable _audioTable;
         private Hashtable _jobTable;
 
@@ -62,8 +70,7 @@ namespace ANM.Framework.Audio
 
         private void Awake()
         {
-            if (!instance)
-                Configure();
+            if (!Instance) Configure();
         }
 
         private void OnDisable()
@@ -89,16 +96,31 @@ namespace ANM.Framework.Audio
         {
             AddJob(new AudioJob(AudioAction.Restart, audioType, fade, delay));
         }
-
+        
         #endregion
 
         private void Configure()
         {
             Log("Configure");
-            instance = this;
+            Instance = this;
             _jobTable = new Hashtable();
             _audioTable = new Hashtable();
+            _audioQueue = new Queue<AudioJob>();
             GenerateAudioTable();
+            
+            foreach (var audioTrack in GetSoundTracks().OrderBy(n=>Random.value))
+                QueueNextTrack(audioTrack.type, true, 1f);
+            
+            Invoke(nameof(PlayNextTrack), 1f);
+        }
+
+        private IEnumerable<AudioObject> GetSoundTracks() => tracks[0].audioObj;
+        
+        private AudioObject[] GetSoundEffects() => tracks[1].audioObj;
+        
+        private void QueueNextTrack(AudioType audioType, bool fade = false, float delay = 0f)
+        {
+            _audioQueue.Enqueue(new AudioJob(AudioAction.Start, audioType, fade, delay));
         }
 
         private void GenerateAudioTable()
@@ -114,7 +136,7 @@ namespace ANM.Framework.Audio
                     else
                     {
                         _audioTable.Add(audioObject.type, audioTrack);
-                        Log("Registering audio in hashtable - " + audioObject.type);
+                        //Log("Registering audio in hashtable - " + audioObject.type);
                     }
                 }
             }
@@ -175,20 +197,8 @@ namespace ANM.Framework.Audio
 
             var track = (AudioTrack) _audioTable[job.type];
             track.source.clip = GetAudioClipFromAudioTrack(job.type, track);
-
-            switch (job.action)
-            {
-                case AudioAction.Start:
-                    track.source.Play();
-                    break;
-                case AudioAction.Stop:
-                    if (!job.fade) track.source.Stop();
-                    break;
-                case AudioAction.Restart:
-                    track.source.Stop();
-                    track.source.Play();
-                    break;
-            }
+            if (job.type != AudioType.Sfx01) SoundTrackActions(job, track);
+            else SfxActions(job, track);
 
             if (job.fade)
             {
@@ -207,13 +217,87 @@ namespace ANM.Framework.Audio
                 if (job.action == AudioAction.Stop)
                 {
                     track.source.Stop();
+                    PlayNextTrack();
                 }
             }
 
             _jobTable.Remove(job.type);
-            Log("Job Count - " + _jobTable.Count);
-
+            //Log("Job Count - " + _jobTable.Count);
             yield return null;
+        }
+
+        private void SoundTrackActions(AudioJob job, AudioTrack track)
+        {
+            currentTrack = job.type;
+            switch (job.action)
+            {
+                case AudioAction.Start:
+                    track.source.Play();
+                    Invoke(nameof(PlayNextTrack), track.source.clip.length + job.delay);
+                    break;
+                case AudioAction.Stop:
+                    if (!job.fade)
+                    {
+                        CancelInvoke();
+                        track.source.Stop();
+                        PlayNextTrack();
+                    }
+
+                    break;
+                case AudioAction.Restart:
+                    CancelInvoke();
+                    track.source.Stop();
+                    track.source.Play();
+                    Invoke(nameof(PlayNextTrack), track.source.clip.length + job.delay);
+                    break;
+            }
+        }
+
+        private void SfxActions(AudioJob job, AudioTrack track)
+        {
+            switch (job.action)
+            {
+                case AudioAction.Start:
+                    track.source.Play();
+                    break;
+                case AudioAction.Stop:
+                    if (!job.fade) track.source.Stop();
+                    break;
+                case AudioAction.Restart:
+                    track.source.Stop();
+                    track.source.Play();
+                    break;
+            }
+        }
+
+        private void PlayNextTrack()
+        {
+            //Log("PlayNextTrack");
+            if (loopThruTracks)
+            {
+                if (_audioQueue.Count > 0)
+                {
+                    //Log("loading next track in Queue");
+                    AddJob(_audioQueue.Dequeue());
+                }
+                else
+                {
+                    //Log("picking random background Audio Track");
+                    foreach (var key in _audioTable.Keys)
+                    {
+                        if ((AudioType) key == currentTrack) continue;
+                        if ((AudioType) key == AudioType.Sfx01) continue;
+                        AddJob(new AudioJob(AudioAction.Start, (AudioType) key, true, 1f));
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if (_audioQueue.Count <= 0) return;
+                //Log("loading next track in Queue");
+                AddJob(_audioQueue.Dequeue());
+            }
         }
 
         private void Log(string msg)
@@ -231,6 +315,7 @@ namespace ANM.Framework.Audio
         private void Dispose()
         {
             Log("Dispose");
+            CancelInvoke();
             foreach (var job in from DictionaryEntry entry in _jobTable select (IEnumerator) entry.Value)
             {
                 StopCoroutine(job);

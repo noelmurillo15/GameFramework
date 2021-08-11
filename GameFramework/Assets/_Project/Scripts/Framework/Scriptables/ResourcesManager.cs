@@ -1,13 +1,13 @@
 ﻿/*
  * ResourcesManager - Contains important Game Resources such as the Input Controller
  * Created by : Allan N. Murillo
- * Last Edited : 3/1/2021
+ * Last Edited : 7/4/2021
  */
 
-using ANM.Input;
 using UnityEngine;
+using ANM.Framework.Input;
 
-namespace ANM.Scriptables
+namespace ANM.Framework.Scriptables
 {
     [CreateAssetMenu(menuName = "Single Instance/Resources Manager")]
     public class ResourcesManager : ScriptableObject

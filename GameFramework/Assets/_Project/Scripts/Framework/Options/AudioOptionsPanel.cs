@@ -35,7 +35,7 @@ namespace ANM.Framework.Options
             _audioPanelAnimator = GetComponent<Animator>();
             _panel = _audioPanelAnimator.transform.GetChild(0).gameObject;
 
-            foreach (var effect in AudioController.instance.tracks)
+            foreach (var effect in AudioController.Instance.tracks)
             {
                 if (effect.audioObj[0].type == AudioType.St01)
                 {

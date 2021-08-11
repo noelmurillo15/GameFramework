@@ -1,7 +1,7 @@
 ﻿/*
  * SaveSettings - Save/Loads game settings (audio, video) to/from a JSON file
  * Created by : Allan N. Murillo
- * Last Edited : 1/14/2021
+ * Last Edited : 7/4/2021
  */
 
 using System.IO;
@@ -45,6 +45,8 @@ namespace ANM.Framework.Options
         {
             return JsonUtility.FromJson<SaveSettings>(jsonString);
         }
+
+        public void Initialize() => SettingsLoadedIni = LoadGameSettings();
 
         public bool LoadGameSettings()
         {
@@ -112,18 +114,5 @@ namespace ANM.Framework.Options
         }
 
         private bool VerifyDirectory(string filePath) => File.Exists(filePath);
-        
-        #region External JS LIBRARY
-
-#if UNITY_WEBGL && !UNITY_EDITOR
-        [System.Runtime.InteropServices.DllImport("__Internal")]
-        static extern void InitializeJsLib();
-
-        public void Initialize() => InitializeJsLib();
-#else
-        public void Initialize() => SettingsLoadedIni = LoadGameSettings();
-#endif
-
-        #endregion
     }
 }

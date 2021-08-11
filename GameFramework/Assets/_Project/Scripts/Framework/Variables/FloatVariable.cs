@@ -1,7 +1,7 @@
 ﻿/*
  * FloatVariable -
  * Created by : Allan N. Murillo
- * Last Edited : 2/17/2020
+ * Last Edited : 7/4/2021
  */
 
 using UnityEngine;

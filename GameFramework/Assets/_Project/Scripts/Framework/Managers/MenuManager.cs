@@ -1,12 +1,12 @@
 ﻿/*
  * MenuManager - Handles interactions with the Menu Ui
  * Created by : Allan N. Murillo
- * Last Edited : 2/26/2021
+ * Last Edited : 7/4/2021
  */
 
-using ANM.Input;
 using UnityEngine;
 using UnityEngine.UI;
+using ANM.Framework.Input;
 using ANM.Framework.Options;
 using ANM.Framework.Extensions;
 using UnityEngine.EventSystems;
@@ -160,7 +160,7 @@ namespace ANM.Framework.Managers
         {
             if (quitOptionsPanel == null || quitPanelSelectedObj == null) return;
             quitOptionsPanel.TurnOnPanel();
-            if(_eventSystem == null) _eventSystem = EventSystem.current;
+            if (_eventSystem == null) _eventSystem = EventSystem.current;
             _eventSystem.SetSelectedGameObject(quitPanelSelectedObj.gameObject);
             quitPanelSelectedObj.OnSelect(null);
         }

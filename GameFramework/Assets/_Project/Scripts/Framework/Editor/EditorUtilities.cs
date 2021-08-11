@@ -9,7 +9,7 @@
 using UnityEditor;
 using System.Collections.Generic;
 
-namespace ANM.EditorUtils
+namespace ANM.Framework.Editor
 {
     public static class EditorUtilities
     {

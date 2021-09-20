@@ -24,7 +24,13 @@ namespace ANM.Framework.Utils
             _count = 0;
             _canUseSplitScreen = false;
             _splitScreenActive = false;
+            
+#if NET_STANDARD_2_0
+            if(_controllers == null) _controllers = new List<SplitScreenController>();
+#else
             _controllers ??= new List<SplitScreenController>();
+#endif
+            
             var container = FindObjectsOfType<SplitScreenController>();
             foreach (var controller in container)
             {

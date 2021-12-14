@@ -1,7 +1,7 @@
 ﻿/*
  * Vector3Extension - Useful extended functionality for Unity Vector3
  * Created by : Allan N. Murillo
- * Last Edited : 2/17/2020
+ * Last Edited : 9/22/2021
  */
 
 using UnityEngine;
@@ -28,6 +28,19 @@ namespace ANM.Framework.Extensions
         public static Vector3 DirectionTo(this Vector3 source, Vector3 destination)
         {
             return Vector3.Normalize(destination - source);
+        }
+
+        public static Vector3 Round(this Vector3 source)
+        {
+            source.x = Mathf.Round(source.x);
+            source.y = Mathf.Round(source.y);
+            source.z = Mathf.Round(source.z);
+            return source;
+        }
+
+        public static Vector3 SnapTo(this Vector3 source, float step)
+        {
+            return (source / step).Round() * step;
         }
     }
 }

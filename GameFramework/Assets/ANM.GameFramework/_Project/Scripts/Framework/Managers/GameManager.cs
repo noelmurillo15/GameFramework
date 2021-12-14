@@ -70,7 +70,7 @@ namespace ANM.Framework.Managers
             Log("Start");
             Cursor.visible = true;
             _resources?.Initialize();
-            Invoke(nameof(Initialize), 1f);
+            Invoke(nameof(Initialize), 3f);
             Cursor.lockState = CursorLockMode.None;
             Cursor.SetCursor(customCursor, Vector2.zero, CursorMode.Auto);
         }

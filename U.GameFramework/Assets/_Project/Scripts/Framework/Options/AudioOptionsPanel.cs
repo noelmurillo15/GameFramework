@@ -5,6 +5,7 @@
  */
 
 using System;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
@@ -22,9 +23,16 @@ namespace ANM.Framework.Options
         [SerializeField] private Slider backgroundVolumeSlider = null;
         [SerializeField] private Button audioPanelSelectedObj = null;
 
+        [SerializeField] private string busMasterPath = "";
+        private FMOD.Studio.Bus masterBus;
+
+        [SerializeField] private string busUiPath = "";
+        private FMOD.Studio.Bus uiBus;
+
+        [SerializeField] private string busAmbiencePath = "";
+        private FMOD.Studio.Bus ambienceBus;
+
         private Animator _audioPanelAnimator;
-        private AudioSource _soundTrackSource;
-        private AudioSource _sfxSource;
         private GameObject _panel;
 
 
@@ -33,6 +41,21 @@ namespace ANM.Framework.Options
             _audioPanelAnimator = GetComponent<Animator>();
             _panel = _audioPanelAnimator.transform.GetChild(0).gameObject;
             _panel.SetActive(false);
+
+            if (busMasterPath != "")
+            {
+                masterBus = RuntimeManager.GetBus(busMasterPath);
+            }
+
+            if (busUiPath != "")
+            {
+                uiBus = RuntimeManager.GetBus(busUiPath);
+            }
+
+            if (busAmbiencePath != "")
+            {
+                ambienceBus = RuntimeManager.GetBus(busAmbiencePath);
+            }
         }
 
         public void AudioPanelIn(EventSystem eventSystem)
@@ -70,23 +93,24 @@ namespace ANM.Framework.Options
 
         public void UpdateMasterVolume(float amount)
         {
-            AudioListener.volume = amount;
+            masterBus.setVolume(amount);
         }
 
         public void UpdateEffectsVolume(float amount)
         {
-            _sfxSource.volume = amount;
+            uiBus.setVolume(amount);
         }
 
         public void UpdateBackgroundVolume(float amount)
         {
-            _soundTrackSource.volume = amount;
+            ambienceBus.setVolume(amount);
         }
 
         private void OverrideMasterVolume()
         {
-            if (Math.Abs(AudioListener.volume - SaveSettings.MasterVolumeIni) > 0f)
-                AudioListener.volume = SaveSettings.MasterVolumeIni;
+            masterBus.getVolume(out var volume);
+            if (Math.Abs(volume - SaveSettings.BackgroundVolumeIni) > 0f)
+                masterBus.setVolume(SaveSettings.BackgroundVolumeIni);
 
             if (!(Math.Abs(audioMasterVolumeSlider.value - SaveSettings.MasterVolumeIni) > 0f)) return;
             EventExtension.MuteEventListener(audioMasterVolumeSlider.onValueChanged);
@@ -96,8 +120,9 @@ namespace ANM.Framework.Options
 
         private void OverrideBackgroundVolume()
         {
-            if (_soundTrackSource != null && Math.Abs(_soundTrackSource.volume - SaveSettings.BackgroundVolumeIni) > 0f)
-                _soundTrackSource.volume = SaveSettings.BackgroundVolumeIni;
+            ambienceBus.getVolume(out var volume);
+            if (Math.Abs(volume - SaveSettings.BackgroundVolumeIni) > 0f)
+                ambienceBus.setVolume(SaveSettings.BackgroundVolumeIni);
 
             if (!(Math.Abs(backgroundVolumeSlider.value - SaveSettings.BackgroundVolumeIni) > 0f)) return;
             EventExtension.MuteEventListener(backgroundVolumeSlider.onValueChanged);
@@ -107,8 +132,9 @@ namespace ANM.Framework.Options
 
         private void OverrideEffectsVolume()
         {
-            if (_sfxSource != null && Math.Abs(_sfxSource.volume - SaveSettings.EffectVolumeIni) > 0f)
-                _sfxSource.volume = SaveSettings.EffectVolumeIni;
+            uiBus.getVolume(out var volume);
+            if (Math.Abs(volume - SaveSettings.EffectVolumeIni) > 0f)
+                uiBus.setVolume(SaveSettings.EffectVolumeIni);
 
             if (!(Math.Abs(effectsVolumeSlider.value - SaveSettings.EffectVolumeIni) > 0f)) return;
             EventExtension.MuteEventListener(effectsVolumeSlider.onValueChanged);

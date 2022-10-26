@@ -4861,6 +4861,9 @@ MonoBehaviour:
   effectsVolumeSlider: {fileID: 9009479964097458999}
   backgroundVolumeSlider: {fileID: 5521306989869581549}
   audioPanelSelectedObj: {fileID: 4958639233906720274}
+  busMasterPath: bus:/Master
+  busUiPath: bus:/Master/UiGroup
+  busAmbiencePath: bus:/Master/Ambience
 --- !u!223 &7896906579532235432
 Canvas:
   m_ObjectHideFlags: 0

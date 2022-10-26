@@ -25,11 +25,15 @@ namespace ANM.Framework.Utils
             switch (index)
             {
                 case 0:
-                    camera.rect = type == SplitScreenType.Horizontal ? new Rect(0f, 0f, 0.5f, 1f) : new Rect(0.5f, 0f, 0.5f, 1f);
+                    camera.rect = type == SplitScreenType.Horizontal
+                        ? new Rect(0f, 0f, 0.5f, 1f)
+                        : new Rect(0.5f, 0f, 0.5f, 1f);
                     Debug.Log("[SplitScreenController]: assigning camera 1 viewport");
                     break;
                 case 1:
-                    camera.rect = type == SplitScreenType.Horizontal ? new Rect(0.5f, 0f, 0.5f, 1f) : new Rect(0f, 0f, 0.5f, 1f);
+                    camera.rect = type == SplitScreenType.Horizontal
+                        ? new Rect(0.5f, 0f, 0.5f, 1f)
+                        : new Rect(0f, 0f, 0.5f, 1f);
                     Debug.Log("[SplitScreenController]: assigning camera 2 viewport");
                     break;
                 default:

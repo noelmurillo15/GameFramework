@@ -2,18 +2,16 @@
  * GameManager - Backbone of the game application
  * Contains data that needs to persist and be accessed from anywhere
  * Created by : Allan N. Murillo
- * Last Edited : 7/4/2021
+ * Last Edited : 10/26/2022
  */
 
 using System;
 using UnityEngine;
-using ANM.Framework.Audio;
 using ANM.Framework.Utils;
 using ANM.Framework.Events;
 using ANM.Framework.Options;
 using ANM.Framework.Extensions;
 using ANM.Framework.Scriptables;
-using AudioType = ANM.Framework.Audio.AudioType;
 
 namespace ANM.Framework.Managers
 {
@@ -92,8 +90,8 @@ namespace ANM.Framework.Managers
         {
             _fpsDisplay = fps;
             _fpsDisplay?.ToggleFpsDisplay(displayFps);
-            
-            //  
+
+            //
             var splitScreenManager = FindObjectOfType<SplitScreenManager>();
             if (splitScreenManager == null) return;
             splitScreenManager.Initialize();
@@ -151,12 +149,6 @@ namespace ANM.Framework.Managers
         private void Initialize()
         {
             Log("Initialize");
-#if UNITY_EDITOR
-            AudioController.Instance.PlayAudio(AudioType.St01, true, 1f);
-#else
-            AudioController.Instance.PlayAudio(AudioType.St01);
-            StartCoroutine(SceneExtension.ForceMenuSceneSequence());
-#endif
         }
 
         private void SetPause(bool b)

@@ -1,19 +1,17 @@
 ﻿/*
  * AudioOptionsPanel - Handles displaying / configuring audio options
  * Created by : Allan N. Murillo
- * Last Edited : 7/10/2020
+ * Last Edited : 10/26/2022
  */
 
 using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using ANM.Framework.Audio;
 using ANM.Framework.Utils;
 using ANM.Framework.Managers;
 using ANM.Framework.Extensions;
 using UnityEngine.EventSystems;
-using AudioType = ANM.Framework.Audio.AudioType;
 
 namespace ANM.Framework.Options
 {
@@ -34,19 +32,6 @@ namespace ANM.Framework.Options
         {
             _audioPanelAnimator = GetComponent<Animator>();
             _panel = _audioPanelAnimator.transform.GetChild(0).gameObject;
-
-            foreach (var effect in AudioController.Instance.tracks)
-            {
-                if (effect.audioObj[0].type == AudioType.St01)
-                {
-                    _soundTrackSource = effect.source;
-                }
-                else if (effect.audioObj[0].type == AudioType.Sfx01)
-                {
-                    _sfxSource = effect.source;
-                }
-            }
-
             _panel.SetActive(false);
         }
 

@@ -24,13 +24,13 @@ namespace ANM.Framework.Utils
             _count = 0;
             _canUseSplitScreen = false;
             _splitScreenActive = false;
-            
+
 #if NET_STANDARD_2_0
-            if(_controllers == null) _controllers = new List<SplitScreenController>();
+            if (_controllers == null) _controllers = new List<SplitScreenController>();
 #else
             _controllers ??= new List<SplitScreenController>();
 #endif
-            
+
             var container = FindObjectsOfType<SplitScreenController>();
             foreach (var controller in container)
             {
@@ -63,7 +63,9 @@ namespace ANM.Framework.Utils
 
         public void SwapSplitScreen()
         {
-            splitScreenType = splitScreenType == SplitScreenType.Horizontal ? SplitScreenType.Vertical : SplitScreenType.Horizontal;
+            splitScreenType = splitScreenType == SplitScreenType.Horizontal
+                ? SplitScreenType.Vertical
+                : SplitScreenType.Horizontal;
             _controllers[0].SetCameraViewport(0, splitScreenType);
             _controllers[1].SetCameraViewport(1, splitScreenType);
         }
@@ -82,7 +84,7 @@ namespace ANM.Framework.Utils
             }
         }
     }
-    
+
     public enum SplitScreenType
     {
         Horizontal,
